@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content-container %}
+
+<div class="page-content-container">
+
+    <!--Page Title-->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <div id="page-title">
+        <h1 class="page-header text-overflow">老男孩IT教育 | 只培养技术精英</h1>
+
+
+    </div>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!--End page title-->
+
+    <!--Page content-->
+    <!--===================================================-->
+    <div id="page-content">
+
+        <div class="row">
+
+            <div class="col-lg-12">
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">问卷< {{ survery_obj.name}} >统计</h3>
+                        <p style="padding-left:20px;color: gray">问卷开始日期: {{ survery_obj.date }}</p>
+
+                    </div>
+                    <div class="panel-body" style=" ">
+
+                        <div id="main" style="height:400px"></div>
+
+
+
+                        <hr />
+                        <h4>学员建议</h4>
+                        <div >
+                           {% for anwser in  survery_obj.surveryrecord_set.select_related %}
+                                {% if anwser.suggestion %}
+                                    <p>{{ anwser.date }} -- {{anwser.student_name  }} -- <pre>{{ anwser.suggestion }}</pre></p>
+                                {% endif %}
+                           {% endfor %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <!--===================================================-->
+    <!--End page content-->
+</div>
+
+{% endblock %}
+
+{% block bottom-js %}
+<script src="/static/plugins/echart/dist/echarts.js"></script>
+<script type="text/javascript">
+
+
+    function GetSurveryChartReport(){
+
+        $.getJSON("{% url 'survery_chart_report' survery_obj.id %}",function(callback){
+            console.log(callback);
+            // 路径配置
+            require.config({
+                paths: {
+                    echarts: '/static/plugins/echart/dist'
+                }
+            });
+
+            // 使用
+            require(
+                [
+                    'echarts',
+                    'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+                ],
+                function (ec) {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myChart = ec.init(document.getElementById('main'));
+
+                    var option = {
+                        tooltip: {
+                            show: true
+                        },
+                        legend: {
+                            data:['问卷统计']
+                        },
+                        xAxis : [
+                            {
+                                type : 'category',
+                                //data : ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                                data : callback.category
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series : [
+                            {
+                                "name":"问卷统计",
+                                "type":"bar",
+                                //"data":[5, 20, 40, 10, 10, 20]
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                              '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                                               '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                                               '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex]
+                                        },
+                                        label: {
+                                            show: true,
+                                            position: 'top',
+                                            formatter: '{b}\n{c}'
+                                        }
+                                    }
+                                },
+
+                                "data":callback.data,
+
+                            }
+                        ]
+                    };
+
+                    // 为echarts对象加载数据
+                    myChart.setOption(option);
+                }
+            );//end require.config
+
+
+
+        });//end getJSON
+
+    }//end GetSurveryChartReport
+
+    GetSurveryChartReport()
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load custom_tag %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | Nifty - Responsive admin template.</title>
+
+
+    <!--STYLESHEET-->
+    <!--=================================================-->
+
+
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link href="/static/css/nifty.min.css" rel="stylesheet">
+
+
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link href="/static/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+
+
+</head>
+
+<!--TIPS-->
+<!--You may remove all ID or Class names which contain "demo-", they are only used for demonstration. -->
+
+<body>
+    {% csrf_token %}
+	<div id="container" class="effect mainnav-lg">
+		
+
+		<div class="boxed">
+
+			<!--CONTENT CONTAINER-->
+			<!--===================================================-->
+			<div id="content-container">
+				
+				<!--Page Title-->
+				<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+				<div id="page-title">
+					<h1 class="page-header text-overflow">老男孩IT教育问卷调查</h1>
+
+
+				</div>
+				<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+				<!--End page title-->
+
+				<!--Page content-->
+				<!--===================================================-->
+				<div id="page-content">
+					
+					<div class="row">
+
+						<div class="col-lg-9">
+							<div class="panel">
+								<div class="panel-body">
+					
+									<!-- GENERAL -->
+									<!--===================================================-->
+									<h3 class="pad-all bord-btm text-thin">{{ survery_obj.name }}</h3>
+                                    <h5 class="text-right" style="color: orangered">*请认真填写,你的意见对我们非常重要!</h5>
+
+									<div id="survery_list" class="panel-group accordion">
+
+										<div class="bord-no pad-top">
+
+											<!-- Question -->
+											<div class=" pad-hor text-lg">
+												班级:{{ survery_obj.by_class }}
+                                                <input id="username" type="text" id="demo-vs-definput" placeholder="请填写你的名字或学号,非必填..." class="form-control">
+											<hr/>
+                                            </div>
+
+                                        </div>
+                                        {% for question in survery_obj.questions.select_related %}
+										<div class="bord-no pad-top">
+					
+											<!-- Question -->
+											<div class="text-semibold pad-hor text-lg">
+												<a href="#demo-gen-faq1" data-toggle="collapse" data-parent="#demo-gen-faq">{{ question.name }}</a>
+											</div>
+											<!-- Answer -->
+											<div anwser_type="{{ question.anwser_type }}"  question_id="{{ question.id }}" id="demo-gen-faq1" class="collapse in">
+
+												<div class="pad-all">
+                                                    {% if question.anwser_type == 'score' %}
+					                                    {% load_score_list %}
+
+                                                    {% endif %}
+                                                    <textarea placeholder="评分原因..." rows="3" class="form-control"></textarea>
+
+                                                </div>
+											</div>
+										</div>
+                                        {% endfor %}
+                                        <div class="text-center">
+                                            <button style="margin-left: -30px;font-size: 18px" class="btn btn-success btn-rounded btn-labeled fa fa-check">提交问卷</button>
+                                            <div id="response_data">
+
+                                            </div>
+
+
+                                        </div>
+
+									</div>
+									<!--===================================================-->
+					
+									<hr class="bord-no pad-all">
+					
+
+					
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+				</div>
+				<!--===================================================-->
+				<!--End page content-->
+
+
+			</div>
+			<!--===================================================-->
+			<!--END CONTENT CONTAINER-->
+
+
+
+		</div>
+
+		
+
+        <!-- FOOTER -->
+        <!--===================================================-->
+        <footer id="footer">
+
+            <!-- Visible when footer positions are fixed -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class="show-fixed pull-right">
+                <ul class="footer-list list-inline">
+                    <li>
+                        <p class="text-sm">SEO Proggres</p>
+                        <div class="progress progress-sm progress-light-base">
+                            <div style="width: 80%" class="progress-bar progress-bar-danger"></div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <p class="text-sm">Online Tutorial</p>
+                        <div class="progress progress-sm progress-light-base">
+                            <div style="width: 80%" class="progress-bar progress-bar-primary"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <button class="btn btn-sm btn-dark btn-active-success">Checkout</button>
+                    </li>
+                </ul>
+            </div>
+
+
+
+            <!-- Visible when footer positions are static -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class="hide-fixed pull-right pad-rgt">Currently v2.2.2</div>
+
+
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!-- Remove the class name "show-fixed" and "hide-fixed" to make the content always appears. -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+            <p class="pad-lft">&#0169; 2016 Oldboy edu</p>
+
+
+
+        </footer>
+        <!--===================================================-->
+        <!-- END FOOTER -->
+
+
+        <!-- SCROLL TOP BUTTON -->
+        <!--===================================================-->
+        <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+        <!--===================================================-->
+
+
+
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+
+
+
+	
+	<!--JAVASCRIPT-->
+	<!--=================================================-->
+
+	<!--jQuery [ REQUIRED ]-->
+	<script src="/static/js/jquery-2.1.1.min.js"></script>
+
+
+	<!--BootstrapJS [ RECOMMENDED ]-->
+	<script src="/static/js/bootstrap.min.js"></script>
+
+
+	
+	<!--Nifty Admin [ RECOMMENDED ]-->
+	<script src="/static/js/nifty.min.js"></script>
+
+
+
+
+
+
+    <script>
+
+
+
+        function AddScore(ele){
+            console.log(ele);
+            $(ele).parent().addClass("active");
+            $(ele).parent().siblings().removeClass("active");
+            $(ele).parent().parent().parent().parent().removeAttr("style");
+
+        }
+
+        function FormVerification(){
+            var data_dic = {
+                'username':$("#username").val() //调查问卷者的姓名
+            };
+            var err_flag = false;//set to true when some data is missing
+            //console.log($("#survery_list").children(".bord-no"));
+            $("div[anwser_type='score']").each(function(index,ele){
+               console.log($(ele).attr("question_id")) ;
+               var selected_score = $(ele).find("li").filter(".active").text();
+               var suggestion = $(ele).find("textarea").val();
+               if (selected_score.length == 0 ){
+                   $(ele).css("background","orange");
+                   err_flag = true;
+               }else{
+                   //add user selected score to data_dic for later posting
+                   data_dic[$(ele).attr("question_id")]  ={"score":selected_score,
+                                                            "suggestion":suggestion
+                                                        };
+
+               }
+            });//end score verification
+
+            $("div[anwser_type='suggestion']").each(function(index,ele) {
+               var suggestion = $(ele).find("textarea").val();
+               if (suggestion.length < 15 ){
+                   $(ele).css("background","red");
+                   err_flag = true;
+               }else{
+                   //add user selected score to data_dic for later posting
+                   data_dic[$(ele).attr("question_id")]  ={"score":0,
+                                                            "suggestion":suggestion
+                                                        };
+
+                    $(ele).removeAttr("style");
+               }
+
+            });//end suggestion verification
+
+            return [err_flag,data_dic]
+            //console.log(data_dic);
+        }//end FormVerification
+
+        $(document).ready(function(){
+
+
+            $("button").click(function(){
+
+                var result = FormVerification();
+                if (result[0] == true){ //didn't pass the form verification
+                    alert("请回答完所有问题后再提交!");
+
+                }else{
+                    console.log(result)
+                    console.log("--ready to submit---")
+                    var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+                    var data = {
+                        'data':JSON.stringify(result[1]),
+                        'csrfmiddlewaretoken'  :   csrftoken
+                    }
+
+                    $.post("/crm/survery/{{ survery_obj.id }}/", data ,function(callback){
+
+                        console.log("callback;");
+                        console.log(callback);
+                        var res = JSON.parse(callback);
+                        $("#response_data").html(" ");
+
+                        $.each(res,function(key,item) {
+                            var err_msg = "<p style='color:red;'>" + key + ": " + item + "</p>";
+                            $("#response_data").append(err_msg);
+                        });//end each
+
+                        if ($("#response_data").children().length == 0){ // no err msg
+                           console.log('----success submit--');
+                           var info_msg = "<p style='color:green;'>感谢您的参与,我们会认真阅读您的建议并努力去改进!</p>";
+                           $("#response_data").append(info_msg);
+                        }
+
+                        console.log("err length:" +res.length)
+                    });//end post
+                }
+
+            });//end button click
+
+
+        });//end document ready
+
+    </script>
+
+	<!--
+
+	REQUIRED
+	You must include this in your project.
+
+	RECOMMENDED
+	This category must be included but you may modify which plugins or components which should be included in your project.
+
+	OPTIONAL
+	Optional plugins. You may choose whether to include it in your project or not.
+
+	DEMONSTRATION
+	This is to be removed, used for demonstration purposes only. This category must not be included in your project.
+
+	SAMPLE
+	Some script samples which explain how to initialize plugins or components. This category should not be included in your project.
+
+
+	Detailed information and more samples can be found in the document.
+
+	-->
+		
+
+</body>
+</html>
+

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content-container %}
+
+<div class="page-content-container">
+
+    <!--Page Title-->
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <div id="page-title">
+        <h1 class="page-header text-overflow">老男孩IT教育 | 只培养技术精英</h1>
+
+
+    </div>
+    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+    <!--End page title-->
+
+    <!--Page content-->
+    <!--===================================================-->
+    <div id="page-content">
+
+        <div class="row">
+
+            <div class="col-lg-12">
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ class_obj.get_course_display }}第<b>{{ class_obj.semester }}</b>期成绩单</h3>
+                        <p style="padding-left:20px;color: gray">成绩算法: {{ study_record_model.score_choices }}</p>
+                        <p style="padding-left:20px;color: gray">开班日期: {{ class_obj.start_date }}</p>
+                        <p style="padding-left:20px;color: gray">结业日期: {{ class_obj.graduate_date }}</p>
+                        <p style="padding-left:20px;color: gray">本期讲师: {%  for teacher in  class_obj.teachers.select_related %}{{ teacher.name }},{% endfor %}</p>
+
+                    </div>
+                    <div class="panel-body" style="margin-top:80px ">
+                        <div class="table-responsive ">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>姓名(学分)</th>
+                                        {% for course_day in class_obj.courserecord_set.select_related %}
+                                        <th>Day{{ course_day.day_num }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stu_grades in class_grade_list %}
+                                    <tr>
+                                        {% for day_grade in stu_grades %}
+                                            {% if forloop.counter == 1 %}
+                                                <td  ><a href="#fakelink" class="btn-link">{{day_grade.0.name }}({{ day_grade.1 }})</a></td>
+                                            {% else %}
+                                                 <td style="color:ghostwhite;font-weight: bold;background: {{ day_grade.1 }}">{{ day_grade.0 }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+    <!--===================================================-->
+    <!--End page content-->
+</div>
+
+
+{% endblock %}
