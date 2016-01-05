@@ -20,7 +20,7 @@
 
 </head>
 <body>
-
+    {% block body-container %}
 	<div id="container" class="effect mainnav-lg">
 
 
@@ -126,7 +126,7 @@ dddd
 	</div>
 	<!--===================================================-->
 	<!-- END OF CONTAINER -->
-
+    {% endblock %}
 
 	<!--jQuery [ REQUIRED ]-->
 	<script src="/static/js/jquery-2.1.1.min.js"></script>
@@ -142,6 +142,7 @@ dddd
     {% block bottom-js %}
 
     {% endblock %}
+
 </body>
 
 

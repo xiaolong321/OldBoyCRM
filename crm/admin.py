@@ -165,7 +165,7 @@ class SurveryAdmin(admin.ModelAdmin):
 
 class SurveryRecordAdmin(admin.ModelAdmin):
     #filter_horizontal = ('questions',)
-    list_display = ['survery','survery_item','score','date']
+    list_display = ['survery','survery_item','score','suggestion','date']
     list_filter = ['survery_item','survery']
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)

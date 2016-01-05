@@ -42,3 +42,26 @@ def pagenator(obj,data_type):
     return html
 
 
+@register.simple_tag
+def valid_survery_count(obj):
+    #print(obj)
+    #print(obj.select_related())
+    #for i in obj.select_related():
+    #    print i.survery_item
+
+    total_survery_records =   obj.surveryrecord_set.select_related().count()
+    total_questions = obj.questions.select_related().count()
+    #print total_survery_records
+    return total_survery_records / total_questions
+
+@register.simple_tag
+def get_single_stu_total_scores(course,stu_obj):
+    total_score = 0
+    for eachday in course.courserecord_set.select_related():
+        for stu_day_grade in eachday.studyrecord_set.select_related():
+            if stu_day_grade.student.id == stu_obj.id :
+                if stu_day_grade.score != -1: #-1 means N/A, no grade record for this day
+                    total_score += stu_day_grade.score
+
+
+    return total_score

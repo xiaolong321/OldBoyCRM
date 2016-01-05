@@ -188,6 +188,7 @@ class StudyRecord(models.Model):
                      (0,'D'),
                      (-1,'N/A'),
                      (-100,'COPY'),
+                     (-1000,'FAIL'),
                      )
     score = models.IntegerField(u"本节成绩",choices=score_choices,default=-1)
 
@@ -204,7 +205,8 @@ class StudyRecord(models.Model):
          40 : "#FE642E",
          0 : "red",
          -1 : "#E9E9E9",
-         -100 : "#585858"
+         -100 : "#585858",
+         -1000 : "darkred"
     }
 
 

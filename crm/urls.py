@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^survery/report/(\d+)/',views.survery_report,name="survery_report"),
     url(r'^survery/report/chart/(\d+)/',views.survery_chart_report,name="survery_chart_report"),
     url(r'^grade/(\d+)/',views.view_class_grade,name="class_grade"),
+    url(r'^grade/single/',views.grade_check,name="single_stu_grade_check"),
 ]

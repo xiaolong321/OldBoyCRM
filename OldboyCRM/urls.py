@@ -16,9 +16,11 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from  crm import urls as crm_urls
+from crm import views as crm_views
 
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^crm/', include(crm_urls)),
+    url(r'^$', crm_views.index ),
 ]
