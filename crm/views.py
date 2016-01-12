@@ -6,6 +6,7 @@ import models
 import json
 import survery_handle
 import class_grade
+import forms
 # Create your views here.
 
 
@@ -70,7 +71,13 @@ def view_class_grade(request,class_id):
         return HttpResponse("Class doesn't exist!")
     grade_gen_obj = class_grade.ClassGrade(class_obj)
     grades = grade_gen_obj.fetch_grades()
-
+    if grade_gen_obj.errors:
+        html = u"<h4 style='color:red'>需为以下学员生成上课纪录后才能进行班级成绩查询,如果此学生之前没上课,生成上课纪录时选择缺勤即可</h4><ul>"
+        for err in grade_gen_obj.errors:
+            html += "<li>%s</li>" % err
+        else:
+            html += u'''</ul> 点击 <a href="/crm/stu_lack_check_records?class_id=%s&stu_ids=%s">为以上学员批量补齐上课纪录</a>''' % (class_obj.id, ",".join(grade_gen_obj.stu_lack_check_record) )
+        return HttpResponse(html)
     return render(request,'crm/class_grade.html',{'class_obj':class_obj,
                                                   'class_grade_list':grades,
                                                   'study_record_model':models.StudyRecord
@@ -100,3 +107,46 @@ def grade_check(request):
         return  render(request,'crm/grade_check.html',{'errors':errors,
                                                        'stu_obj':stu_obj,
                                                        'study_record_model':models.StudyRecord})
+
+
+
+@login_required
+def stu_lack_check_records(request):
+    '''use this function to make up missing course check in records for some late enrolled students'''
+    class_id = request.GET.get("class_id")
+    stu_ids = request.GET.get('stu_ids')
+    if stu_ids:
+        stu_ids = stu_ids.split(',')
+    class_obj = models.ClassList.objects.get(id=class_id)
+    for stu_id in stu_ids:
+
+        for course_day in class_obj.courserecord_set.select_related():
+            try:
+                models.StudyRecord.objects.get_or_create(course_record_id=course_day.id,
+                                                         student_id= stu_id,
+                                                         record = 'noshow',
+
+                                                         )
+            except Exception as e:
+                pass
+    return HttpResponseRedirect("/crm/grade/%s" % class_id)
+
+def scholarship(request):
+
+    return render(request,'crm/scholarship.html')
+
+
+def compliant(request):
+
+    if request.method == "GET":
+        compliant_form = forms.CompliantForm()
+        return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
+    elif request.method == "POST":
+        compliant_form = forms.CompliantForm(request.POST)
+        if compliant_form.is_valid():
+            compliant_form.save()
+            return HttpResponse(u"<h3 style='color:red'>感谢您的建议,我们将尽快认真处理,如果您留下了联系方式,我们会在2个工作日内与你联系并告诉您所提交的投诉或建议的处理进度或结果...have a nice day!</h3><a href='/'>返回首页</a>")
+        return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
+def stu_faq(request):
+
+    return render(request,"crm/stu_faq.html")

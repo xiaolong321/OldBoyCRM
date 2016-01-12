@@ -1,0 +1,152 @@
+{% extends 'crm/index.html' %}
+
+{% block page-content-title %}投诉\建议{% endblock %}
+
+{% block page-content %}
+
+    <h5>欢迎向老男孩教育提建议或投诉,告诉我们哪些做的不够好,帮助我们为学员提供更好的服务.</h5>
+
+
+    <form id="compliant-form" class="form-horizontal" method="POST" action="{% url 'compliant' %}">{% csrf_token %}
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="demo-is-inputsmall">类型</label>
+                <div class="col-sm-6">
+                    {{ compliant_form.compliant_type }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="demo-is-inputnormal" class="col-sm-3 control-label">标题</label>
+                <div class="col-sm-6">
+                    {{ compliant_form.title }}
+                    <!--input type="text" placeholder="Normal" class="form-control" id="demo-is-inputnormal"-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="demo-is-inputlarge" class="col-sm-3 control-label">投诉\建议内容</label>
+                <div class="col-sm-6">
+                    {{ compliant_form.content }}
+                    <!--input type="text" placeholder=".input-lg" class="form-control input-lg" id="demo-is-inputlarge" -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">姓名</label>
+                <div class="col-sm-3">
+                    {{ compliant_form.name }}
+                    <!--input type="text" placeholder=".col-sm-3" class="form-control" -->
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-9 col-sm-offset-3">
+                    <button class="btn btn-info btn-labeled fa fa-submit fa-lg" type="submit">提交</button>
+                </div>
+            </div>
+        </div>
+        {% if compliant_form.errors %}
+            <pre style="color:red">{{ compliant_form.errors }}</pre>
+        {% endif %}
+    </form>
+
+
+
+{% endblock %}
+
+{% block bottom-js %}
+<script src="/static/plugins/bootstrap-validator/bootstrapValidator.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+
+        var faIcon = {
+            valid: 'fa fa-check-circle fa-lg text-success',
+            invalid: 'fa fa-times-circle fa-lg',
+            validating: 'fa fa-refresh'
+        }
+
+
+
+        $('#compliant-form').bootstrapValidator({
+            excluded: [':disabled'],
+            feedbackIcons: faIcon,
+            fields: {
+            title: {
+                validators: {
+                    notEmpty: {
+                        message: 'The title is required'
+                    },
+				stringLength: {
+					min: 4,
+					max: 128,
+					message: 'The title must be more than 4 and less than 128 characters long'
+				},
+
+                }
+            },
+            content: {
+                validators: {
+                    notEmpty: {
+                        message: 'The content is required'
+                    },
+				stringLength: {
+					min: 15,
+					max: 1024,
+					message: 'The content must be more than 15 and less than 1024 characters long'
+				},
+                }
+            },
+            memberType: {
+                validators: {
+                    notEmpty: {
+                        message: 'Please choose the membership type that best meets your needs'
+                    }
+                }
+            },
+            address: {
+                validators: {
+                    notEmpty: {
+                        message: 'The address is required'
+                    }
+                }
+            },
+            city: {
+                validators: {
+                    notEmpty: {
+                        message: 'The city is required'
+                    }
+                }
+            },
+            country: {
+                validators: {
+                    notEmpty: {
+                        message: 'The city is required'
+                    }
+                }
+            }
+            }
+        }).on('status.field.bv', function(e, data) {
+            var $form     = $(e.target),
+            validator = data.bv,
+            $tabPane  = data.element.parents('.tab-pane'),
+            tabId     = $tabPane.attr('id');
+
+            if (tabId) {
+            var $icon = $('a[href="#' + tabId + '"][data-toggle="tab"]').parent().find('i');
+
+            // Add custom class to tab containing the field
+            if (data.status == validator.STATUS_INVALID) {
+                $icon.removeClass(faIcon.valid).addClass(faIcon.invalid);
+            } else if (data.status == validator.STATUS_VALID) {
+                var isValidTab = validator.isValidContainer($tabPane);
+                $icon.removeClass(faIcon.valid).addClass(isValidTab ? faIcon.valid : faIcon.invalid);
+            }
+            }
+        });
+
+    });//end document ready
+
+</script>
+
+{% endblock %}

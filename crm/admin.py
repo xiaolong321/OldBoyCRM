@@ -88,6 +88,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
                     "get_total_late_num",
                     "get_total_leave_early_num",
                     )
+    list_filter = ('course','day_num','teacher')
 
     actions = ['initialize_student_list']
     def initialize_student_list(modeladmin, request, queryset):
@@ -167,6 +168,14 @@ class SurveryRecordAdmin(admin.ModelAdmin):
     #filter_horizontal = ('questions',)
     list_display = ['survery','survery_item','score','suggestion','date']
     list_filter = ['survery_item','survery']
+
+class CompliantAdmin(admin.ModelAdmin):
+    list_display = ('compliant_type','title','content','name','date','dealing_time','status','comment')
+    list_filter = ('compliant_type','status','date')
+
+class StudentFAQAdmin(admin.ModelAdmin):
+    list_display = ('title','author','date')
+
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)
 admin.site.register(models.ConsultRecord,ConsultRecordAdmin)
@@ -177,3 +186,5 @@ admin.site.register(models.StudyRecord,StudyRecordAdmin)
 admin.site.register(models.SurveryRecord,SurveryRecordAdmin)
 admin.site.register(models.Survery,SurveryAdmin)
 admin.site.register(models.SurveryItem)
+admin.site.register(models.Compliant,CompliantAdmin)
+admin.site.register(models.StudentFAQ,StudentFAQAdmin)

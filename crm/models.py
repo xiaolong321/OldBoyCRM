@@ -11,6 +11,7 @@ from myauth import UserProfile
 course_choices = (('LinuxL1',u'Linux中高级'),
                       ('LinuxL2',u'Linux架构师'),
                       ('PythonDevOps',u'Python自动化开发'),
+                      ('PythonDevOps51',u'Python自动化开发(51网络)'),
                       ('BigDataDev',u"大数据开发课程"),
                       ('Cloud',u"云计算课程"),
                       #('PythonDevOps',u'Python自动化开发'),
@@ -287,3 +288,41 @@ class SurveryRecord(models.Model):
         verbose_name = u'问卷记录'
         verbose_name_plural = u"问卷记录"
 
+
+class Compliant(models.Model):
+    type_choices = (('compliant',u"投诉"),('suggestion',u"建议"))
+    compliant_type = models.CharField(u"选择类型",choices=type_choices,max_length=32,default="compliant")
+    title = models.CharField(max_length=128,help_text=u"标题...")
+    content = models.TextField(max_length=1024,help_text=u"投诉或建议内容....")
+    name = models.CharField(u"姓名",help_text=u"不填则为匿名投诉\建议...",max_length=32)
+    date = models.DateTimeField(u"创建日期",auto_now_add=True)
+    status_choices = (('unread',u"未处理"),
+                      ('sovled',u'已处理'),
+                      ('pending',u'目前无法解决'),
+                      )
+    status = models.CharField(u"状态",choices=status_choices,max_length=32,default="unread")
+    comment = models.TextField(u"处理结果备注",help_text=u"处理方案,必填...",blank=True,null=True)
+    dealing_time = models.DateTimeField(u"处理时间",blank=True,null=True)
+    dealer = models.ForeignKey(UserProfile,verbose_name=u"处理人",blank=True,null=True)
+
+    def __unicode__(self):
+        return "%s --- %s" %(self.title,self.status)
+
+    class Meta:
+        verbose_name = u"学员投诉\建议"
+        verbose_name_plural = u"学员投诉\建议"
+
+
+class StudentFAQ(models.Model):
+    title = models.CharField(u"问题",max_length=128)
+    solution =models.TextField(u"答案")
+    author = models.ForeignKey(UserProfile,verbose_name=u"作者")
+    date = models.DateTimeField(auto_now_add=True)
+
+
+    def __unicode__(self):
+        return "%s" %(self.title)
+
+    class Meta:
+        verbose_name = u"学员常见问题汇总"
+        verbose_name_plural = u"学员常见问题汇总"

@@ -18,11 +18,15 @@
 
                 <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">学员平台</h3>
+                        <h3 class="panel-title">{% block page-content-title %}学员平台{% endblock %}</h3>
                     </div>
                     <div class="panel-body" style="">
+                      {% block page-content %}
                       <h4><a class="btn-link" href="{% url 'single_stu_grade_check' %}">成绩查询</a></h4>
-                      <h4><a class="btn-link" href="#">投诉建议</a></h4>
+                      <h4><a class="btn-link" href="{% url 'scholarship' %}">奖学金政策</a></h4>
+                      <h4><a class="btn-link" href="{% url 'compliant' %}">投诉建议</a></h4>
+                      <h4><a class="btn-link" href="{% url 'stu_faq' %}">学员常见问题汇总</a></h4>
+                      {% endblock %}
                     </div> <!--end panel-body-->
                 </div> <!--end panel-->
             </div> <!--end col-lg-12-->
