@@ -21,7 +21,7 @@ class CustomerAdmin(admin.ModelAdmin):
     filter_horizontal = ('class_list',)
     list_filter = ('source','course','class_type','status','date','consultant')
     inlines = [ConsultRecordInline,PaymentRecordInline]
-    list_display = ('qq','qq_name','name','stu_id','source','course','class_type','status','colored_status','customer_note','consultant','date')
+    list_display = ('qq','qq_name','name','stu_id','source','course','class_type','status','colored_status','get_enrolled_course','customer_note','consultant','date')
     #list_editable = ('status',)
     #def has_delete_permission(self, request, obj=None):
     #    return False
@@ -116,7 +116,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
         return actions
 
 class StudyRecordAdmin(admin.ModelAdmin):
-    list_display = ('course_record','student','record','colored_record','colored_score','score','date')
+    list_display = ('course_record','student','get_stu_id','record','colored_record','colored_score','score','date')
     list_filter = ("course_record__course__course","course_record","score","record")
     search_fields = ('student__name','student__stu_id')
     list_editable = ("score","record")
@@ -150,6 +150,11 @@ class StudyRecordAdmin(admin.ModelAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
+
+    def get_stu_id(self, obj):
+        return obj.student.stu_id
+    get_stu_id.admin_order_field  = u'student__stu_id'  #Allows column order sorting
+    get_stu_id.short_description = u'学号'  #Renames column head
 
 class SurveryAdmin(admin.ModelAdmin):
     filter_horizontal = ('questions',)

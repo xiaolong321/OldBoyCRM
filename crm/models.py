@@ -62,7 +62,9 @@ class Customer(models.Model):
 
         return  format_td
 
-
+    def get_enrolled_course(self):
+        return " | ".join(["%s(%s)" %(i.get_course_display(),i.semester) for i in self.class_list.select_related()])
+    get_enrolled_course.short_description = u'已报班级'
 
     def __unicode__(self):
         return u"QQ:%s -- Stu:%s -- Name:%s" %(self.qq,self.stu_id,self.name)
