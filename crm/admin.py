@@ -116,7 +116,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
         return actions
 
 class StudyRecordAdmin(admin.ModelAdmin):
-    list_display = ('course_record','student','get_stu_id','record','colored_record','colored_score','score','date')
+    list_display = ('course_record','get_stu_name','get_stu_id','record','colored_record','colored_score','score','date','note')
     list_filter = ("course_record__course__course","course_record","score","record")
     search_fields = ('student__name','student__stu_id')
     list_editable = ("score","record")
@@ -155,6 +155,12 @@ class StudyRecordAdmin(admin.ModelAdmin):
         return obj.student.stu_id
     get_stu_id.admin_order_field  = u'student__stu_id'  #Allows column order sorting
     get_stu_id.short_description = u'学号'  #Renames column head
+    def get_stu_name(self, obj):
+        return obj.student.name
+    get_stu_name.admin_order_field  = u'student__name'  #Allows column order sorting
+    get_stu_name.short_description = u'姓名'  #Renames column head
+
+
 
 class SurveryAdmin(admin.ModelAdmin):
     filter_horizontal = ('questions',)

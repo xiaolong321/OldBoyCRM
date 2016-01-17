@@ -194,9 +194,8 @@ class StudyRecord(models.Model):
                      (-1000,'FAIL'),
                      )
     score = models.IntegerField(u"本节成绩",choices=score_choices,default=-1)
-
     date = models.DateTimeField(auto_now_add=True)
-
+    note = models.CharField(u"备注",max_length=255,blank=True,null=True)
     color_dic = {
          100:"#5DFC70",
          90 : "yellowgreen",
