@@ -54,18 +54,19 @@ class Customer(models.Model):
 
     def colored_status(self):
         if self.status == "signed":
-            format_td =format_html('<span style="padding:5px;background-color:yellowgreen;color:white">已报名</span>')
+            format_td =format_html('<span style="padding:2px;background-color:yellowgreen;color:white">已报名</span>')
         elif self.status == "unregistered":
-            format_td =format_html('<span style="padding:5px;background-color:gray;color:white">未报名</span>')
+            format_td =format_html('<span style="padding:2px;background-color:gray;color:white">未报名</span>')
         elif self.status == "paid_in_full":
-            format_td =format_html('<span style="padding:5px;background-color:orange;color:white">学费已交齐</span>')
+            format_td =format_html('<span style="padding:2px;background-color:orange;color:white">学费已交齐</span>')
 
         return  format_td
 
     def get_enrolled_course(self):
         return " | ".join(["%s(%s)" %(i.get_course_display(),i.semester) for i in self.class_list.select_related()])
     get_enrolled_course.short_description = u'已报班级'
-
+    colored_status.admin_order_field  = u'客户状态'
+    colored_status.short_description  = u'客户状态'
     def __unicode__(self):
         return u"QQ:%s -- Stu:%s -- Name:%s" %(self.qq,self.stu_id,self.name)
     class Meta:

@@ -65,13 +65,14 @@ class UserProfileAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('id','email','is_admin','is_active')
+    list_display = ('id','email','is_admin','is_active','is_staff')
     list_filter = ('is_admin',)
+    filter_horizontal = ('groups',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('name','department','tel','mobile','memo')}),
         #('API TOKEN info', {'fields': ('token',)}),
-        ('Permissions', {'fields': ('is_active','is_admin')}),
+        ('Permissions', {'fields': ('is_active','is_admin','is_staff','groups')}),
         ('账户有效期', {'fields': ('valid_begin_time','valid_end_time')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -79,9 +80,8 @@ class UserProfileAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email',  'password1', 'password2','is_active','is_admin')}
+            'fields': ('email',  'password1', 'password2','is_active','is_staff','is_admin')}
         ),
     )
     search_fields = ('email',)
     ordering = ('email',)
-    filter_horizontal = ()

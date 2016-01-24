@@ -25,7 +25,7 @@
 
                 <div class="panel">
                     <div class="panel-heading">
-                        <h3 class="panel-title">问卷< {{ survery_obj.name}} >统计</h3>
+                        <h3 class="panel-title">问卷< {{ survery_obj.name}} >统计 <a class="btn-link pull-right" style="font-size: 12px;color:deepskyblue" href="{% url 'survery'  survery_obj.id %}">查看问卷链接</a></h3>
                         <p style="padding-left:20px;color: gray">问卷开始日期: {{ survery_obj.date }}</p>
                         <p style="padding-left:20px;color: gray">收到有效问卷: {% valid_survery_count survery_obj  %}份</p>
 

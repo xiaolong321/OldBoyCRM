@@ -1,11 +1,12 @@
 #_*_coding:utf-8_*_
 __author__ = 'jieli'
-
+from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager, AbstractBaseUser,PermissionsMixin
 )
+
 import django
 
 class UserManager(BaseUserManager):
@@ -28,6 +29,7 @@ class UserManager(BaseUserManager):
         )
 
         user.set_password(password)
+        #user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -45,22 +47,27 @@ class UserManager(BaseUserManager):
             #memo=memo,
         )
         user.is_admin = True
+        #user.is_staff = True
         user.save(using=self._db)
         return user
 
 
-class UserProfile(AbstractBaseUser):
+class UserProfile(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
     )
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=True,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-
     name = models.CharField(u'名字', max_length=32)
     department = models.CharField(u'部门', max_length=32,default=None,blank=True,null=True)
-    #business_unit = models.ManyToManyField(BusinessUnit)
+    #business_unit = models.CharField(max_length=1)
     tel = models.CharField(u'座机', max_length=32,default=None,blank=True,null=True)
     mobile = models.CharField(u'手机', max_length=32,default=None,blank=True,null=True)
 
@@ -68,7 +75,7 @@ class UserProfile(AbstractBaseUser):
     date_joined = models.DateTimeField(blank=True, auto_now_add=True)
     #valid_begin = models.DateTimeField(blank=True, auto_now=True)
     valid_begin_time = models.DateTimeField(default=django.utils.timezone.now )
-    valid_end_time = models.DateTimeField(default=django.utils.timezone.now() + django.utils.timezone.timedelta(days=90))
+    valid_end_time = models.DateTimeField(default=django.utils.timezone.now)
 
 
 
@@ -102,11 +109,13 @@ class UserProfile(AbstractBaseUser):
         # Simplest possible answer: Yes, always
         return True
 
-    @property
+
+    '''@property
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    '''
 
     class Meta:
         verbose_name = u'用户信息'
