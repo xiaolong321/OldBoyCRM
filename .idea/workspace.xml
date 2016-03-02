@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="324330b8-1cbe-4aac-b524-28e07e8903d2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/OldboyCRM.iml" afterPath="$PROJECT_DIR$/.idea/OldboyCRM.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/admin.py" afterPath="$PROJECT_DIR$/crm/admin.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/models.py" afterPath="$PROJECT_DIR$/crm/models.py" />
     </list>
     <ignored path="OldboyCRM.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,52 +29,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crm/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="66" column="34" selection-start-line="66" selection-start-column="34" selection-end-line="66" selection-end-column="34" />
-              <folding>
-                <marker date="1456901059000" expanded="true" signature="735:3316" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="2334:2428" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="3151:3229" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="3245:3316" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="3352:4156" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="4008:4062" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="4079:4156" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="4193:5120" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="4955:5034" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5051:5120" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5152:5825" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5479:5547" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5563:5680" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5712:5777" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="5859:7752" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="6161:6215" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="6231:6347" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="6381:6599" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="6633:6845" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="6881:7097" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="7138:7364" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="7788:10167" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="9177:9294" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="9311:9438" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="9469:9811" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="9840:10003" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="10202:10799" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="10680:10705" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="10722:10799" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="10828:11252" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="11142:11167" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="11183:11252" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="11290:12067" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="11881:11982" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="11998:12067" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="12100:13194" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="13049:13102" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="13119:13194" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="13460:13494" placeholder="..." />
-              </folding>
+            <state vertical-scroll-proportion="-1.4776119">
+              <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -83,7 +43,27 @@
         <entry file="file://$PROJECT_DIR$/crm/admin.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+              <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="myauth.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/crm/myauth.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="75" column="62" selection-start-line="75" selection-start-column="62" selection-end-line="75" selection-end-column="62" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/crm/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="145" column="37" selection-start-line="145" selection-start-column="37" selection-end-line="145" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -92,7 +72,7 @@
       <file leaf-file-name="survery_report.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/crm/survery_report.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-17.5">
+            <state vertical-scroll-proportion="0.0">
               <caret line="28" column="82" selection-start-line="28" selection-start-column="82" selection-end-line="28" selection-end-column="82" />
               <folding>
                 <element signature="e#736#777#0#HTML" expanded="true" />
@@ -112,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/OldboyCRM/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3633218">
-              <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="94" column="24" selection-start-line="94" selection-start-column="24" selection-end-line="94" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -126,12 +106,8 @@
         <entry file="file://$PROJECT_DIR$/crm/myauth_admin.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-              <folding>
-                <marker date="1456901059000" expanded="false" signature="44:258" placeholder="import ..." />
-                <marker date="1456901059000" expanded="true" signature="301:1268" placeholder="..." />
-                <marker date="1456901059000" expanded="true" signature="2169:3332" placeholder="..." />
-              </folding>
+              <caret line="75" column="69" selection-start-line="75" selection-start-column="69" selection-end-line="75" selection-end-column="69" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -170,9 +146,9 @@
         <option value="$PROJECT_DIR$/OldboyCRM/urls.py" />
         <option value="$PROJECT_DIR$/crm/myauth.py" />
         <option value="$PROJECT_DIR$/crm/myauth_admin.py" />
-        <option value="$PROJECT_DIR$/crm/models.py" />
-        <option value="$PROJECT_DIR$/crm/admin.py" />
         <option value="$PROJECT_DIR$/templates/crm/survery_report.html" />
+        <option value="$PROJECT_DIR$/crm/admin.py" />
+        <option value="$PROJECT_DIR$/crm/models.py" />
       </list>
     </option>
   </component>
@@ -182,9 +158,10 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1280" />
-    <option name="height" value="724" />
+    <option name="x" value="-348" />
+    <option name="y" value="-1053" />
+    <option name="width" value="1651" />
+    <option name="height" value="923" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -211,7 +188,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -260,7 +237,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -502,8 +479,8 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
-        <env name="DJANGO_SETTINGS_MODULE" value="OldboyCRM.settings" />
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="OldboyCRM.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -512,7 +489,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="OldboyCRM" />
       <option name="launchJavascriptDebuger" value="false" />
-      <option name="port" value="8000" />
+      <option name="port" value="9000" />
       <option name="host" value="0.0.0.0" />
       <option name="additionalOptions" value="" />
       <option name="browserUrl" value="" />
@@ -540,28 +517,28 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="724" extended-state="6" />
-    <editor active="true" />
+    <frame x="-348" y="-1053" width="1651" height="923" extended-state="0" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1930533" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15226848" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12820514" sideWeight="0.5028653" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13291925" sideWeight="0.49713466" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.70386904" sideWeight="0.49713466" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32853025" sideWeight="0.49713466" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -634,47 +611,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="116" column="17" selection-start-line="116" selection-start-column="17" selection-end-line="116" selection-end-column="17" />
-          <folding>
-            <marker date="1456901059000" expanded="true" signature="735:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="2334:2428" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3151:3229" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3245:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3352:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4008:4062" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4079:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4193:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4955:5034" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5051:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5152:5825" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5479:5547" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5563:5680" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5712:5777" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5859:7752" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6161:6215" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6231:6347" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6381:6599" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6633:6845" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6881:7097" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7138:7364" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7788:10167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9177:9294" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9311:9438" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9469:9811" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9840:10003" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10202:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10680:10705" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10722:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10828:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11142:11167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11183:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11290:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11881:11982" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11998:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="12100:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13049:13102" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13119:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13460:13494" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -748,47 +685,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding>
-            <marker date="1456901059000" expanded="true" signature="735:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="2334:2428" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3151:3229" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3245:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3352:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4008:4062" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4079:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4193:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4955:5034" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5051:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5152:5825" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5479:5547" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5563:5680" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5712:5777" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5859:7752" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6161:6215" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6231:6347" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6381:6599" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6633:6845" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6881:7097" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7138:7364" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7788:10167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9177:9294" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9311:9438" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9469:9811" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9840:10003" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10202:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10680:10705" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10722:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10828:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11142:11167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11183:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11290:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11881:11982" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11998:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="12100:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13049:13102" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13119:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13460:13494" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -833,47 +730,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1456901059000" expanded="true" signature="735:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="2334:2428" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3151:3229" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3245:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3352:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4008:4062" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4079:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4193:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4955:5034" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5051:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5152:5825" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5479:5547" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5563:5680" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5712:5777" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5859:7752" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6161:6215" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6231:6347" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6381:6599" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6633:6845" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6881:7097" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7138:7364" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7788:10167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9177:9294" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9311:9438" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9469:9811" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9840:10003" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10202:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10680:10705" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10722:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10828:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11142:11167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11183:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11290:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11881:11982" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11998:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="12100:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13049:13102" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13119:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13460:13494" placeholder="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1010,13 +867,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crm/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="130" column="20" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/OldboyCRM/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5460751">
@@ -1031,81 +881,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crm/myauth.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.077859">
-          <caret line="63" column="25" selection-start-line="63" selection-start-column="25" selection-end-line="63" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crm/myauth_admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-          <folding>
-            <marker date="1456901059000" expanded="false" signature="44:258" placeholder="import ..." />
-            <marker date="1456901059000" expanded="true" signature="301:1268" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="2169:3332" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crm/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="66" column="34" selection-start-line="66" selection-start-column="34" selection-end-line="66" selection-end-column="34" />
-          <folding>
-            <marker date="1456901059000" expanded="true" signature="735:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="2334:2428" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3151:3229" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3245:3316" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="3352:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4008:4062" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4079:4156" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4193:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="4955:5034" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5051:5120" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5152:5825" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5479:5547" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5563:5680" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5712:5777" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="5859:7752" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6161:6215" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6231:6347" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6381:6599" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6633:6845" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="6881:7097" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7138:7364" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="7788:10167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9177:9294" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9311:9438" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9469:9811" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="9840:10003" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10202:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10680:10705" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10722:10799" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="10828:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11142:11167" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11183:11252" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11290:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11881:11982" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="11998:12067" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="12100:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13049:13102" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13119:13194" placeholder="..." />
-            <marker date="1456901059000" expanded="true" signature="13460:13494" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/crm/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crm/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1116,7 +891,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/crm/survery_report.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-17.5">
+        <state vertical-scroll-proportion="0.0">
           <caret line="28" column="82" selection-start-line="28" selection-start-column="82" selection-end-line="28" selection-end-column="82" />
           <folding>
             <element signature="e#736#777#0#HTML" expanded="true" />
@@ -1127,8 +902,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/OldboyCRM/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3633218">
-          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="94" column="24" selection-start-line="94" selection-start-column="24" selection-end-line="94" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/myauth_admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="75" column="69" selection-start-line="75" selection-start-column="69" selection-end-line="75" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/myauth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="75" column="62" selection-start-line="75" selection-start-column="62" selection-end-line="75" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="145" column="37" selection-start-line="145" selection-start-column="37" selection-end-line="145" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.4776119">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding />
         </state>
       </provider>

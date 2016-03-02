@@ -119,7 +119,7 @@ class StudyRecordAdmin(admin.ModelAdmin):
     list_display = ('course_record','get_stu_name','get_stu_id','record','colored_record','colored_score','score','date','note')
     list_filter = ("course_record__course__course","course_record","score","record")
     search_fields = ('student__name','student__stu_id')
-    list_editable = ("score","record")
+    list_editable = ("score","record","note")
     actions = ["set_to_late","set_to_noshow","set_to_leave_early","set_to_checked"]
     def set_to_late(modeladmin,request,queryset):
 

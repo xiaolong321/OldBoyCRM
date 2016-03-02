@@ -8,13 +8,18 @@ from django.utils.html import format_html
 from myauth import UserProfile
 
 
-course_choices = (('LinuxL1',u'Linux中高级'),
+course_choices = (
+                      ('LinuxL1',u'Linux中高级'),
                       ('LinuxL2',u'Linux架构师'),
+                      ('Linux51',u'Linux中高级(51网络)'),
+                      ('LinuxL251',u'Linux中高级+架构合成班(51网络)'),
                       ('PythonDevOps',u'Python自动化开发'),
+                      ('PythonFullStack',u'Python高级全栈开发'),
                       ('PythonDevOps51',u'Python自动化开发(51网络)'),
+                      ('PythonFullStack51',u'Python全栈开发(51网络)'),
                       ('BigDataDev',u"大数据开发课程"),
                       ('Cloud',u"云计算课程"),
-                      #('PythonDevOps',u'Python自动化开发'),
+
                       )
 
 class_type_choices= (('online',u'网络班'),
@@ -26,7 +31,7 @@ class Customer(models.Model):
     qq = models.CharField(max_length=64,unique=True,help_text=u'QQ号必须唯一')
     qq_name = models.CharField(u'QQ名称',max_length=64,blank=True,null=True)
     name = models.CharField(u'姓名',max_length=32,blank=True,null=True)
-    phone = models.IntegerField(u'手机号',blank=True,null=True)
+    phone = models.BigIntegerField(u'手机号',blank=True,null=True)
     stu_id = models.CharField(u"学号",blank=True,null=True,max_length=64)
     source_type = (('qq',u"qq群"),
                    ('referral',u"内部转介绍"),
