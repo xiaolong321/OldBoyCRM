@@ -2,3 +2,4 @@
 .idea
 OldboyCRM/settings.py
 crm/migrations
+logs
