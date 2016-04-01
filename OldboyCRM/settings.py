@@ -115,3 +115,84 @@ STATICFILES_DIRS = (
 AUTH_USER_MODEL = 'crm.UserProfile'
 
 LOGIN_URL = '/admin/login/'
+
+############################################
+# 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作
+LOGGING_stamdard_format = '[%(asctime)s][task_id:%(name)s][%(filename)s:%(lineno)d] [%(levelname)s]- %(message)s'
+LOGGING_simple_format = '[%(filename)s:%(lineno)d][%(levelname)s] %(message)s'
+LOGGING_request_format = '[%(asctime)s][%(status_code)s][%(request)s] %(message)s'
+REST_SESSION_LOGIN = False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # this fixes the problem
+    'formatters': {
+        'standard': {  # 详细
+            'format': LOGGING_stamdard_format
+        },
+        'simple': {  # 简单
+            'format': LOGGING_simple_format
+        },
+        'request': {  # 简单
+            'format': LOGGING_request_format
+        },
+    },
+    'filters': {},
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+        'console':{
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',  # 打印到前台
+            'formatter': 'simple'
+        },
+        'default': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR+'/logs/','all.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter':'standard',
+        },
+        'request': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR+'/logs/','request.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter':'request',
+        },
+        'db': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR+'/logs/','db.log'),
+            'maxBytes': 1024*1024*10,
+            'backupCount': 5,
+            'formatter':'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['default','console'],
+            'propagate': False,
+            'level': 'DEBUG',
+        },
+        'django.request': {
+            'handlers': ['request','default'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.db.backends':{
+            'handlers': ['db'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+    }
+}
+try:
+    from .settings_dev import *
+except Exception as e:
+    print u'无法找到settings_dev文件.开启生产模式'
+    print e.message
