@@ -37,18 +37,29 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crm',
+
+    'mptt',
+    'rest_framework',
+    'django_js_reverse',
+
+    'core.adminlte',
+
+    'core.crm',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+
+    'core.adminlte.middleware.ApiPermissionCheck',
+    'core.adminlte.middleware.MenuMiddleware'
+
 )
 
 ROOT_URLCONF = 'OldboyCRM.urls'
@@ -116,7 +127,37 @@ STATICFILES_DIRS = (
 AUTH_USER_MODEL = 'crm.UserProfile'
 
 LOGIN_URL = '/admin/login/'
-
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS':
+        'core.adminlte.pagination.CommonPageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
+    'DATE_FORMAT': '%Y-%m-%d',
+    'DATE_INPUT_FORMATS': ('%Y-%m-%d',),
+    'TIME_FORMAT': '%H:%M:%S',
+    'TIME_INPUT_FORMATS': ('%H:%M:%S',),
+    'LANGUAGES': (
+        ('zh-hans', 'Simplified Chinese'),
+    ),
+    'LANGUAGE_CODE': 'zh-hans',
+    # 'LANGUAGE_CODE': 'zh-hans',
+    'NON_FIELD_ERRORS_KEY': 'detail',
+}
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作
 LOGGING_stamdard_format = '[%(asctime)s][task_id:%(name)s][%(filename)s:%(lineno)d] [%(levelname)s]- %(message)s'
