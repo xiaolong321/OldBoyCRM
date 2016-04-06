@@ -3,3 +3,4 @@
 OldboyCRM/settings.py
 crm/migrations
 logs
+.DS_Store
