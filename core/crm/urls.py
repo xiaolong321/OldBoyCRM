@@ -15,6 +15,6 @@ urlpatterns = [
     url(r'^stu_lack_check_records/', views.stu_lack_check_records, name="stu_lack_check_records"),
     url(r'crm_customer',login_required(views.crm_customer.as_view()), name='crm_customer'),
 
-    url(r'api/issus/', chuliqi, name='crm_api' )
+    url(r'api/issue', chuliqi, name='crm_api' )
 
 ]

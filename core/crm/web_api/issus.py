@@ -106,7 +106,7 @@ p_object = {
     "crm_customer": {
         'object': crm_customer,
         'Whitelist': [
-            'get_crm_customer_list',
+            'get_list_crm_customer',
         ]
     },
 }

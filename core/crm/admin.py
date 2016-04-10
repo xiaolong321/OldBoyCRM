@@ -23,10 +23,12 @@ class CustomerAdmin(admin.ModelAdmin):
     raw_id_fields = ('referral_from',)
     filter_horizontal = ('class_list',)
     list_filter = ('source', 'course', 'class_type', 'status', 'date', 'consultant')
+    my_list_filter = ('source', 'course', 'class_type', 'status', 'date', 'consultant')
+
     inlines = [ConsultRecordInline, PaymentRecordInline]
     list_display = (
-    'id', 'qq_name', 'name', 'course', 'class_type', 'colored_status', 'get_enrolled_course', 'qq', 'customer_note',
-    'consultant', 'date')
+    'qq_name', 'name', 'course', 'class_type', 'colored_status', 'get_enrolled_course', 'qq', 'customer_note',
+    'consultant', 'date','id', )
     # list_editable = ('status',)
     # def has_delete_permission(self, request, obj=None):
     #    return False

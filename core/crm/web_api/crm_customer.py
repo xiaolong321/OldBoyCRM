@@ -9,6 +9,7 @@ from time import sleep
 import logging
 logger = logging.getLogger(__name__)
 from ..web_models.models import Customer
+from django.db.models import Q
 
 class PageInfo(object):
 
@@ -127,19 +128,20 @@ class BaseResponse(object):
         self.data = None
 
 
-logger = logging.getLogger(__name__)
-
-
-def get_crm_customer_list(request, ret):
+def get_list_crm_customer(request, ret):
     response = BaseResponse()
     try:
-        conditions = request.GET.get('search', None)
+        conditions = request.POST.get('search', None)
+        conditions_key = request.POST.get('search_key', None)
         page = request.GET.get('page', None)
         if not conditions:
             conditions = "{}"
+        if not conditions_key:
+            conditions_key = "{}"
         conditions = json.loads(conditions)
-        logger.info("conditions:%s,page:%s" % (conditions, page))
-        all_count = get_describe_instances_count(status=["pending", "running", "stopped", "suspended"])
+        conditions_key = json.loads(conditions_key)
+        logger.info("conditions:%s,conditions_key:%s,page:%s" % (conditions, conditions_key, page))
+        all_count = get_describe_instances_count(conditions=conditions,conditions_key=conditions_key,status=["pending", "running", "stopped", "suspended"])
         page_info = PageInfo(page, all_count.count, perItems=settings.REST_FRAMEWORK['PAGE_SIZE'])
         ret['results'] = get_describe_instances(page_info.start, page_info.end, data=all_count.data).data
         ret["current_page"] = page_info.current_page
@@ -154,7 +156,7 @@ def get_crm_customer_list(request, ret):
     return ret
 
 
-def get_describe_instances_count(**kwargs):
+def get_describe_instances_count(conditions,conditions_key,**kwargs):
     """
 
     :param kwargs:
@@ -162,7 +164,27 @@ def get_describe_instances_count(**kwargs):
     """
     response = BaseResponse()
     try:
-        data = Customer.objects.values()
+        # create search condition
+        con = Q()
+        for k, v in conditions.items():
+            temp = Q()
+            temp.connector = 'OR'
+            for item in v:
+                temp.children.append((k, item))
+            con.add(temp, 'AND')
+
+        for k, v in conditions_key.items():
+            k = k.split('.')[-1]
+            temp = Q()
+            temp.connector = 'AND'
+            if v is None:
+                continue
+            if len(v) == 0:
+                continue
+            temp.children.append((k, v))
+            con.add(temp, 'AND')
+        print con
+        data = Customer.objects.filter(con).values()
         response.count = len(data)
         response.data = data
         response.status = True
@@ -187,6 +209,10 @@ def get_describe_instances(start, end, data, **kwargs):
 
 
 def ret_instance_id(data):
+    heihei = Customer.objects.get(id=data['id'])
+    data['colored_status'] = heihei.colored_status()
+    data['get_enrolled_course'] = heihei.get_enrolled_course()
+    print data
     pass
 
 
