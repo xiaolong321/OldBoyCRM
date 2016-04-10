@@ -172,7 +172,7 @@ def get_describe_instances_count(conditions,conditions_key,**kwargs):
             for item in v:
                 temp.children.append((k, item))
             con.add(temp, 'AND')
-
+        print Customer.objects.filter(qq__exact='3')
         for k, v in conditions_key.items():
             k = k.split('.')[-1]
             temp = Q()
@@ -183,7 +183,6 @@ def get_describe_instances_count(conditions,conditions_key,**kwargs):
                 continue
             temp.children.append((k, v))
             con.add(temp, 'AND')
-        print con
         data = Customer.objects.filter(con).values()
         response.count = len(data)
         response.data = data
@@ -212,7 +211,6 @@ def ret_instance_id(data):
     heihei = Customer.objects.get(id=data['id'])
     data['colored_status'] = heihei.colored_status()
     data['get_enrolled_course'] = heihei.get_enrolled_course()
-    print data
     pass
 
 

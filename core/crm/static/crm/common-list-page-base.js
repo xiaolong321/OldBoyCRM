@@ -189,7 +189,7 @@ var CommonListPageVue = Vue.extend({
                 ret[name] = val
             });
             data['search_key'] = JSON.stringify(ret);
-            data['search'] = JSON.stringify({'name':$("#tableSearch").val()});
+            data['search'] = JSON.stringify({'qq':$("#tableSearch").val()});
             return data
         },
         // 获取与 刷新数据
@@ -197,7 +197,6 @@ var CommonListPageVue = Vue.extend({
             var self = this;
             if(!arguments[4]) sl_key = true;
             data['action_name'] = self.action_name;
-            data['userName'] = self.userName;
             if (sl_key){
                 data = self.sl_key(data);
             }
