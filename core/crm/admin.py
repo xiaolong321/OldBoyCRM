@@ -24,7 +24,9 @@ class CustomerAdmin(admin.ModelAdmin):
     filter_horizontal = ('class_list',)
     list_filter = ('source', 'course', 'class_type', 'status', 'date', 'consultant')
     my_list_filter = ('source', 'course', 'class_type', 'status', 'consultant')
-
+    my_fieldsets = (
+        (u'基础信息', {'no_input': ['qq'], 'fields': ('qq', 'qq_name', 'name', 'phone', 'stu_id')}),
+    )
     inlines = [ConsultRecordInline, PaymentRecordInline]
     list_display = (
         'qq_name', 'stu_id', 'name', 'course', 'class_type',

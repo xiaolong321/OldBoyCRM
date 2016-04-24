@@ -187,26 +187,10 @@ class Customer_View(CommonPageViewMixin, TemplateView):
     def get_context_data_detail(self, pk, context, **kwargs):
 
         self.template_name = 'crm/common_detail.html'  # 页面地址
-        context['page_action'] = 'data_detail'
+        context['page_action'] = 'customer_info'
 
-        context['page_title'] = 'Customer %s 详情' % self.Page_Models.objects.get(id=pk).caption
+        context['page_title'] = 'Customer %s 详情' % self.Page_Models.objects.get(id=pk).name
         context['nid'] = pk
-
-        context['mode'] = 1
-        context['list_filter'] = [
-            self.Page_Models._meta.get_field(i)
-            for i in self.Page_Admin.my_list_filter
-            ]
-        context['list_display'] = [
-            ('name', {'verbose_name': '任务名称'}),
-            ('type', {'verbose_name': '类型'}),
-            ('hosts', {'verbose_name': '涉及主机'}),
-            ('status', {'verbose_name': '当前状态'}),
-            ('creator', {'verbose_name': '提交人'}),
-            ('updated_at', {'verbose_name': '更新时间'}),
-            ('id', ''),
-        ]
-
         context['list_display_buttons'] = [
             {'name': u'详情', 'type': 'logsdetail'},
         ]
