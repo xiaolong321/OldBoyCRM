@@ -4,7 +4,7 @@ from django.contrib import admin
 # Register your models here.
 
 from core.crm.web_models import models
-from core.crm.web_models.myauth_admin import UserProfileAdmin
+
 
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect, HttpResponse
@@ -217,7 +217,6 @@ class StudentFAQAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'date')
 
 
-admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer, CustomerAdmin)
 admin.site.register(models.ConsultRecord, ConsultRecordAdmin)
 admin.site.register(models.PaymentRecord, PaymentRecordAdmin)

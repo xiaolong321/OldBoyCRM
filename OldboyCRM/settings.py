@@ -45,7 +45,7 @@ INSTALLED_APPS = (
 
     'core.adminlte',
 
-    # 'core.crm',
+    'core.crm',
 )
 
 MIDDLEWARE_CLASSES = (

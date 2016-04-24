@@ -5,7 +5,7 @@ from django.db import models
 # Create your models here.
 from django.utils.html import format_html
 
-from myauth import UserProfile
+from core.adminlte.web_models.myauth import UserProfile
 
 course_choices = (
     ('LinuxL1', u'Linux中高级'),
