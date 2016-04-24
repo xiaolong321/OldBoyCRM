@@ -60,7 +60,12 @@
     $.AdminLTE.getApiUrl = function(app, model){
         return '/api/v1/' + app + '/' + model;
     };
-
+    $.AdminLTE.getApiQyUrl = function(app){
+        return '/qy/pages/' + app + '/';
+    };
+    $.AdminLTE.getApiAssetsUrl = function(app){
+        return '/assets/issus/';
+    };
     $.AdminLTE.apiGet = function (url, data, callback) {
         sendRequest('GET', url, data, callback)
     };

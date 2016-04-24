@@ -3,7 +3,9 @@
 
 from settings import *
 
+print u"^" * 20 + u'测试环境' + u"^" * 20
 DEBUG = True
+SHELL_MODE = False
 
 DATABASES = {
     'default': {
@@ -13,3 +15,5 @@ DATABASES = {
 }
 
 ############################################
+for i in LOGGING['handlers']:
+    LOGGING['handlers'][i]['level'] = 'DEBUG'

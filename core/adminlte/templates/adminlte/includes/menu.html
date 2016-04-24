@@ -2,7 +2,7 @@
 <aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
-            <li class="header">HEADER</li>
+            <li class="header">菜单</li>
             <li {% if request.path_info == '/' %}class="active"{% endif %}>
                 <a href="/">
                     <i class="fa fa-dashboard"></i>
@@ -11,7 +11,28 @@
             </li>
             {% recursetree page_menus %}
                 <li {% if not node.is_leaf_node %}
-                        class="treeview {% if node.app_name in request.path_info %} active{% endif %}"
+                        class="treeview {% if node.app_name %}
+                                {% if node.app_name in request.path_info %} active{% endif %}
+                            {% else %}
+                                {% if node.url == request.path_info %} active{% endif %}
+                                {% if 'qa' in request.path_info %}
+                                    {% if 'qa' == node.url %}
+                                        active
+                                    {% endif %}
+                                {% elif 'dev' in request.path_info %}
+                                    {% if 'dev' == node.url %}
+                                        active
+                                    {% endif %}
+                                {% elif 'prd' in request.path_info %}
+                                    {% if 'prd' == node.url %}
+                                        active
+                                    {% endif %}
+                                {% elif 'task' in request.path_info %}
+                                    {% if 'task' == node.url %}
+                                        active
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}"
                     {% endif %}>
                     {% if not node.is_leaf_node %}
                         <a href="javascript:void(0)">
@@ -28,7 +49,7 @@
                                 {% url 'adminlte:common_list_page' node.app_name node.model_name as menu_url %}
                             {% endif %}
                             <li {% if menu_url == request.path_info %}
-                                    class='active'
+                                        class='active'
                                 {% endif %}>
                                 <a href="{{ menu_url }}">
                                     <i class="fa {{ node.icon }}"></i>

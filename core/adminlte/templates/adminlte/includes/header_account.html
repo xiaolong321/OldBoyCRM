@@ -1,46 +1,34 @@
+{% load adminlte_tags %}
 <li class="dropdown user user-menu">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <img src="{{ request.user.staff_of.avatar.url }}"
+        <img src="{% get_avatar_url request.user.avatar %}"
              class="user-image" alt="User Image">
         <span class="hidden-xs">
-            {{ request.user.staff_of.real_name }}
+            {{ request.user.staff_of.real_name|default:request.user }}
         </span>
     </a>
     <ul class="dropdown-menu">
         <!-- User image -->
         <li class="user-header">
-            <img src="{{ request.user.staff_of.avatar.url }}"
+            <img src="{% get_avatar_url request.user.avatar %}"
                  class="img-circle" alt="User Image">
             <p>
-                您好： {{ request.user.staff_of.real_name }}
-                {% if request.user.staff_of.real_name %}
-                    ({{ request.user.username }})
+                您好： {{ request.user.name|default:request.user }}
+                {% if request.user.email %}
+                    ({{ request.user.email }})
                 {% endif %}
                 <small>最近一次登录:{{ request.user.last_login }}</small>
             </p>
         </li>
-        <!-- Menu Body -->
-        {% comment %}<li class="user-body">
-            <div class="col-xs-4 text-center">
-                <a href="#">Followers</a>
-            </div>
-            <div class="col-xs-4 text-center">
-                <a href="#">Sales</a>
-            </div>
-            <div class="col-xs-4 text-center">
-                <a href="#">Friends</a>
-            </div>
-        </li>{% endcomment %}
-        <!-- Menu Footer-->
         <li class="user-footer">
             <div class="pull-left">
-                <a href="{% url 'change_password' %}"
+                <a href="http://jira.jiuxinfinance.com/secure/ViewProfile.jspa"
                    class="btn btn-default btn-flat">
                     修改密码
                 </a>
             </div>
             <div class="pull-right">
-                <a href="/admin/logout/"
+                <a href="{% url 'registration:logout' %}"
                    class="btn btn-default btn-flat">
                     退 出
                 </a>

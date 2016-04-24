@@ -15,8 +15,8 @@
     {% block base_head_style %}
     {% endblock %}
     <!--[if lt IE 9]>
-        <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
-        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <script src="{{ STATIC_PREFIX }}plugins/html5.min.js"></script>
+        <script src="{{ STATIC_PREFIX }}plugins/respond.min.js"></script>
     <![endif]-->
 </head>
 {% block base_body %}
@@ -51,7 +51,7 @@
                                     {% if page_title != default_dashboard_title %}
                                     <li class="active">
                                         {% if page_app_name and page_model_name %}
-                                            <a href="{% url 'adminlte:common_list_page' page_app_name page_model_name %}">
+                                            <a href="">
                                                 {{ page_title }}
                                             </a>
                                         {% else %}

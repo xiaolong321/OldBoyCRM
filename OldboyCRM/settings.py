@@ -24,8 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!_ozu*fpy09_)o)kutimblfxqn6j9(q#57s6_q*dws!ef-lh*f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-ALLOWED_HOSTS = []
+DEBUG = True
+
+ALLOWED_HOSTS = ['*', ]
 
 
 # Application definition
@@ -44,7 +45,7 @@ INSTALLED_APPS = (
 
     'core.adminlte',
 
-    'core.crm',
+    # 'core.crm',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,8 +58,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
-    'core.adminlte.middleware.ApiPermissionCheck',
-    'core.adminlte.middleware.MenuMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
+
+    'backend.middleware.ApiPermissionCheck',
+    'backend.middleware.MenuMiddleware'
 
 )
 
@@ -76,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -106,27 +110,31 @@ DATABASES = {
 #LANGUAGE_CODE = 'en-us'
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    "%s/%s" %(BASE_DIR, "statics"),
-)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
-AUTH_USER_MODEL = 'crm.UserProfile'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_URL = '/admin/login/'
+MEDIA_URL = '/media/'
+
+LOGIN_URL = '/auth/login/'
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -143,7 +151,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS':
-        'core.adminlte.pagination.CommonPageNumberPagination',
+        'backend.validators.pagination.CommonPageNumberPagination',
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
     'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
@@ -161,7 +169,7 @@ REST_FRAMEWORK = {
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作
 LOGGING_stamdard_format = '[%(asctime)s][task_id:%(name)s][%(filename)s:%(lineno)d] [%(levelname)s]- %(message)s'
-LOGGING_simple_format = '[%(filename)s:%(lineno)d][%(levelname)s] %(message)s'
+LOGGING_simple_format = '[%(asctime)s][%(filename)s:%(lineno)d][%(levelname)s] %(message)s'
 LOGGING_request_format = '[%(asctime)s][%(status_code)s][%(request)s] %(message)s'
 REST_SESSION_LOGIN = False
 LOGGING = {
@@ -191,7 +199,7 @@ LOGGING = {
             'formatter': 'simple'
         },
         'default': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR+'/logs/','all.log'),
             'maxBytes': 1024*1024*10,
@@ -199,7 +207,7 @@ LOGGING = {
             'formatter':'standard',
         },
         'request': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR+'/logs/','request.log'),
             'maxBytes': 1024*1024*10,
@@ -207,7 +215,7 @@ LOGGING = {
             'formatter':'request',
         },
         'db': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR+'/logs/','db.log'),
             'maxBytes': 1024*1024*10,
@@ -238,8 +246,12 @@ LOGGING = {
         },
     }
 }
+AUTH_USER_MODEL = 'adminlte.UserProfile'
+
+LDAP_CHECK = False
+
 try:
     from .settings_dev import *
 except Exception as e:
-    print u'无法找到settings_dev文件.开启生产模式'
     print e.message
+    print u"=" * 20 + u'正式环境' + u"=" * 20

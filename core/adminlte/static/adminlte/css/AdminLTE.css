@@ -4317,11 +4317,11 @@ fieldset[disabled] .btn-vk.active {
   width: 100%!important;
 }
 /*
- * Misc: print
+ * Misc: from apps.workflows.
  * -----------
  */
-@media print {
-  .no-print,
+@media from apps.workflows. {
+  .no-from apps.workflows.,
   .main-sidebar,
   .left-side,
   .main-header,
