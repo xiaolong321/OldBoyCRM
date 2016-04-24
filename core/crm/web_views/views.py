@@ -10,10 +10,13 @@ import core.crm.web_models.models
 import core.crm.web_views.class_grade
 import core.crm.web_views.forms
 
-from core.adminlte.views import IndexView
+from core.adminlte.web_views.views import CommonPageViewMixin, TemplateView
 import logging
+
 logger = logging.getLogger(__name__)
 from .. import admin
+
+
 # Create your views here.
 
 
@@ -163,95 +166,80 @@ def stu_faq(request):
     return render(request, "crm/stu_faq.html")
 
 
-class crm_customer(IndexView):
+class Customer_View(CommonPageViewMixin, TemplateView):
     Page_Admin = admin.CustomerAdmin
     Page_Models = admin.models.Customer
 
     def get_context_data(self, **kwargs):
         """
-        get 请求返回结果
-        """
-        context = super(crm_customer, self).get_context_data(**kwargs)
+            get 请求返回结果
+            """
+        context = super(Customer_View, self).get_context_data(**kwargs)
         pk = self.request.GET.get('pk')
         add = self.request.GET.get('add')
         logger.info(u"pk_id:%s add:%s" % (pk, add))
         context['page_action_name'] = 'crm_customer'
-        if add is not None:
-            return self.get_context_data_create(context, **kwargs)
         if pk is None:
             return self.get_context_data_list(context, **kwargs)
         else:
             return self.get_context_data_detail(pk, context, **kwargs)
 
     def get_context_data_detail(self, pk, context, **kwargs):
+
         self.template_name = 'crm/common_detail.html'  # 页面地址
         context['page_action'] = 'data_detail'
 
-        context['page_title'] = 'dev_sql %s 详情' % pk
+        context['page_title'] = 'Customer %s 详情' % self.Page_Models.objects.get(id=pk).caption
+        context['nid'] = pk
+
+        context['mode'] = 1
         context['list_filter'] = [
             self.Page_Models._meta.get_field(i)
             for i in self.Page_Admin.my_list_filter
             ]
-        context['list_display'] = self.Page_Admin.list_display
-        context['list_display_name'] = [
-            self.Page_Models._meta.get_field(i).verbose_name
-            for i in self.Page_Admin.list_display
-            ]
-
-        return context
-
-    def get_context_data_list(self, context, **kwargs):
-        self.template_name = 'crm/common_list.html'  # 页面地址
-        context['page_action'] = 'get_list_crm_customer'
-
-        context['page_title'] = 'dev_sql 列表'
-        context['list_filter'] = self.get_list_filter(self.Page_Admin.my_list_filter)
-
-        context['list_display'] = self.get_list_display(self.Page_Admin.list_display)
+        context['list_display'] = [
+            ('name', {'verbose_name': '任务名称'}),
+            ('type', {'verbose_name': '类型'}),
+            ('hosts', {'verbose_name': '涉及主机'}),
+            ('status', {'verbose_name': '当前状态'}),
+            ('creator', {'verbose_name': '提交人'}),
+            ('updated_at', {'verbose_name': '更新时间'}),
+            ('id', ''),
+        ]
 
         context['list_display_buttons'] = [
-            {'name': u'详情', 'type': 'detail'},
-            {'name': u'添加', 'type': 'create'},
-            {'name': u'删除', 'type': 'removeOne'}
+            {'name': u'详情', 'type': 'logsdetail'},
         ]
         context['all_list_display_buttons'] = [
             {'name': u'刷新', 'type': 'search'},
-            {'name': u'删除', 'type': 'removeSelected'},
         ]
         return context
-    def get_list_filter(self,data):
-        ret = [ ]
-        for i in data:
-            ret.append(self.Page_Models._meta.get_field(i))
-        return ret
-    def get_list_display(self,data):
-        ret = []
-        for i in data:
-            try:
-                ret.append(
-                    (i, self.Page_Models._meta.get_field(i))
-                )
-            except:
-                ret.append(
-                    (i, i)
-                )
-        return ret
-    def get_context_data_create(self, context, **kwargs):
 
-        self.template_name = 'crm/common_add.html'  # 页面地址
-        context['page_action'] = 'data_create'
-        context['page_title'] = 'dev_sql 创建'
-        context['add_fieldsets'] = []
+    def get_my_list_display(self):
+        list_display = []
         for i in self.Page_Admin.list_display:
-            context['add_fieldsets'].append(
-                (
-                    i[0],
-                    {
-                        'fields': [
-                                self.Page_Models._meta.get_field(x).verbose_name
-                                for x in i[1]['fields']
-                            ]
-                    }
+            try:
+                list_display.append((i, self.Page_Models._meta.get_field(i)))
+            except:
+                list_display.append(
+                    (i, {'verbose_name': i})
                 )
-            )
+        return list_display
+
+    def get_context_data_list(self, context, **kwargs):
+        self.template_name = 'crm/common_list.html'
+        context['page_action'] = 'get_customer_list'
+
+        context['page_title'] = 'Customer 列表'
+        context['list_filter'] = [
+            self.Page_Models._meta.get_field(i)
+            for i in self.Page_Admin.my_list_filter
+            ]
+        context['list_display'] = self.get_my_list_display
+        context['list_display_buttons'] = [
+            {'name': u'详情', 'type': 'detail'},
+        ]
+        context['all_list_display_buttons'] = [
+            {'name': u'刷新', 'type': 'search'},
+        ]
         return context

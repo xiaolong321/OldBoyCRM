@@ -89,6 +89,18 @@ var CommonListPageVue = Vue.extend({
             var pk = $(event.target).data('pk');
             window.location.href = self.Url + '/pages/' + self.action_name + '/?pk=' + pk;
         },
+        logsdetail: function (event) {
+            // 详情方法
+            var self = this;
+            var pk = $(event.target).data('pk');
+            window.location.href = self.Url + '/pages/logs' + '/?sql_pk=' + pk;
+        },
+        prdlogsdetail: function (event) {
+            // 详情方法
+            var self = this;
+            var pk = $(event.target).data('pk');
+            window.location.href = self.Url + '/pages/logs' + '/?prd_pk=' + pk;
+        },
         update: function (event) {
             // 修改方法
             // 修改与详情一样 都是直接 跳转到相应的页面
@@ -179,6 +191,22 @@ var CommonListPageVue = Vue.extend({
             $("#tableSearch").val('');
             this.search(event);
         },
+        // 获取与 刷新数据
+        send_issus: function (Url,data,callback,sl_key){
+            var self = this;
+            if(!arguments[4]) sl_key = true;
+            data['action_name'] = self.action_name;
+            data['userName'] = self.userName;
+            if (sl_key){
+                data = self.sl_key(data);
+            }
+            console.info(data);
+            $.AdminLTE.ajaxPost_return(
+                 Url,
+                 data,
+                 callback
+            );
+        },
         // 初始化筛选器
         sl_key: function (data) {
             // 初始化 返回列表
@@ -189,23 +217,8 @@ var CommonListPageVue = Vue.extend({
                 ret[name] = val
             });
             data['search_key'] = JSON.stringify(ret);
-            data['search'] = JSON.stringify({'qq':$("#tableSearch").val()});
+            data['search'] = JSON.stringify({'caption':$("#tableSearch").val()});
             return data
-        },
-        // 获取与 刷新数据
-        send_issus: function (Url,data,callback, sl_key){
-            var self = this;
-            if(!arguments[4]) sl_key = true;
-            data['action_name'] = self.action_name;
-            if (sl_key){
-                data = self.sl_key(data);
-            }
-            console.info(data);
-            $.AdminLTE.ajaxPost_return(
-                 Url,
-                 data,
-                 callback
-            );
         },
         error_mode: function(Callback, notreload){
             swal({
@@ -219,7 +232,7 @@ var CommonListPageVue = Vue.extend({
         },
         loadData: function (data) {
             var self = this;
-            var Url = self.Url + '/api/issue';
+            var Url = self.Url + '/api/issus/';
             if(arguments.length === 2){
                 Url = arguments[1];
             }
@@ -229,11 +242,21 @@ var CommonListPageVue = Vue.extend({
                 data,
                 function (resp) {
                     console.info(resp);
-                    self.items = resp.results;
-                    self.count = resp.count;
-                    self.perPage = resp.per_page;
-                    self.totalPage = resp.total_page;
-                    self.currentPage = resp.current_page;
+                    if(resp.ret_code != 0){
+                        swal({
+                            title: "错误!",
+                            text: resp.message,
+                            type: "error",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }else{
+                        self.items = resp.results;
+                        self.count = resp.count;
+                        self.perPage = resp.per_page;
+                        self.totalPage = resp.total_page;
+                        self.currentPage = resp.current_page;
+                    }
                 }
             );
         }

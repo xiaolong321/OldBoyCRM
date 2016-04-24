@@ -27,8 +27,9 @@ class CustomerAdmin(admin.ModelAdmin):
 
     inlines = [ConsultRecordInline, PaymentRecordInline]
     list_display = (
-    'qq_name', 'stu_id', 'name', 'course', 'class_type', 'colored_status', 'get_enrolled_course', 'qq', 'customer_note',
-    'consultant', 'date','id', )
+        'qq_name', 'stu_id', 'name', 'course', 'class_type',
+            'colored_status', 'get_enrolled_course', 'qq', 'customer_note',
+        'consultant', 'date','id', )
     # list_editable = ('status',)
     # def has_delete_permission(self, request, obj=None):
     #    return False

@@ -29,6 +29,13 @@ urlpatterns = [
 ]
 
 urlpatterns += [
+    url(
+        r'^crm/',
+        include(
+            "core.crm.urls",
+            namespace="crm"
+        )
+    ),
 ]
 if settings.DEBUG: #如果 开启 DEBUG 模式.会默认加载相关的目录信息
     urlpatterns += static(settings.MEDIA_URL,
