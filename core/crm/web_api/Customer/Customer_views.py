@@ -13,14 +13,15 @@ from django.db.models import Q
 logger = logging.getLogger(__name__)
 from core.crm import admin
 
-
 Page_Models = admin.models.Customer
 Page_Admin = admin.CustomerAdmin
+
 
 def get_customer_list(request, ret):
     """
     获取 customer_list 列表方法
     """
+    # 获取相关的 search  page 等查询信息
     conditions = request.POST.get('search', None)
     page = request.GET.get('page', None)
     if not conditions:
@@ -36,17 +37,21 @@ def get_customer_list(request, ret):
         conditions_key,
         page,
     ))
+    # 获取 总数.以及相关的具体内容
     all_count = get_customer_list_count(
         conditions_key=conditions_key,
         conditions=conditions,
     )
+    # 分页信息
     page_info = pager.PageInfo(page, all_count.count)
-
+    # 分页后的详细 内容整形
     ret['results'] = get_customer_list_results(page_info.start, page_info.end, data=all_count.data).data
+    # 返回相关的分页信息
     ret["current_page"] = page_info.current_page
     ret["total_page"] = page_info.total_page
     ret["count"] = page_info.total_items
     ret['per_page'] = settings.REST_FRAMEWORK['PAGE_SIZE']
+    # 最终判定是否成功. 在此之前 有错误需要直接抛错
     ret['ret_code'] = 0
     result = json.dumps(ret, cls=serialization.CJsonEncoder)
     logger.info(result)
@@ -62,6 +67,8 @@ def get_customer_list_count(**kwargs):
     response = BaseResponse()
     response.count = 0
     try:
+        # 查询接口整形
+        # 利用 django的Q 方法 进行 .如果需要 可以自己写相关的查询 方法
         con = Q()
         for k, v in kwargs['conditions'].items():
             temp = Q()
@@ -86,7 +93,7 @@ def get_customer_list_count(**kwargs):
         logger.info(u'con_Q:%s' % (
             con
         ))
-
+        # 直接调用 django的 models  进行查询方式 这里默认采用 最新创建信息. 如果需要最近修改 .需要在增加一个字段
         obj = Page_Models.objects.filter(con).order_by("-id")
         response.count = obj.count()
         response.data = obj.values()
@@ -98,9 +105,11 @@ def get_customer_list_count(**kwargs):
 
 
 def get_customer_list_results(start, end, data, **kwargs):
+    """
+    分页 之后.更改具体的单条值 信息 整形
+    """
     response = BaseResponse()
     try:
-
         data = data[start:end]
         for i in data:
             ret_customer_list_id(i)
@@ -113,6 +122,9 @@ def get_customer_list_results(start, end, data, **kwargs):
 
 
 def ret_customer_list_id(data):
+    '''
+    具体 信息整形.可以添加或者是修改 相关字段
+    '''
     try:
         Page_Models_id = Page_Models.objects.get(id=data['id'])
         try:
@@ -129,13 +141,16 @@ def ret_customer_list_id(data):
 
 
 def get_customer_info(request, ret):
+    """
+    查询单条 具体信息 内容
+    """
     pk = request.POST.get('pk', None)
     if pk is None:
         raise Exception('id 错误')
+    logger.debug(u'pk:%s' % pk)
     Page = Page_Models.objects.get(id=pk)
     ret['results'] = []
     count = 0
-
     for i in Page_Admin.my_fieldsets:
         customer_info(i, ret, count, Page)
         count += 1
@@ -145,6 +160,10 @@ def get_customer_info(request, ret):
 
 
 def customer_info(i, ret, count, Page):
+    """
+    具体单条 内容整形 并获取相关的修改具体内容
+    !!!!!!!!!不需要修改  直接用即可
+    """
     try:
         data = []
         try:
@@ -201,6 +220,9 @@ def customer_info(i, ret, count, Page):
 
 
 def post_customer_info(request, ret):
+    """
+    单条信息 修改
+    """
     pk = request.POST.get('id', None)
     if pk is None:
         raise Exception('id 错误')
@@ -229,6 +251,11 @@ def post_customer_info(request, ret):
 
 
 def detail_info_save(k, v, Page):
+    """
+    ##################
+    单条 保存具体内容 不需要修改
+
+    """
     try:
         if not hasattr(Page, k):
             raise Exception(u'参数校验错误 !!!!')
