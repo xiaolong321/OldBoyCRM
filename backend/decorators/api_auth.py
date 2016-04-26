@@ -10,8 +10,8 @@ from backend.commons import serialization
 from django.shortcuts import HttpResponse
 from backend import middleware
 from django.conf import settings
-from core.adminlte.web_models.myauth import Permission_Api_objects, Permission_Api_Action
-from core.adminlte.web_models.constants import  RequestType
+from core.adminlte.web_models.myauth import Permission_Api_objects, Permission_Api_Action, UsableStatus
+from core.adminlte.web_models.constants import RequestType
 logger = logging.getLogger(__name__)
 
 
@@ -78,19 +78,27 @@ def api_auth_check(p_object):
                     "ret_count": 0
                 }
             try:
-                Permission_Api_objects_list = [i[0] for i in Permission_Api_objects.objects.values_list('action_name')]
+                Permission_Api_objects_list = [
+                    i[0]
+                    for i in Permission_Api_objects.objects.filter(
+                        status=UsableStatus.USABLE).values_list('action_name')
+                    ]
             except:
                 Permission_Api_objects_list = []
 
             try:
                 user_api_permissions_list = ["%s_%s" % (RequestType.get_name(code=i[1]), i[0]) for i in
-                                             request.user.groups.values_list('groups__group_api_permissions__action',
+                                             request.user.groups.filter(
+                                                 groups__group_api_permissions__status=UsableStatus.USABLE
+                                             ).values_list('groups__group_api_permissions__action',
                                                                              'groups__group_api_permissions__Type')]
             except:
                 user_api_permissions_list = []
             try:
                 user_api_permissions_list += ["%s_%s" % (RequestType.get_name(code=i[1]), i[0]) for i in
-                                             request.user.user_api_permissions.values_list('action', 'Type')]
+                                             request.user.user_api_permissions.filter(
+                                                 status=UsableStatus.USABLE
+                                             ).values_list('action', 'Type')]
             except:
                 user_api_permissions_list += []
             try:

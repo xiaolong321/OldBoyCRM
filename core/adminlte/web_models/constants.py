@@ -18,7 +18,7 @@ TRUE_FALSE = (
 )
 
 DICT_NULL_BLANK_TRUE = {
-    #默认demols 状态
+    # 默认demols 状态
     'null': True,
     'blank': True
 }
