@@ -9,11 +9,11 @@ from .web_models import models
 ######################################################################
 # 自定义 user 方法
 from .web_models.myauth_admin import UserProfileAdmin
-from .web_models.myauth import Permission_Api_Action, Permission_Api_objects, Groups
+from .web_models.myauth import Permission_Api_Action, Permission_Api_objects, Groups, Group
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(Permission_Api_Action)
 admin.site.register(Permission_Api_objects)
-
+#admin.site.unregister(Group)
 @admin.register(Groups)
 class GroupAdmin(admin.ModelAdmin):
     search_fields = ('name',)

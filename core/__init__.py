@@ -1,5 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, unicode_literals
+# -*- coding:utf-8 -*-
+__author__ = 'xuebk'
 
-__author__ = 'lyhapple'
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def main():
+    pass
+
+
+if __name__ == '__main__':
+    main()

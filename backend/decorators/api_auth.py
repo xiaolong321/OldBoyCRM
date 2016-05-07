@@ -85,26 +85,48 @@ def api_auth_check(p_object):
                     ]
             except:
                 Permission_Api_objects_list = []
-
+            user_api_permissions_list = []
+            if request.user.id is None:
+                ret['action'] = 'error'
+                ret['ret_code'] = 1
+                ret['message'] = u'# 请从新进行登陆操作. '
+                return my_HttpResponse(
+                    ret,
+                    logs_data=ret['message'],
+                )
             try:
-                user_api_permissions_list = ["%s_%s" % (RequestType.get_name(code=i[1]), i[0]) for i in
-                                             request.user.groups.filter(
-                                                 groups__group_api_permissions__status=UsableStatus.USABLE
-                                             ).values_list('groups__group_api_permissions__action',
-                                                                             'groups__group_api_permissions__Type')]
+                for i in request.user.groups.filter(
+                        groups__group_api_permissions__status=UsableStatus.USABLE
+                    ).values_list('groups__group_api_permissions__action',
+                                  'groups__group_api_permissions__Type'):
+                    if i[1] is None:
+                        user_api_permissions_list.append(
+                            "%s" % i[0]
+                        )
+                    else:
+                        user_api_permissions_list.append(
+                            "%s_%s" % (RequestType.get_name(code=i[1]), i[0])
+                        )
             except:
                 user_api_permissions_list = []
             try:
-                user_api_permissions_list += ["%s_%s" % (RequestType.get_name(code=i[1]), i[0]) for i in
-                                             request.user.user_api_permissions.filter(
-                                                 status=UsableStatus.USABLE
-                                             ).values_list('action', 'Type')]
+                for i in request.user.user_api_permissions.filter(
+                        status=UsableStatus.USABLE
+                ).values_list('action', 'Type'):
+                    if i[1] is None:
+                        user_api_permissions_list.append(
+                            "%s" % i[0]
+                        )
+                    else:
+                        user_api_permissions_list.append(
+                            "%s_%s" % (RequestType.get_name(code=i[1]), i[0])
+                        )
             except:
                 user_api_permissions_list += []
             try:
                 # 获取 action
-                print Permission_Api_objects_list
-                print user_api_permissions_list
+                # print Permission_Api_objects_list
+                # print user_api_permissions_list
                 action = request.POST.get('action', None)
                 if action is None:
                     ret['action'] = 'error'
@@ -125,13 +147,20 @@ def api_auth_check(p_object):
                         logs_data=ret['message']
                     )
                 # 判断是否存在相应的 接口.
-                if hasattr(p_object[action_name]['object'], action) == False or \
-                   action not in user_api_permissions_list:
+                if action not in user_api_permissions_list:
                     # 表达式 1 action 不能在 action_name 中可以进行调用. 为True
                     # 表达式 2 action 不在可被调用白名单中. 为True
                     ret['action'] = 'error'
                     ret['ret_code'] = 1
                     ret['message'] = u'# action:%s ,action_name:%s 您没有这个接口权限.' % (action, action_name)
+                    return my_HttpResponse(
+                        ret,
+                        logs_data=ret['message']
+                    )
+                if hasattr(p_object[action_name]['object'], action) == False :
+                    ret['action'] = 'error'
+                    ret['ret_code'] = 1
+                    ret['message'] = u'#反射 接口:%s 失败 ' % (action_name)
                     return my_HttpResponse(
                         ret,
                         logs_data=ret['message']

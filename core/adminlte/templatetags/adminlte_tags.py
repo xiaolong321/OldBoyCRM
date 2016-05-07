@@ -29,9 +29,11 @@ def get_attr(obj, attr_name):
 @register.simple_tag
 def get_avatar_url(avatar):
     try:
+        if not avatar.url:
+            raise Exception(u'没有')
         return avatar.url
     except:
-        return ''
+        return '/static/avatat_de.jpg'
 
 
 @register.filter(name='render_field_label')

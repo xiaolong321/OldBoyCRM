@@ -6,12 +6,11 @@ from .constants import UsableStatus, DICT_NULL_BLANK_TRUE
 from django.utils import timezone
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-from django.contrib.auth.models import Group
 from django.db import models
 from django.contrib import admin
 
 logger = logging.getLogger(__name__)
-from myauth import UserProfile
+from myauth import UserProfile, Groups
 
 
 class BaseModel(models.Model):
@@ -151,7 +150,7 @@ class Resource(BaseModel, UsableStatus):
 
 class Permission(BaseModel, UsableStatus):
     group = models.ForeignKey(
-        Group, verbose_name=u'角色',
+        Groups, verbose_name=u'角色',
         related_name='group_permission'
     )
     menus = models.ManyToManyField(

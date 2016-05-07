@@ -2,13 +2,7 @@
 <aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
-            <li class="header">菜单</li>
-            <li {% if request.path_info == '/' %}class="active"{% endif %}>
-                <a href="/">
-                    <i class="fa fa-dashboard"></i>
-                    <span>{{ default_dashboard_title }}</span>
-                </a>
-            </li>
+
             {% recursetree page_menus %}
                 <li {% if not node.is_leaf_node %}
                         class="treeview {% if node.app_name %}

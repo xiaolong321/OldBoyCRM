@@ -107,6 +107,7 @@ class Permission_Api_Action(models.Model, UsableStatus):
     Type = models.PositiveSmallIntegerField(
         u'请求类型',
         choices=RequestType.STATUS,
+        **DICT_NULL_BLANK_TRUE
     )
     memo = models.TextField(
         u'备注',
