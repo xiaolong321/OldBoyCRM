@@ -65,14 +65,6 @@ th.active .arrow {
                         <div class="col-xs-12 col-sm-12">
                             <div id='sl-key' class="sl-key">
                                 <h4>筛选器</h4>
-                                {% if modes == '1' %}
-                                    <span id="list_filter_prd_type">类型 选项:</span>
-                                    <select onchange='commonListPageVue.search(this)' name="prd_type">
-                                        <option value='9999'>请选择</option>
-                                        <option value='jx_sql'>sql上线</option>
-                                        <option value='JX_online'>前后端上线</option>
-                                    </select>
-                                {% endif %}
                                 {% for k in list_filter %}
                                     <span id="list_filter_{{ k }}">{{ k.verbose_name }} 选项:</span>
                                     <select onchange='commonListPageVue.search(this)' name="{{ k }}">

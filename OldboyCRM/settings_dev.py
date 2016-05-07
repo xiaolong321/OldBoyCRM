@@ -15,5 +15,5 @@ DATABASES = {
 }
 
 ############################################
-for i in LOGGING['handlers']:
-    LOGGING['handlers'][i]['level'] = 'DEBUG'
+# for i in LOGGING['handlers']:
+#     LOGGING['handlers'][i]['level'] = 'DEBUG'

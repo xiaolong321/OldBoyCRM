@@ -63,7 +63,7 @@ class ConsultRecordAdmin(admin.ModelAdmin):
 class PaymentRecordAdmin(admin.ModelAdmin):
     raw_id_fields = ('customer',)
 
-    list_display = ('customer', 'course', "class_type", "pay_type", "paid_fee", 'consultant', "note", "date")
+    list_display = ('customer', 'course', "class_type", "pay_type", "paid_fee", 'consultant', "note", "date", "id")
     search_fields = ('customer__qq',)
     list_filter = ('course', 'pay_type', 'class_type', 'consultant', 'date')
 
@@ -109,6 +109,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
                     "get_total_noshow_num",
                     "get_total_late_num",
                     "get_total_leave_early_num",
+                    'id'
                     )
     list_filter = ('course', 'day_num', 'teacher')
 
@@ -142,7 +143,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
 
 class StudyRecordAdmin(admin.ModelAdmin):
     list_display = (
-    'course_record', 'get_stu_name', 'get_stu_id', 'record', 'colored_record', 'colored_score', 'score', 'date', 'note')
+    'course_record', 'get_stu_name', 'get_stu_id', 'record', 'colored_record', 'colored_score', 'score', 'date', 'note', 'id')
     list_filter = ("course_record__course__course", "course_record", "score", "record")
     search_fields = ('student__name', 'student__stu_id')
     list_editable = ("score", "record", "note")
@@ -210,6 +211,23 @@ class SurveryRecordAdmin(admin.ModelAdmin):
     list_display = ['survery', 'survery_item', 'score', 'suggestion', 'date']
     list_filter = ['survery_item', 'survery']
 
+    def get_actions(self, request):
+        actions = super(SurveryRecordAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+    def get_model_perms(self, request):
+        """
+        Returns a dict of all perms for this model. This dict has the keys
+        ``add``, ``change``, and ``delete`` mapping to the True/False for each
+        of those actions.
+        """
+        model_perms = super(SurveryRecordAdmin, self).get_model_perms(request)
+        print model_perms
+        if 'delete' in model_perms:
+            model_perms['delete'] = False
+        return model_perms
 
 class CompliantAdmin(admin.ModelAdmin):
     list_display = ('compliant_type', 'title', 'content', 'name', 'date', 'dealing_time', 'status', 'comment')
@@ -217,8 +235,10 @@ class CompliantAdmin(admin.ModelAdmin):
 
 
 class StudentFAQAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'date')
+    list_display = ('title', 'author', 'date', 'id')
 
+class SurveryItemAdmin(admin.ModelAdmin):
+    list_display = ('name', 'date', 'anwser_type', 'id')
 
 admin.site.register(models.Customer, CustomerAdmin)
 admin.site.register(models.ConsultRecord, ConsultRecordAdmin)
