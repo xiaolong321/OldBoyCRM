@@ -4,3 +4,5 @@ OldboyCRM/settings.py
 crm/migrations
 logs
 .DS_Store
+core/adminlte/migrations
+core/crm/migrations
