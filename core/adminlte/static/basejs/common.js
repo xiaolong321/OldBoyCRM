@@ -448,6 +448,39 @@
                 $menu.addClass('current').siblings().removeClass('current');
                 $content.removeClass('hide').siblings().addClass('hide');
             });
-        }
+        },
+        'CreateLabel':function(attrs,csses, text){
+            var obj= document.createElement('label');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateDiv':function(attrs,csses, text){
+            var obj= document.createElement('div');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateSpan':function(attrs, csses, text){
+            var obj= document.createElement('span');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
     });
 })(jQuery);

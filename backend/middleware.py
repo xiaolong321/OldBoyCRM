@@ -37,10 +37,11 @@ class MenuMiddleware(object):
         response.context_data['page_menus'] = []
         response.context_data['groups'] = []
         if request.path_info.startswith('/page/') \
-           or request.path_info.startswith('/apps/') \
-           or request.path_info.startswith('/assets/') \
-           or request.path_info.startswith('/qy/') \
-           or request.path_info == '/':
+                or request.path_info.startswith('/apps/') \
+                or request.path_info.startswith('/assets/') \
+                or request.path_info.startswith('/qy/') \
+                or request.path_info.startswith('/assets_new/') \
+                or request.path_info == '/':
             if request.user.is_superuser:
                 page_menus = Menu.objects.filter(status=Menu.USABLE)
                 groups = []

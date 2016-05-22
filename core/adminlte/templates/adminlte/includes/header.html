@@ -10,9 +10,15 @@
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">切换菜单</span>
         </a>
-
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav" id="messagesetVue">
+                <li class="dropdown user user-menu">
+                    <a href="{{ page_Global_Return }}" >
+                        <span class="hidden-xs">
+                            返回
+                        </span>
+                    </a>
+                </li>
                 {% include "adminlte/includes/header_account.html" %}
             </ul>
         </div>

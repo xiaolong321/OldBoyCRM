@@ -6,6 +6,7 @@ from django.contrib import admin
 logger = logging.getLogger(__name__)
 
 from .web_models import models
+from .web_models import models_message
 ######################################################################
 # 自定义 user 方法
 from .web_models.myauth_admin import UserProfileAdmin
@@ -34,7 +35,8 @@ admin.site.register(models.SystemConfig, models.SystemConfigAdmin)
 admin.site.register(models.Menu, models.MenuAdmin)
 admin.site.register(models.Resource, models.ResourceAdmin)
 admin.site.register(models.Permission, models.PermissionAdmin)
-
+# 消息内容
+admin.site.register(models_message.MyMessage, models_message.MyMessageAdmin)
 def main():
     pass
 

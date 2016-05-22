@@ -157,10 +157,15 @@ def api_auth_check(p_object):
                         ret,
                         logs_data=ret['message']
                     )
+                try:
+                    hasattr(p_object[action_name]['object'], action)
+                except Exception as e :
+                    print e.message
+                    raise Exception(u'#反射 接口:%s 失败 ' % (action))
                 if hasattr(p_object[action_name]['object'], action) == False :
                     ret['action'] = 'error'
                     ret['ret_code'] = 1
-                    ret['message'] = u'#反射 接口:%s 失败 ' % (action_name)
+                    ret['message'] = u'#反射 接口:%s 失败 ' % (action)
                     return my_HttpResponse(
                         ret,
                         logs_data=ret['message']
@@ -170,6 +175,7 @@ def api_auth_check(p_object):
                 ret = getattr(p_object[action_name]['object'], action)(request, ret)
                 ret = func(ret)
             except Exception as e :
+                ret['message'] = e.message
                 print e
             return my_HttpResponse(
                         ret,

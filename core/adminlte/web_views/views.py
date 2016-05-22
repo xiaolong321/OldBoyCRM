@@ -58,6 +58,12 @@ class CommonPageViewMixin(object):
             page_title = self.model._meta.verbose_name
         else:
             page_title = default_dashboard_title
+        try:
+            page_Global_Return = self.request.environ['HTTP_REFERER']
+            if '/auth/login/?next=' in page_Global_Return:
+                page_Global_Return = ''
+        except:
+            page_Global_Return = ''
 
         common_dict = {
             'default_dashboard_title': default_dashboard_title,
@@ -66,7 +72,8 @@ class CommonPageViewMixin(object):
             'page_action': getattr(self, 'app_name', ''),
             'page_action_name': getattr(self, 'model_name', ''),
             'page_system_name': get_system_config_value('system_name'),
-            'page_system_subhead': get_system_config_value('system_subhead')
+            'page_system_subhead': get_system_config_value('system_subhead'),
+            'page_Global_Return': page_Global_Return,
         }
         context.update(common_dict)
         return context

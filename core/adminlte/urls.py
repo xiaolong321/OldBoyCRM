@@ -15,9 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
-from .web_views import auth
+from .web_views import auth, Message
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     url(r'^login/$', auth.LoginView.as_view(), name='login'),
     url(r'^logout/$', auth.LogoutView.as_view(), name='logout'),
+    url(r'^message/$', login_required(Message.Message), name='Message'),
 ]
