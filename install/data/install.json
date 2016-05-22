@@ -1,0 +1,635 @@
+[
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 1,
+        "fields": {
+            "app_label": "admin",
+            "model": "logentry"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 2,
+        "fields": {
+            "app_label": "auth",
+            "model": "permission"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 3,
+        "fields": {
+            "app_label": "auth",
+            "model": "group"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 4,
+        "fields": {
+            "app_label": "contenttypes",
+            "model": "contenttype"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 5,
+        "fields": {
+            "app_label": "sessions",
+            "model": "session"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 6,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "systemconfig"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 7,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "groups"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 8,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "userprofile"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 9,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "permission"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 10,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "menu"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 11,
+        "fields": {
+            "app_label": "adminlte",
+            "model": "resource"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 1,
+        "fields": {
+            "name": "Can add log entry",
+            "content_type": 1,
+            "codename": "add_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 2,
+        "fields": {
+            "name": "Can change log entry",
+            "content_type": 1,
+            "codename": "change_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 3,
+        "fields": {
+            "name": "Can delete log entry",
+            "content_type": 1,
+            "codename": "delete_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 4,
+        "fields": {
+            "name": "Can add permission",
+            "content_type": 2,
+            "codename": "add_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 5,
+        "fields": {
+            "name": "Can change permission",
+            "content_type": 2,
+            "codename": "change_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 6,
+        "fields": {
+            "name": "Can delete permission",
+            "content_type": 2,
+            "codename": "delete_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 7,
+        "fields": {
+            "name": "Can add group",
+            "content_type": 3,
+            "codename": "add_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 8,
+        "fields": {
+            "name": "Can change group",
+            "content_type": 3,
+            "codename": "change_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 9,
+        "fields": {
+            "name": "Can delete group",
+            "content_type": 3,
+            "codename": "delete_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 10,
+        "fields": {
+            "name": "Can add content type",
+            "content_type": 4,
+            "codename": "add_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 11,
+        "fields": {
+            "name": "Can change content type",
+            "content_type": 4,
+            "codename": "change_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 12,
+        "fields": {
+            "name": "Can delete content type",
+            "content_type": 4,
+            "codename": "delete_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 13,
+        "fields": {
+            "name": "Can add session",
+            "content_type": 5,
+            "codename": "add_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 14,
+        "fields": {
+            "name": "Can change session",
+            "content_type": 5,
+            "codename": "change_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 15,
+        "fields": {
+            "name": "Can delete session",
+            "content_type": 5,
+            "codename": "delete_session"
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "超级管理员",
+            "permissions": []
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 2,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:32:00",
+            "updated_at": "2016-05-22T17:32:00",
+            "deleted_at": null,
+            "name": "CRM",
+            "icon": "fa-circle-o",
+            "parent": null,
+            "app_name": "crm",
+            "model_name": "",
+            "url": "crm",
+            "order": 0,
+            "status": 1,
+            "lft": 1,
+            "rght": 24,
+            "tree_id": 2,
+            "level": 0
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 1,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:31:00",
+            "updated_at": "2016-05-22T17:31:00",
+            "deleted_at": null,
+            "name": "上课纪录",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "crm",
+            "model_name": "crm",
+            "url": "/crm/pages/crm_courserecord/",
+            "order": 0,
+            "status": 1,
+            "lft": 2,
+            "rght": 3,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 3,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:37:00",
+            "updated_at": "2016-05-22T17:37:00",
+            "deleted_at": null,
+            "name": "交款纪录",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "crm",
+            "model_name": "/crm",
+            "url": "/crm/pages/crm_paymentrecord/",
+            "order": 0,
+            "status": 1,
+            "lft": 4,
+            "rght": 5,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 4,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:38:00",
+            "updated_at": "2016-05-22T17:38:00",
+            "deleted_at": null,
+            "name": "学员学习纪录",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_studyrecord/",
+            "order": 0,
+            "status": 1,
+            "lft": 6,
+            "rght": 7,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 5,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:41:00",
+            "updated_at": "2016-05-22T17:41:00",
+            "deleted_at": null,
+            "name": "学员常见问题汇总",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_studentfaq/",
+            "order": 0,
+            "status": 1,
+            "lft": 8,
+            "rght": 9,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 6,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:41:00",
+            "updated_at": "2016-05-22T17:41:00",
+            "deleted_at": null,
+            "name": "学员投诉\\建议",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_compliant/",
+            "order": 0,
+            "status": 1,
+            "lft": 10,
+            "rght": 11,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 7,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:41:00",
+            "updated_at": "2016-05-22T17:41:00",
+            "deleted_at": null,
+            "name": "客户信息表",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_customer/",
+            "order": 0,
+            "status": 1,
+            "lft": 12,
+            "rght": 13,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 8,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:41:00",
+            "updated_at": "2016-05-22T17:41:00",
+            "deleted_at": null,
+            "name": "客户咨询跟进记录",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_consultrecord/",
+            "order": 0,
+            "status": 1,
+            "lft": 14,
+            "rght": 15,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 9,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:42:00",
+            "updated_at": "2016-05-22T17:42:00",
+            "deleted_at": null,
+            "name": "班级列表",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_classlist/",
+            "order": 0,
+            "status": 1,
+            "lft": 16,
+            "rght": 17,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 10,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:42:00",
+            "updated_at": "2016-05-22T17:42:00",
+            "deleted_at": null,
+            "name": "调查问卷",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_survery/",
+            "order": 0,
+            "status": 1,
+            "lft": 18,
+            "rght": 19,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 11,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:42:00",
+            "updated_at": "2016-05-22T17:42:00",
+            "deleted_at": null,
+            "name": "调查问卷问题列表",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_surveryitem/",
+            "order": 0,
+            "status": 1,
+            "lft": 20,
+            "rght": 21,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 12,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:43:00",
+            "updated_at": "2016-05-22T17:43:00",
+            "deleted_at": null,
+            "name": "问卷记录",
+            "icon": "fa-circle-o",
+            "parent": 2,
+            "app_name": "",
+            "model_name": "",
+            "url": "/crm/pages/crm_surveryrecord/",
+            "order": 0,
+            "status": 1,
+            "lft": 22,
+            "rght": 23,
+            "tree_id": 2,
+            "level": 1
+        }
+    },
+    {
+        "model": "adminlte.menu",
+        "pk": 13,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:46:00",
+            "updated_at": "2016-05-22T17:46:00",
+            "deleted_at": null,
+            "name": "管理中心",
+            "icon": "fa-circle-o",
+            "parent": null,
+            "app_name": "",
+            "model_name": "",
+            "url": "/admins/",
+            "order": 0,
+            "status": 1,
+            "lft": 1,
+            "rght": 2,
+            "tree_id": 3,
+            "level": 0
+        }
+    },
+    {
+        "model": "adminlte.systemconfig",
+        "pk": 1,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:29:00",
+            "updated_at": "2016-05-22T17:29:00",
+            "deleted_at": null,
+            "name": "system_name",
+            "value": "老男孩oldboy CRM",
+            "title": "system_name",
+            "parent": null,
+            "status": 1,
+            "lft": 1,
+            "rght": 2,
+            "tree_id": 1,
+            "level": 0
+        }
+    },
+    {
+        "model": "adminlte.systemconfig",
+        "pk": 2,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:29:00",
+            "updated_at": "2016-05-22T17:29:00",
+            "deleted_at": null,
+            "name": "system_subhead",
+            "value": "CRM 管理系统",
+            "title": "system_subhead",
+            "parent": null,
+            "status": 1,
+            "lft": 1,
+            "rght": 2,
+            "tree_id": 2,
+            "level": 0
+        }
+    },
+    {
+        "model": "adminlte.groups",
+        "pk": 1,
+        "fields": {
+            "permissions": [],
+            "group_api_permissions": [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44
+            ]
+        }
+    },
+    {
+        "model": "adminlte.permission",
+        "pk": 1,
+        "fields": {
+            "creator": null,
+            "created_at": "2016-05-22T17:32:48.762",
+            "updated_at": "2016-05-22T17:32:48.762",
+            "deleted_at": null,
+            "group": 1,
+            "status": 1,
+            "menus": [
+                2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+            ],
+            "resources": []
+        }
+    },
+    {
+        "model": "adminlte.userprofile",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$24000$uh42h1B36I1J$vt30Ln/FrVldCaPk/Xl6V/aQubq6OtEqK3s0XWo4gL4=",
+            "last_login": "2016-05-22T17:51:59.526",
+            "is_superuser": true,
+            "email": "admin@qq.com",
+            "is_staff": true,
+            "is_active": true,
+            "is_admin": true,
+            "name": "admin",
+            "department": "",
+            "tel": "",
+            "mobile": "",
+            "memo": "",
+            "date_joined": "2016-05-22T17:28:04.434",
+            "valid_begin_time": "2016-05-22T17:28:00",
+            "valid_end_time": "2016-05-22T17:28:00",
+            "avatar": "",
+            "groups": [
+                1
+            ],
+            "user_permissions": [],
+            "user_api_permissions": []
+        }
+    },
+    {
+        "model": "adminlte.userprofile",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$24000$yHu2YdiUNUp4$jltqC3ONZ4uYKAsPpISuzzNU4knOHFpWZnXTMv8nmPg=",
+            "last_login": "2016-05-22T17:50:58.463",
+            "is_superuser": false,
+            "email": "test@qq.com",
+            "is_staff": false,
+            "is_active": true,
+            "is_admin": false,
+            "name": "test",
+            "department": "",
+            "tel": "",
+            "mobile": "",
+            "memo": "",
+            "date_joined": "2016-05-22T17:48:10.221",
+            "valid_begin_time": "2016-05-22T17:48:10.103",
+            "valid_end_time": "2016-05-22T17:48:10.103",
+            "avatar": "",
+            "groups": [],
+            "user_permissions": [],
+            "user_api_permissions": []
+        }
+    }
+]
