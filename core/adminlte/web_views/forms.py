@@ -59,13 +59,15 @@ class LoginForm(AuthenticationForm):
                 if LDAPTool().ldap_get_vaild(uid=username, passwd=password):
                     user_email = LDAPTool().ldap_get_user(uid=username)['mail']
             except Exception as e:
+                user_email = username
                 print e
             try:
                 self.user_cache = authenticate(
                     email=user_email,
                     password=password
                 )
-            except:
+            except Exception as e:
+                print e.message
                 pass
             if self.user_cache is None:
                 raise forms.ValidationError(
