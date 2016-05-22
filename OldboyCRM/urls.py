@@ -18,17 +18,19 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from core.adminlte.web_views.views import IndexView
+from core.crm.web_views import views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', login_required(IndexView.as_view()), name='index'),
+    url(r'^admins/', include(admin.site.urls)),
+    url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^auth/', include("core.adminlte.urls",
                            namespace="registration")),
 ]
 
 urlpatterns += [
+    url(r'^admin/$', login_required(IndexView.as_view()), name='index'),
     url(
         r'^crm/',
         include(

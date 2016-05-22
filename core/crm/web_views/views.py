@@ -1,4 +1,4 @@
-# _*_coding:utf-8_*_
+# coding=utf-8
 import json
 
 import core.crm.web_models.survery_handle
@@ -21,9 +21,21 @@ from .. import admin
 
 
 
+class IndexView(CommonPageViewMixin, TemplateView):
+    """
+        默认首页
+    """
+    template_name = "crm/index.html"  # 页面地址
 
-def index(request):
-    return render(request, 'crm/index.html')
+    def get_context_data(self, **kwargs):
+        """
+            get 请求返回结果
+        """
+        context = super(IndexView, self).get_context_data(**kwargs)
+        # TODO 下面的方法.可以所称统一类 进行调用
+        # staff_count = Staff.objects.filter(status=Staff.IN_JOB).count()              #返回员工信息
+        # context['staff_count'] = staff_count
+        return context
 
 
 def survery(request, survery_id):

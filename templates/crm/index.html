@@ -1,39 +1,16 @@
-{% extends 'base.html' %}
+{% extends "adminlte/base.html" %}
 
-
-{% block body-container %}
-
-<div id="container" class="effect mainnav-lg">
-    <div id="page-title">
-        <h1 class="page-header text-overflow">老男孩IT教育 | 只培养技术精英</h1>
-
-
+{% block base_body_inner %}
+    <div class="row" style="margin:0 auto; width:450px; height:500px;">
+        <div style="margin:0 auto; width:50%; height:50%;" ></div>
+        <h1>{{ page_system_name }}</h1>
+        <div class="panel-body" style="">
+            {% block page-content %}
+                <h4><a class="btn-link" href="">成绩查询</a></h4>
+                <h4><a class="btn-link" href="">奖学金政策</a></h4>
+                <h4><a class="btn-link" href="">投诉建议</a></h4>
+                <h4><a class="btn-link" href="">学员常见问题汇总</a></h4>
+            {% endblock %}
+        </div>
     </div>
-
-    <div id="page-content">
-
-        <div class="row">
-
-            <div class="col-lg-12">
-
-                <div class="panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{% block page-content-title %}学员平台{% endblock %}</h3>
-                    </div>
-                    <div class="panel-body" style="">
-                      {% block page-content %}
-                      <h4><a class="btn-link" href="{% url 'single_stu_grade_check' %}">成绩查询</a></h4>
-                      <h4><a class="btn-link" href="{% url 'scholarship' %}">奖学金政策</a></h4>
-                      <h4><a class="btn-link" href="{% url 'compliant' %}">投诉建议</a></h4>
-                      <h4><a class="btn-link" href="{% url 'stu_faq' %}">学员常见问题汇总</a></h4>
-                      {% endblock %}
-                    </div> <!--end panel-body-->
-                </div> <!--end panel-->
-            </div> <!--end col-lg-12-->
-        </div><!--end row-->
-
-    </div><!--end page-content-->
-
-</div>
-
 {% endblock %}
