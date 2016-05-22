@@ -13,18 +13,6 @@
                                     {% if 'qa' == node.url %}
                                         active
                                     {% endif %}
-                                {% elif 'dev' in request.path_info %}
-                                    {% if 'dev' == node.url %}
-                                        active
-                                    {% endif %}
-                                {% elif 'prd' in request.path_info %}
-                                    {% if 'prd' == node.url %}
-                                        active
-                                    {% endif %}
-                                {% elif 'task' in request.path_info %}
-                                    {% if 'task' == node.url %}
-                                        active
-                                    {% endif %}
                                 {% endif %}
                             {% endif %}"
                     {% endif %}>

@@ -56,9 +56,12 @@ class Views(CommonPageViewMixin, TemplateView):
             try:
                 list_display.append((i, self.Page_Models._meta.get_field(i)))
             except:
-                list_display.append(
-                    (i, {'verbose_name': getattr(self.Page_Models, i).short_description})
-                )
+                try:
+                    list_display.append(
+                        (i, {'verbose_name': getattr(self.Page_Models, i).short_description})
+                    )
+                except:
+                    pass
         return list_display
 
     def get_my_list_filter(self):
