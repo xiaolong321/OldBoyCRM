@@ -11,12 +11,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 from ... import admin
-
+from . import froms
 
 class Views(CommonPageViewMixin, TemplateView):
     Page_Admin = admin.ClassListAdmin
     Page_Models = admin.models.ClassList
     page_action_name = 'crm_classlist'
+
     def get_context_data(self, **kwargs):
         """get 请求返回结果 """
         context = super(Views, self).get_context_data(**kwargs)
@@ -25,11 +26,22 @@ class Views(CommonPageViewMixin, TemplateView):
         logger.info(u"pk_id:%s add:%s" % (pk, add))
         context['page_action_name'] = self.page_action_name
         if add:
-            return self.get_context_data_detail(pk, context, **kwargs)
+            return self.get_context_create(context, **kwargs)
         if pk is None:
             return self.get_context_data_list(context, **kwargs)
         else:
             return self.get_context_data_detail(pk, context, **kwargs)
+
+    def get_context_create(self,context, **kwargs):
+        self.template_name = 'crm/classlist_create.html'
+        context['page_action'] = 'post_common_create'
+        context['page_title'] = u'%s 添加' % (
+            self.Page_Models._meta.verbose_name,
+        )
+        context['form'] = froms.classlistadd
+
+        return context
+
 
     def get_context_data_detail(self, pk, context, **kwargs):
 
@@ -49,7 +61,6 @@ class Views(CommonPageViewMixin, TemplateView):
             {'name': u'刷新', 'type': 'search'},
         ]
         return context
-
     def get_my_list_display(self):
         list_display = []
         for i in self.Page_Admin.list_display:
@@ -86,5 +97,6 @@ class Views(CommonPageViewMixin, TemplateView):
         ]
         context['all_list_display_buttons'] = [
             {'name': u'刷新', 'type': 'search'},
+            {'name': u'添加', 'type': 'create'},
         ]
         return context
