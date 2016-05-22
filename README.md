@@ -30,7 +30,7 @@ crm>web_api>issus>crm_customer API接口层
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser #建立账户
-python manage.py loaddata data.json # 菜单等
+python manage.py loaddata ./install/data/install.json # 菜单等
 # 最后 在后台 建立
 http://127.0.0.1:8080/admin/crm/customer/
 客户信息中建立模拟数据.
