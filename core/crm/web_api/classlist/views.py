@@ -50,10 +50,13 @@ class ClassListSearchRequest(Monitor):
         con = Q()
         for k, v in self.get_SlKeySearch().items():
             temp = Q()
-            temp.children.append((k, v))
-            # temp.connector = 'OR'
-            # for item in v:
-            #    temp.children.append((k, item))
+            Kv = k.split(',')
+            for i in Kv:
+                temp.connector = 'OR'
+                temp.children.append((i, v))
+                # temp.connector = 'OR'
+                # for item in v:
+                #    temp.children.append((k, item))
             con.add(temp, 'AND')
         for k, v in self.get_SlKeyListFilter().items():
             k = k.split('.')[-1]
