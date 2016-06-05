@@ -482,5 +482,60 @@
             $(obj).html(text);
             return obj
         },
+        'CreateButton':function(attrs, csses, text){
+            var obj= document.createElement('button');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateTextArea':function(attrs, csses, text){
+            var obj= document.createElement('textarea');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateDl': function (attrs, csses, text) {
+            var obj= document.createElement('dl');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateDt': function (attrs, csses, text) {
+            var obj= document.createElement('dt');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        },
+        'CreateDd': function (attrs, csses, text) {
+            var obj= document.createElement('dd');
+            $.each(attrs,function(k,v){
+                $(obj).attr(k,v);
+            });
+            $.each(csses,function(k,v){
+                $(obj).css(k,v);
+            });
+            $(obj).html(text);
+            return obj
+        }
     });
 })(jQuery);

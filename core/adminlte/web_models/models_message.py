@@ -22,7 +22,6 @@ class MyMessage(BaseModel):
         UserProfile,
         verbose_name=u"接收人",
         related_name='receive_user',
-        **DICT_NULL_BLANK_TRUE
     )
     Message = models.TextField(
         verbose_name=u'json接口',

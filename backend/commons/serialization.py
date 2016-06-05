@@ -14,4 +14,8 @@ class CJsonEncoder(json.JSONEncoder):
         elif isinstance(obj, date):
             return obj.strftime("%Y-%m-%d")
         else:
-            return json.JSONEncoder.default(self, obj)
+            try:
+                return json.JSONEncoder.default(self, obj)
+            except Exception as e:
+                print e.message
+                return None

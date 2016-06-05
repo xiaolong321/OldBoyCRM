@@ -37,6 +37,22 @@ class IndexView(CommonPageViewMixin, TemplateView):
         # context['staff_count'] = staff_count
         return context
 
+class CrmIndexView(CommonPageViewMixin, TemplateView):
+    """
+        默认首页
+    """
+    template_name = "adminlte/index.html"  # 页面地址
+
+    def get_context_data(self, **kwargs):
+        """
+            get 请求返回结果
+        """
+        context = super(CrmIndexView, self).get_context_data(**kwargs)
+        # TODO 下面的方法.可以所称统一类 进行调用
+        # staff_count = Staff.objects.filter(status=Staff.IN_JOB).count()              #返回员工信息
+        # context['staff_count'] = staff_count
+        return context
+
 
 def survery(request, survery_id):
     if request.method == "GET":

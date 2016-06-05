@@ -228,6 +228,42 @@ class ResourceAdmin(admin.ModelAdmin):
     ordering = ('name',)
 
 
+class PermIsUser(BaseModel, UsableStatus):
+    users = models.OneToOneField(
+        UserProfile, verbose_name=u'用户',
+        related_name='User_permission'
+    )
+    menus = models.ManyToManyField(
+        Menu, verbose_name=u'菜单',
+        blank=True
+    )
+    resources = models.ManyToManyField(
+        Resource, verbose_name=u'资源',
+        blank=True
+    )
+    status = models.PositiveSmallIntegerField(
+        u'状态', choices=UsableStatus.STATUS,
+        default=UsableStatus.USABLE, db_index=True
+    )
+
+    def __unicode__(self):
+        return self.users.name
+
+    class Meta:
+        verbose_name_plural = verbose_name = u'基础-首要配置-用户权限'
+
+class PermIsUserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'users', 'status')
+    list_filter = ('status',)
+    fieldsets = (
+        (u'角色', {'fields': ('users',)}),
+        # ('API TOKEN info', {'fields': ('token',)}),
+        (u'资源', {'fields': ('menus', 'resources')}),
+        (u'状态', {'fields': ('status',)}),
+    )
+
+    search_fields = ('users',)
+    ordering = ('users',)
 def main():
     pass
 
