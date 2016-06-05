@@ -107,7 +107,7 @@ class Views(CommonPageViewMixin, TemplateView):
         # 配置搜索框
         # 不开启 写 False
         context['search'] = {
-            'name': 'qq__contains'
+            'name': "stu_id__contains,qq__contains"
         }
         return context
 
