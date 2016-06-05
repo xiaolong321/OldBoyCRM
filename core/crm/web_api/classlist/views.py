@@ -3,8 +3,10 @@
 __author__ = 'xuebk'
 import json
 import logging
+import copy
 from backend.commons import pager
 from core.adminlte import admin
+from django.db.models import Q
 # 调用 相关的models
 from core.crm.web_models.models import ClassList
 from core.crm.web_models import constants
@@ -44,18 +46,44 @@ class ClassListSearchRequest(Monitor):
             self
         )
 
-    def SlKeyTeacHers(self, ComPile):
-        """
-            进行 查询 指定内容 方法
-        """
-        TeacHers = ''
-        if 'teachers' in self.get_SlKeyListFilter().keys():
-            TeacHers = self.get_SlKeyListFilter()['teachers']
-        if TeacHers:
-            # func = lambda x, y: x if y in x else x + [y]
-            ComPile += set(Page_Models.objects.filter(teachers=TeacHers))
-            # ComPile = reduce(func, [[], ] + ComPile)
-        return ComPile
+    def SlKey(self):
+        con = Q()
+        for k, v in self.get_SlKeySearch().items():
+            temp = Q()
+            temp.children.append((k, v))
+            # temp.connector = 'OR'
+            # for item in v:
+            #    temp.children.append((k, item))
+            con.add(temp, 'AND')
+        for k, v in self.get_SlKeyListFilter().items():
+            k = k.split('.')[-1]
+            temp = Q()
+            temp.connector = 'AND'
+            if v is None:
+                continue
+            if len(v) == 0:
+                continue
+            if v == '9999':
+                continue
+            temp.children.append((k, v))
+            con.add(temp, 'AND')
+        return con
+
+    def ComPile_data(self, data):
+        __data = copy.deepcopy(data)
+        try:
+            __data['colored_status'] = Page_Models.objects.get(id=data['id']).colored_status()
+        except:
+            __data['colored_status'] = u'未知状态'
+        try:
+            __data['get_enrolled_course'] = Page_Models.objects.get(id=data['id']).get_enrolled_course()
+        except:
+            __data['get_enrolled_course'] = u'尚未发现班级'
+        try:
+            __data['consultant'] = Page_Models.objects.get(id=data['id']).consultant.name
+        except:
+            __data['consultant'] = u'尚未发现班级'
+        return __data
 
     def do_request(self):
         """
@@ -64,9 +92,10 @@ class ClassListSearchRequest(Monitor):
             2.对请求结果进行入库操作
         """
         # 验证 是否存在 SlKeyListFilter
-        if self.get_SlKeyListFilter():
+        if self.get_SlKeyListFilter() or self.get_SlKeySearch():
             # 如果存在 多个.就继续添加即可.
-            ComPile = self.SlKeyTeacHers([])
+            Con = self.SlKey()
+            ComPile = Page_Models.objects.filter(Con)
         else:
             ComPile = Page_Models.objects.all()
         # 取出 全部内容
@@ -89,17 +118,6 @@ class ClassListSearchRequest(Monitor):
             ComPileData.append(
                 data
             )
-        # 验证 是否存在 SlKeySearch
-        if self.get_SlKeySearch():
-            SlKeySearch = []
-            for key, val in self.get_SlKeySearch().items():
-                for i in ComPileData:
-                    try:
-                        if val in i[key]:
-                            SlKeySearch.append(i)
-                    except:
-                        pass
-            ComPileData = SlKeySearch
         if type(self.get_PageNumber()) != int:
             PageNumber = int(self.get_PageNumber())
         else:

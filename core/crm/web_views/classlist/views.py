@@ -22,7 +22,7 @@ class Views(CommonPageViewMixin, TemplateView):
         self.template_name = 'crm/common_list.html'  # 页面地址
         context['page_action'] = 'get_describe_list'
 
-        context['page_title'] = '用户管理'
+        context['page_title'] = '班级'
         # 自定义 类搜索
         # 这里可以直接从后端获取相关的搜索主键
         context['list_filter'] = [
@@ -79,7 +79,7 @@ class Views(CommonPageViewMixin, TemplateView):
         # 配置搜索框
         # 不开启 写 False
         context['search'] = {
-            'name': 'course'
+            'name': 'course__contains'
         }
         return context
 

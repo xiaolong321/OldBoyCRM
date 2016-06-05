@@ -133,12 +133,15 @@ h1.tit-h1 { font-size:38px; text-align:center; margin:30px 0 15px; color:#f60;}
                                                     data-name="search"
                                                     data-page="1"
                                                     v-on:click="resetSearch">
-                                                <i class="fa fa-times-circle"></i>
+                                                <i data-name="search"
+                                                    data-page="1"
+                                                   class="fa fa-times-circle"></i>
                                             </button>
                                             <button class="btn btn-sm btn-default"
                                                     data-page="1"
                                                     v-on:click="search">
-                                                <i class="fa fa-search"></i>
+                                                <i data-page="1"
+                                                   class="fa fa-search"></i>
                                             </button>
                                         </div>
                                     </div>

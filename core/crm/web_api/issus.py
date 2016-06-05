@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 from backend.decorators.api_auth import api_auth_check
 from .classlist import views as classlist_views
+from .customer import views as customer_views
 
 common_list = {
     'name': 'search 方法',
@@ -46,6 +47,14 @@ p_object = {
                 'type': ['get'],
                 'memo': '获取 info 文件内容方法'
             }
+        ]
+    },
+    "crm_customer": {
+        'object': customer_views,
+        'Whitelist': [
+            common_list,
+            common_detail,
+            common_add,
         ]
     }
 }
