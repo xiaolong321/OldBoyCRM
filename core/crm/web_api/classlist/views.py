@@ -1,147 +1,572 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 __author__ = 'xuebk'
-import logging
 import json
-from backend.base_response import BaseResponse_new as BaseResponse
-from backend.commons import serialization
+import logging
 from backend.commons import pager
-from django.conf import settings
-from django.core import serializers
-from django.db.models import Q
-
+from core.adminlte import admin
+# 调用 相关的models
+from core.crm.web_models.models import ClassList
+from core.crm.web_models import constants
+Page_Models = ClassList
+Course_Constants = constants.Course_Constants
 logger = logging.getLogger(__name__)
-from core.crm import admin
 
-Page_Admin = admin.ClassListAdmin
-Page_Models = admin.models.ClassList
 
-def get_common_list(request, ret):
-    """
-        获取 get_common_list 列表方法
-     """
-    # 获取相关的 search  page 等查询信息
-    conditions = request.POST.get('search', None)
-    page = request.GET.get('page', None)
-    if not conditions:
-        conditions = "{}"
-    conditions = json.loads(conditions)
-    conditions_key = request.POST.get('search_key', None)
-    if not conditions_key:
-        conditions_key = "{}"
-    conditions_key = json.loads(conditions_key)
+class Monitor(object):
+    def __init__(self):
+        self.__params = {}
+        self.__adding = {}
 
-    logger.info("conditions:%s,conditions_key:%s,page:%s" % (
-        conditions,
-        conditions_key,
-        page,
-    ))
-    # 获取 总数.以及相关的具体内容
-    all_count = get_common_list_count(
-        conditions_key=conditions_key,
-        conditions=conditions,
+    def add_query_param(self, k, v):
+        if self.__params is None:
+            self.__params = {}
+        self.__params[k] = v
+
+    def get_query_params(self):
+        return self.__params
+
+    def add_adding_param(self, k, v):
+        if self.__adding is None:
+            self.__adding = {}
+        self.__adding[k] = v
+
+    def get_adding_params(self):
+        return self.__adding
+
+
+class ClassListSearchRequest(Monitor):
+    def __init__(self):
+        """
+        获取域名列表
+        """
+        Monitor.__init__(
+            self
+        )
+
+    def SlKeyTeacHers(self, ComPile):
+        """
+            进行 查询 指定内容 方法
+        """
+        TeacHers = ''
+        if 'teachers' in self.get_SlKeyListFilter().keys():
+            TeacHers = self.get_SlKeyListFilter()['teachers']
+        if TeacHers:
+            # func = lambda x, y: x if y in x else x + [y]
+            ComPile += set(Page_Models.objects.filter(teachers=TeacHers))
+            # ComPile = reduce(func, [[], ] + ComPile)
+        return ComPile
+
+    def do_request(self):
+        """
+            重构 request 方法.
+            1.请求阿里云整体列表.
+            2.对请求结果进行入库操作
+        """
+        # 验证 是否存在 SlKeyListFilter
+        if self.get_SlKeyListFilter():
+            # 如果存在 多个.就继续添加即可.
+            ComPile = self.SlKeyTeacHers([])
+        else:
+            ComPile = Page_Models.objects.all()
+        # 取出 全部内容
+        ComPileData = []
+        for i_data in ComPile:
+            data = i_data.__dict__
+            # TODO 需要增加 对于 用户组.以及用户权限信息的获取
+            try:
+                data['teachers'] = [
+                    "%s" % i.name
+                    for i in Page_Models.objects.get(id=data['id']).teachers.all()
+                    ]
+            except:
+                data['teachers'] = u'未知讲师'
+            try:
+                data['student_num'] = Page_Models.objects.get(id=data['id']).customer_set.select_related().count()
+            except:
+                data['student_num'] = u'获取学员数量失败.'
+                # data['userpre'] = ['13',313]
+            ComPileData.append(
+                data
+            )
+        # 验证 是否存在 SlKeySearch
+        if self.get_SlKeySearch():
+            SlKeySearch = []
+            for key, val in self.get_SlKeySearch().items():
+                for i in ComPileData:
+                    try:
+                        if val in i[key]:
+                            SlKeySearch.append(i)
+                    except:
+                        pass
+            ComPileData = SlKeySearch
+        if type(self.get_PageNumber()) != int:
+            PageNumber = int(self.get_PageNumber())
+        else:
+            PageNumber = self.get_PageNumber()
+        if type(self.get_PageSize()) != int:
+            PageSize = int(self.get_PageSize())
+        else:
+            PageSize = self.get_PageSize()
+        try:
+            page_info = pager.PageInfo(
+                PageNumber,
+                len(ComPileData),
+                perItems=PageSize,
+            )
+            Projects = ComPileData[page_info.start:page_info.end]
+        except Exception as e:
+            logger.error(e.message, exc_info=True)
+        return {
+            'Projects': Projects,
+            'PageSize': PageSize,
+            'PageNumber': PageNumber,
+            'TotalCount': len(ComPileData),
+        }
+
+    def get_PageNumber(self):
+        return self.get_query_params().get('PageNumber', 1)
+
+    def set_PageNumber(self, PageNumber):
+        self.add_query_param('PageNumber', PageNumber)
+
+    def get_PageSize(self):
+        return self.get_query_params().get('PageSize', 20)
+
+    def set_PageSize(self, PageSize):
+        self.add_query_param('PageSize', PageSize)
+
+    def get_SlKeySearch(self):
+        return self.get_query_params().get('SlKeySearch', {})
+
+    def set_SlKeySearch(self, SlKeySearch):
+        self.add_query_param('SlKeySearch', SlKeySearch)
+
+    def get_SlKeyListFilter(self):
+        return self.get_query_params().get('SlKeyListFilter', {})
+
+    def set_SlKeyListFilter(self, SlKeyListFilter):
+        self.add_query_param('SlKeyListFilter', SlKeyListFilter)
+
+
+class ClassListModifyRequest(Monitor):
+    def __init__(self):
+        """
+        获取域名列表
+        """
+        Monitor.__init__(
+            self
+        )
+
+    def get_Pk(self):
+        return self.get_query_params().get('id', None)
+
+    def set_Pk(self, Pk):
+        self.add_query_param('id', Pk)
+
+    def joining_base(self):
+        """
+            拼接 基础信息
+        """
+        if self.get_Pk() is None:
+            raise Exception(u'必须拥有code值才能进行 修改')
+        # 从本地中读取 code 基础信息
+        BanJi = Page_Models.objects.get(id=self.get_Pk())
+        DataCode = {
+            'id': BanJi.id,
+            "course": BanJi.course,
+            "semester": BanJi.semester,
+            "start_date": BanJi.start_date,
+            "graduate_date": BanJi.graduate_date,
+            "teachers": BanJi.teachers,
+        }
+        results = []
+        # 拼接显示内容
+        results.append(
+            {
+                'type': 'input',
+                'code': 'id',
+                'name': 'id',
+                'value': DataCode['id'],
+                'class': '',
+                'disabled': "true",
+            }
+        )
+        results.append(
+            {
+                'type': 'PositiveSmallIntegerField',
+                'code': 'course',
+                'name': '课程名称',
+                'value': [Course_Constants.get_name(DataCode['course'])],
+                'choices': Course_Constants.STATUS,
+                # 'class': 'pici_1_hosts_class',
+            }
+        )
+        results.append(
+            {
+                'type': 'input',
+                'code': 'semester',
+                'name': '学期',
+                'value': DataCode['semester'],
+                'class': '',
+                # 'disabled': "true",
+            }
+        )
+        results.append(
+            {
+                'type': 'DateField',
+                'code': 'start_date',
+                'name': '开班日期',
+                'value': DataCode['start_date'],
+                'class': '',
+                # 'disabled': "true",
+            }
+        )
+        results.append(
+            {
+                'type': 'DateField',
+                'code': 'graduate_date',
+                'name': '结业日期',
+                'value': DataCode['graduate_date'],
+                'class': '',
+                # 'disabled': "true",
+            }
+        )
+        # 获取讲师具体name 的方法
+        __teachers_value = [
+            "%s" % i.name
+            for i in BanJi.teachers.all()
+        ]
+        __teachers_choices = [
+            (i.id, i.name)
+            for i in admin.models.UserProfile.objects.all()
+        ]
+        results.append(
+            {
+                'type': 'ManyToManyField',
+                'code': 'teachers',
+                'name': '讲师',
+                'value': __teachers_value,
+                'choices': __teachers_choices,
+                'class': '',
+                # 'disabled': "true",
+            }
+        )
+        return results
+
+    def joining_adding(self):
+        """
+            拼接附加信息
+        """
+        results = []
+        return results
+
+    def do_modify(self):
+        """
+            根据 code 获取 相关的修改信息
+        """
+        results = self.joining_base()
+        # results += self.joining_adding()
+        return results
+        pass
+
+    def do_info(self):
+        """
+            根据 code 获取 相关的信息
+        """
+        results = self.joining_base()
+        # results += self.joining_adding()
+        return results
+
+    def do_post_modify(self):
+        try:
+            Page = Page_Models.objects.get(
+                id=self.get_Pk()
+            )
+            Page.semester = 123
+            Page.save()
+        except Exception as e:
+            logger.error(
+                u'*' * 3 + u'post_modify' + u'*' * 3 +
+                u'出现 错误. 可能是 获取不到具体内容 %s' % e.message,
+                exc_info=True
+            )
+            raise Exception(e)
+        return True
+
+
+class ClassListAddDelRequest(Monitor):
+    def __init__(self):
+        """
+        获取域名列表
+        """
+        Monitor.__init__(
+            self
+        )
+
+    def do_request(self):
+        """
+            重构 request 方法.
+            1.请求阿里云整体列表.
+            2.对请求结果进行入库操作
+        """
+        # 验证 是否存在 SlKeyListFilter
+        pass
+
+    def get_Code(self):
+        return self.get_query_params().get('code', None)
+
+    def set_Code(self, Code):
+        self.add_query_param('code', Code)
+
+    def joining_base(self):
+        """
+            拼接 基础信息
+        """
+        if self.get_Code() is None:
+            raise Exception(u'必须拥有code值才能进行 修改')
+        # 从本地中读取 code 基础信息
+        User = Page_Models.objects.get(id=self.get_Code())
+        DataCode = {
+            'id': User.id,
+            'name': User.name,
+            'password': User.password
+        }
+        results = []
+        # 拼接显示内容
+        results.append(
+            {
+                'type': 'input',
+                'code': 'id',
+                'name': '名称',
+                'value': DataCode['id'],
+                'class': '',
+                'disabled': "true",
+            }
+        )
+        results.append(
+            {
+                'type': 'input',
+                'code': 'name',
+                'name': '名称',
+                'value': DataCode['name'],
+                'class': '',
+                'disabled': "true",
+            }
+        )
+        results.append(
+            {
+                'type': 'input',
+                'code': 'password',
+                'name': '密码',
+                'value': DataCode['password'],
+                'class': '',
+                # 'disabled': "true",
+            }
+        )
+        return results
+
+    def joining_adding(self):
+        """
+            拼接附加信息
+        """
+        if self.get_Code() is None:
+            raise Exception(u'必须拥有code值才能进行 修改')
+        # 查询数据库.并返回 othis
+        User = Page_Models.objects.get(id=self.get_Code())
+        results = []
+        # 拼接显示内容
+        results.append(
+            {
+                'type': 'ManyToManyField',
+                'code': 'groups',
+                'name': '用户组',
+                'value': [i.name for i in User.groups.all()],
+                'choices': [
+                    [i.id, i.name]
+                    for i in Groups_Models.objects.all()
+                    ],
+                'class': 'pici_1_hosts_class',
+            }
+        )
+        # 获取 全部权限信息
+        userpre_choices = {}
+        for i in Resource_Models.objects.all():
+            userpre_choices.setdefault(i.app_name, {})
+            userpre = userpre_choices.get(i.app_name)
+            userpre.setdefault('choices', [])
+            __choices = userpre.get('choices')
+            __choices.append(
+                {
+                    'id': i.id,
+                    'name': i.name
+                }
+            )
+        __userpre_choices = []
+        for k, v in userpre_choices.items():
+            __userpre_choices.append(
+                {
+                    'id': k,
+                    'name': '%s 权限' % k,
+                    'choices': v.get('choices', [])
+                }
+            )
+        # 获取当前用户权限信息
+        value = []
+        for i in User.User_permission.resources.all():
+            value.append(
+                i.name
+            )
+        results.append(
+            {
+                'type': 'Screen',
+                'code': 'userpre',
+                'name': '权限',
+                'value': value,
+                'choices': __userpre_choices,
+            }
+        )
+        return results
+
+    def do_modify(self):
+        """
+            根据 code 获取 相关的修改信息
+        """
+        results = self.joining_base()
+        results += self.joining_adding()
+        return results
+        pass
+
+    def do_info(self):
+        """
+            根据 code 获取 相关的信息
+        """
+        results = self.joining_base()
+        results += self.joining_adding()
+        return results
+
+    def do_post_modify(self):
+        if self.get_adding_params():
+            try:
+                Page = Page_Models.objects.get(
+                    code=self.get_Code()
+                )
+            except:
+                Page = Page_Models.objects.create(
+                    code=self.get_Code()
+                )
+            Page.other = json.dumps(self.get_adding_params())
+            Page.save()
+        return True
+
+
+def get_search(request, ret):
+    logger.debug(
+        u'*' * 3 + u'get_search' + u'*' * 3 +
+        u'获取模式为 Users 开始'
     )
-    # 分页信息
-    page_info = pager.PageInfo(page, all_count.count)
-    # 分页后的详细 内容整形
-    ret['results'] = get_common_list_results(page_info.start, page_info.end, data=all_count.data).data
-    # 返回相关的分页信息
-    ret["current_page"] = page_info.current_page
-    ret["total_page"] = page_info.total_page
-    ret["count"] = page_info.total_items
-    ret['per_page'] = settings.REST_FRAMEWORK['PAGE_SIZE']
-    # 最终判定是否成功. 在此之前 有错误需要直接抛错
-    ret['ret_code'] = 0
-    result = json.dumps(ret, cls=serialization.CJsonEncoder)
-    logger.info(result)
+    Req = ClassListSearchRequest()
+    PageNumber = request.POST.get(u'PageNumber', None)
+    if PageNumber is not None:
+        Req.set_PageNumber(PageNumber)
+    PageSize = request.POST.get(u'PageSize', None)
+    if PageSize is not None:
+        Req.set_PageSize(PageSize)
+    SlKeyListFilter = request.POST.get(u'SlKeyListFilter', None)
+    if SlKeyListFilter is not None:
+        Req.set_SlKeyListFilter(json.loads(SlKeyListFilter))
+    SlKeySearch = request.POST.get(u'SlKeySearch', None)
+    if SlKeySearch is not None:
+        Req.set_SlKeySearch(json.loads(SlKeySearch))
+    try:
+        Req = Req.do_request()
+        ret['results'] = Req['Projects']
+        ret["PageSize"] = Req['PageSize']
+        ret["PageNumber"] = Req['PageNumber']
+        ret["ret_count"] = Req['TotalCount']
+        ret['per_page'] = 20
+        ret['ret_code'] = 0
+    except Exception as e:
+        logger.error(
+            u'*' * 3 + u'get_codes_data' + u'*' * 3 +
+            u'%s' % e.message
+        )
+        ret['message'] = e.message
+    logger.debug(
+        u'*' * 3 + u'get_search' + u'*' * 3 +
+        u'获取模式为 Users 结束'
+    )
     return ret
 
 
-def get_common_list_count(**kwargs):
-    """
-    获取全部信息
-    :param conditions:
-    :return:
-    """
-    response = BaseResponse()
-    response.count = 0
+def get_modify(request, ret):
+    logger.debug(
+        u'*' * 3 + u'get_modify' + u'*' * 3 +
+        u'获取修改相关信息 开始'
+    )
+    Req = ClassListModifyRequest()
+    PK = request.POST.get(u'pk', None)
+    if PK is not None:
+        Req.set_Pk(PK)
     try:
-        # 查询接口整形
-        # 利用 django的Q 方法 进行 .如果需要 可以自己写相关的查询 方法
-        con = Q()
-        for k, v in kwargs['conditions'].items():
-            temp = Q()
-            temp.connector = 'OR'
-            for item in v:
-                temp.children.append((k, item))
-            con.add(temp, 'AND')
-
-        for k, v in kwargs['conditions_key'].items():
-            k = k.split('.')[-1]
-            temp = Q()
-            temp.connector = 'AND'
-            if v is None:
-                continue
-            if len(v) == 0:
-                continue
-            if v == '9999':
-                continue
-            temp.children.append((k, v))
-            con.add(temp, 'AND')
-
-        logger.info(u'con_Q:%s' % (
-            con
-        ))
-        # 直接调用 django的 models  进行查询方式 这里默认采用 最新创建信息. 如果需要最近修改 .需要在增加一个字段
-        obj = Page_Models.objects.filter(con).order_by("-id")
-        response.count = obj.count()
-        response.data = obj.values()
-        response.status = True
-    except Exception, e:
-        print e.message
-        response.message = str(e)
-    return response
+        ret['results'] = Req.do_modify()
+        ret['ret_code'] = 0
+    except Exception as e:
+        ret['message'] = e.message
+    logger.debug(
+        u'*' * 3 + u'get_modify' + u'*' * 3 +
+        u'获取修改相关信息 结束'
+    )
+    return ret
 
 
-def get_common_list_results(start, end, data, **kwargs):
-    """
-    分页 之后.更改具体的单条值 信息 整形
-    """
-    response = BaseResponse()
+def post_modify(request, ret):
+    logger.debug(
+        u'*' * 3 + u'post_modify' + u'*' * 3 +
+        u'获取相关信息 开始'
+    )
+    aliyun = ClassListModifyRequest()
+    code = request.POST.get(u'id_id', None)
+    if code is not None:
+        aliyun.set_Pk(code)
     try:
-        data = data[start:end]
-        for i in data:
-            get_common_list_ret_id(i)
-        response.data = list(data)
-        response.status = True
-    except Exception, e:
-        print e
-        response.message = str(e)
-    return response
+        if aliyun.do_post_modify():
+            ret['ret_code'] = 0
+            ret['message'] = u'成功'
+            ret['results'] = ''
+    except Exception as e:
+        ret['message'] = e.message
+    logger.debug(
+        u'*' * 3 + u'get_info' + u'*' * 3 +
+        u'获取相关信息 结束'
+    )
+    return ret
 
 
-def get_common_list_ret_id(data):
-    '''
-    具体 信息整形.可以添加或者是修改 相关字段
-    '''
+def get_info(request, ret):
+    logger.debug(
+        u'*' * 3 + u'get_info' + u'*' * 3 +
+        u'获取相关信息 开始'
+    )
+    Req = ClassListModifyRequest()
+    PK = request.POST.get(u'pk', None)
+    if PK is not None:
+        Req.set_Pk(PK)
     try:
-        Page_Models_id = Page_Models.objects.get(id=data['id'])
-        try:
-            list_display = Page_Admin.my_list_display
-        except:
-            list_display = Page_Admin.list_display
-        for i in list_display:
-            try:
-                data[i] = "%s" % getattr(Page_Models_id,i)()
-            except:
-                data[i] = "%s" % getattr(Page_Models_id, i)
-    except Exception, e:
-        print e.message
-    return data
+        ret['results'] = Req.do_info()
+        ret['ret_code'] = 0
+    except Exception as e:
+        ret['message'] = e.message
+    logger.debug(
+        u'*' * 3 + u'get_info' + u'*' * 3 +
+        u'获取相关信息 结束'
+    )
+    return ret
 
-def get_common_detail(request, ret):
+
+def main():
     pass
-def post_common_detail(request, ret):
-    pass
-def post_common_add(request, ret):
-    pass
+
+
+if __name__ == '__main__':
+    main()

@@ -1,102 +1,92 @@
-# _*_coding:utf-8_*_
-import json
-
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect
-
-from core.adminlte.web_views.views import CommonPageViewMixin, TemplateView
-
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+__author__ = 'xuebk'
 import logging
 
 logger = logging.getLogger(__name__)
-from ... import admin
-from . import froms
+from core.adminlte.web_views.views import CommonPageViewMixin, TemplateView
 
 class Views(CommonPageViewMixin, TemplateView):
-    Page_Admin = admin.ClassListAdmin
-    Page_Models = admin.models.ClassList
-    page_action_name = 'crm_classlist'
 
     def get_context_data(self, **kwargs):
-        """get 请求返回结果 """
+        """
+        get 请求返回结果
+        """
         context = super(Views, self).get_context_data(**kwargs)
-        pk = self.request.GET.get('pk')
-        add = self.request.GET.get('add')
-        logger.info(u"pk_id:%s add:%s" % (pk, add))
-        context['page_action_name'] = self.page_action_name
-        if add:
-            return self.get_context_create(context, **kwargs)
-        if pk is None:
-            return self.get_context_data_list(context, **kwargs)
-        else:
-            return self.get_context_data_detail(pk, context, **kwargs)
-
-    def get_context_create(self,context, **kwargs):
-        self.template_name = 'crm/classlist_create.html'
-        context['page_action'] = 'post_common_create'
-        context['page_title'] = u'%s 添加' % (
-            self.Page_Models._meta.verbose_name,
-        )
-        context['form'] = froms.classlistadd
-
-        return context
-
-
-    def get_context_data_detail(self, pk, context, **kwargs):
-
-        self.template_name = 'crm/common_detail.html'  # 页面地址
-        context['page_action'] = 'get_common_detail'
-
-        context['page_title'] = u'%s %s 详情' % (
-            self.Page_Models._meta.verbose_name,
-            self.Page_Models.objects.get(id=pk).name
-        )
-
-        context['nid'] = pk
-        context['list_display_buttons'] = [
-            {'name': u'详情', 'type': 'logsdetail'},
-        ]
-        context['all_list_display_buttons'] = [
-            {'name': u'刷新', 'type': 'search'},
-        ]
-        return context
-    def get_my_list_display(self):
-        list_display = []
-        for i in self.Page_Admin.list_display:
-            try:
-                list_display.append((i, self.Page_Models._meta.get_field(i)))
-            except:
-                list_display.append(
-                    (i, {'verbose_name': getattr(self.Page_Models, i).short_description})
-                )
-        return list_display
-
-    def get_my_list_filter(self):
-        list_filters = []
-        try:
-            list_filter = self.Page_Admin.my_list_filter
-        except:
-            list_filter = self.Page_Admin.list_filter
-        for i in list_filter:
-            try:
-                list_filters.append((i, getattr(self.Page_Models,i)._meta))
-            except Exception as e:
-                pass
-        return list_filters
+        # 调用的 api 的 action_name
+        # 没有生效 .去 js里面改.action_name 即可
+        context['page_action_name'] = 'classlist'
+        return self.get_context_data_list(context, **kwargs)
 
     def get_context_data_list(self, context, **kwargs):
-        self.template_name = 'crm/common_list.html'
-        context['page_action'] = 'get_common_list'
+        self.template_name = 'crm/common_list.html'  # 页面地址
+        context['page_action'] = 'get_describe_list'
 
-        context['page_title'] = self.Page_Models._meta.verbose_name
-        context['list_filter'] = self.get_my_list_filter()
-        context['list_display'] = self.get_my_list_display()
+        context['page_title'] = '用户管理'
+        # 自定义 类搜索
+        # 这里可以直接从后端获取相关的搜索主键
+        context['list_filter'] = [
+            {
+                'id': 'teachers',
+                'verbose_name': '讲师',
+                'get_choices': (
+                    ('', "----------"),
+                    ('1', "admin")
+                ),
+            }
+        ]
+        # 列表头
+        context['list_display'] = [
+            {'verbose_name': '课程名称', 'id': 'course'},
+            {'verbose_name': '学期', 'id': 'semester'},
+            {'verbose_name': '开班日期', 'id': 'start_date'},
+            {'verbose_name': '结业日期', 'id': 'graduate_date'},
+            {'verbose_name': '学员数量', 'id': 'student_num'},
+            {'verbose_name': '讲师', 'id': 'teachers', 'type': 'Dialog'},
+            {'verbose_name': '操作', 'id': 'id'},
+        ]
+
         context['list_display_buttons'] = [
-            {'name': u'详情', 'type': 'detail'},
+            {
+                'name': u'修改',
+                'icon': 'fa-pencil-square-o',
+                'type': 'get_modify',
+                'action': 'get_modify'
+            },
+            {
+                'name': u'详情',
+                'icon': 'fa-sticky-note',
+                'type': 'get_info',
+                'action': 'get_info'
+            },
         ]
-        context['all_list_display_buttons'] = [
-            {'name': u'刷新', 'type': 'search'},
-            {'name': u'添加', 'type': 'create'},
+        context['all_list_display'] = [
+            {
+                "id": 'refresh',
+                'icon': 'fa-refresh',
+                'name': u'刷新',
+                'type': 'search',
+                'action': 'get_search'
+            },
+            {
+                "id": 'adds',
+                'icon': 'fa-plus-circle',
+                'name': u'添加',
+                'type': 'adds',
+                'action': 'get_adds'
+            },
         ]
+        # 配置搜索框
+        # 不开启 写 False
+        context['search'] = {
+            'name': 'course'
+        }
         return context
+
+
+def main():
+    pass
+
+
+if __name__ == '__main__':
+    main()
