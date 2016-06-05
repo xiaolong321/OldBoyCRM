@@ -1,5 +1,9 @@
 Django==1.9
 django-debugtools==1.6
+django-groundwork==0.2.5
+django-js-reverse==0.7.0
+django-mptt==0.8.3
+djangorestframework==3.2.3
 gevent==1.1.0
 greenlet==0.4.9
 MySQL-python==1.2.3
