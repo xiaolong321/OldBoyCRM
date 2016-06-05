@@ -73,6 +73,14 @@ class ClassListSearchRequest(Monitor):
     def ComPile_data(self, data):
         __data = copy.deepcopy(data)
         try:
+            __data['course'] = constants.Course_Constants.get_name(__data['course'])
+        except:
+            pass
+        try:
+            __data['class_type'] = constants.Class_Type_Constants.get_name(__data['class_type'])
+        except:
+            pass
+        try:
             __data['colored_status'] = Page_Models.objects.get(id=data['id']).colored_status()
         except:
             __data['colored_status'] = u'未知状态'

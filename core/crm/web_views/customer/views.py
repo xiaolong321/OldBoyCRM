@@ -69,7 +69,7 @@ class Views(CommonPageViewMixin, TemplateView):
             {'verbose_name': 'QQ名称', 'id': 'qq_name'},
             {'verbose_name': '学号', 'id': 'stu_id'},
             {'verbose_name': '姓名', 'id': 'name'},
-            {'verbose_name': '客户来源', 'id': 'course'},
+            {'verbose_name': '咨询课程', 'id': 'course'},
             {'verbose_name': '班级类型', 'id': 'class_type'},
             {'verbose_name': '客户状态', 'id': 'colored_status'},
             {'verbose_name': '已报班级', 'id': 'get_enrolled_course'},
@@ -107,7 +107,7 @@ class Views(CommonPageViewMixin, TemplateView):
         # 配置搜索框
         # 不开启 写 False
         context['search'] = {
-            'name': 'stu_id__contains'
+            'name': 'qq__contains'
         }
         return context
 
