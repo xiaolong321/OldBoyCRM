@@ -204,7 +204,7 @@ class StudyRecord(models.Model):
     note = models.CharField(u"备注",max_length=255,blank=True,null=True)
     color_dic = {
          100:"#5DFC70",
-         90 : "yellowgreen",
+         90 : "greenyellow",
          85 : "deepskyblue",
          80 : "#49E3F5",
          70 : "#1CD4C8",

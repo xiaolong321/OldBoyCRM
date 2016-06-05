@@ -1,0 +1,15 @@
+
+
+
+.stu_checked{
+    background-color: greenyellow;
+}
+.stu_late{
+    background-color: yellow;
+}
+.stu_noshow{
+    background-color: red;
+}
+.stu_leave_early{
+    background-color: red;
+}

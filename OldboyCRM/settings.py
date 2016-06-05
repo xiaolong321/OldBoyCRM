@@ -1,3 +1,4 @@
+#_*_encoding:utf-8_*_
 """
 Django settings for OldboyCRM project.
 
@@ -23,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!_ozu*fpy09_)o)kutimblfxqn6j9(q#57s6_q*dws!ef-lh*f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = []
 
 
@@ -112,9 +113,11 @@ STATICFILES_DIRS = (
 )
 
 
+
 AUTH_USER_MODEL = 'crm.UserProfile'
 
 LOGIN_URL = '/admin/login/'
+
 
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作
@@ -191,8 +194,11 @@ LOGGING = {
         },
     }
 }
+
+'''
 try:
     from .settings_dev import *
 except Exception as e:
-    print u'无法找到settings_dev文件.开启生产模式'
-    print e.message
+    print(u'无法找到settings_dev文件.开启生产模式')
+    print(e.message)
+'''

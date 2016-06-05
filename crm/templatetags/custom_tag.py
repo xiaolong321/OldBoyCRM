@@ -9,6 +9,9 @@ from django.utils.html import escapejs, format_html
 
 from crm import models
 
+@register.filter
+def get_score_color(stu_study_obj):
+    return stu_study_obj.color_dic[stu_study_obj.score]
 
 @register.simple_tag
 def load_score_list():

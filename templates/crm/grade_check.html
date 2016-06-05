@@ -66,24 +66,29 @@
                                     <p>结业日期:{{ course.graduate_date }}</p>
                                     <p>成绩算法: {{ study_record_model.score_choices }}</p>
                                     <tr>
-                                        <th>总学分</th>
-                                        {% for course_day in course.courserecord_set.select_related %}
-                                        <th>Day{{ course_day.day_num }}</th>
-                                        {% endfor %}
+                                        <th>学分</th>
+                                        <th>节次</th>
+                                        <th>出勤情况</th>
+                                        <th>成绩</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>{% get_single_stu_total_scores course  stu_obj %}</td>
-                                        {% for course_day in course.courserecord_set.select_related   %}
+
+                                    {% for course_day in course.courserecord_set.select_related %}
+                                        <tr>
                                             {% for stu in course_day.studyrecord_set.select_related %}
-                                                {% if stu.student.qq == stu_obj.qq  %}
-                                                    <td>
-                                                        {{ stu.get_score_display}}
-                                                    </td>
+                                                {% if stu.student.qq == stu_obj.qq %}
+                                                    <td>{{ stu.score }}</td>
+                                                    <td>{{ course_day.day_num }}</td>
+                                                    <td class="stu_{{ stu.record }}">{{ stu.get_record_display }}</td>
+                                                    <td style="background-color: {{ stu|get_score_color }}" >{{ stu.get_score_display }}</td>
                                                 {% endif %}
                                             {% endfor %}
-                                        {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td ><b>总学分:{% get_single_stu_total_scores course  stu_obj %}</b></td>
                                     </tr>
 
                                 </tbody>
