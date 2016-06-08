@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^compliant/',views.compliant,name="compliant"),
     url(r'^stu_faq/',views.stu_faq,name="stu_faq"),
     url(r'^stu_lack_check_records/',views.stu_lack_check_records,name="stu_lack_check_records"),
+    url(r'^grade_chart/(\d+)/',views.get_grade_chart,name="get_grade_chart"),
 ]

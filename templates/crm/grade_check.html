@@ -1,5 +1,11 @@
 {% extends "base.html" %}
+
+{% block header-resource-files %}
+    <script src="/static/plugins/echart/echarts.common.min.js"></script>
+{% endblock %}
+
 {% load custom_tag %}
+
 
 {% block body-container %}
 
@@ -70,7 +76,8 @@
                                         <th>节次</th>
                                         <th>出勤情况</th>
                                         <th>成绩</th>
-                                        
+                                        <th>成绩批注</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -83,6 +90,7 @@
                                                     <td>{{ course_day.day_num }}</td>
                                                     <td class="stu_{{ stu.record }}">{{ stu.get_record_display }}</td>
                                                     <td style="background-color: {{ stu|get_score_color }}" >{{ stu.get_score_display }}</td>
+                                                    <td  >{{ stu.note }}</td>
                                                 {% endif %}
                                             {% endfor %}
                                         </tr>
@@ -93,7 +101,11 @@
 
                                 </tbody>
                             </table>
+                            <div id="grade-chart-{{ course.id }}" class="row" style="height:400px;"></div>
                             <hr/>
+
+
+
                         {% endfor %}
 
                     </div>
@@ -108,3 +120,91 @@
 
 
 {% endblock %}
+
+
+
+{% block bottom-js %}
+{% if stu_obj %}
+    <script>
+    $(document).ready(function(){
+
+        $.getJSON("{% url 'get_grade_chart'  stu_obj.id %}",function(callback){
+
+            console.log(callback);
+            //chart sample
+            $.each(callback,function(class_id,score_dic){
+                var student_name_list =[],
+                    student_score_list = [];
+                for (i in score_dic.record_count){
+                        student_name_list.push(score_dic.record_count[i][1]) ; //姓名
+                        student_score_list.push(score_dic.record_count[i][2]) ; //成绩
+                        //student_score_list.push(score_dic.record_count[i]) ; //成绩
+                        //student_score_list.push(score_dic.record_count[i]) ; //成绩
+                }
+                var myChart = echarts.init(document.getElementById('grade-chart-'+class_id));
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '班级整体成绩'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['成绩']
+                    },
+                    xAxis: {
+                        data: student_name_list,
+
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '总学分',
+                        type: 'bar',
+                        data: student_score_list,
+                        itemStyle:{
+                            normal:{
+                                color:function(value){
+                                    console.log(value);
+                                    if(value.name == "{{ stu_obj.name }}"){
+                                        return 'yellowgreen'
+                                    }else{
+                                        return 'red'
+                                    }
+                                }
+                            }
+                        }
+
+                    }],
+
+                };
+
+                myChart.setOption(option);
+
+                //end chart sample
+
+
+            });//end each
+
+
+        });//end getJSON
+
+
+
+
+
+
+
+
+
+
+    });//end doc ready
+
+
+
+
+
+
+    </script>
+{% endif %}
+
+{% endblock %}
+

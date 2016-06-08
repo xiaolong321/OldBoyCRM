@@ -7,6 +7,8 @@ import json
 import survery_handle
 import class_grade
 import forms
+from django.db.models import Sum,Count
+
 # Create your views here.
 
 
@@ -150,3 +152,30 @@ def compliant(request):
 def stu_faq(request):
 
     return render(request,"crm/stu_faq.html")
+
+
+@login_required
+def get_grade_chart(request,stu_id):
+    stu_obj = models.Customer.objects.get(id=stu_id)
+    #print('---stuid', stu_obj)
+    class_grade_dic = {}
+    for class_obj in stu_obj.class_list.select_related(): #loop all the courses this student enrolled in
+        class_grade_dic[class_obj.id] = {'record_count':[]}
+
+        for stu in class_obj.customer_set.select_related():
+            stu_scores = stu.studyrecord_set.select_related().values('course_record__course_id','student__name','student_id').annotate(score_count=Sum('score'))
+            for score_dic in stu_scores: #有可能有多个课程
+                if score_dic['course_record__course_id']  == class_obj.id:
+                    class_grade_dic[class_obj.id]['record_count'].append([
+                        score_dic['student_id'] ,
+                        score_dic['student__name'] ,
+                        score_dic['score_count'] ,
+                    ])
+                    '''class_grade_dic[class_obj.id]['record_count'].append({
+                        'value':score_dic['score_count'],
+                        'name':score_dic['student__name']
+                    })'''
+        #加上排名
+        class_grade_dic[class_obj.id]['record_count'] = sorted(class_grade_dic[class_obj.id]['record_count'],key=lambda x:x[2])
+    print(class_grade_dic)
+    return HttpResponse(json.dumps(class_grade_dic))
