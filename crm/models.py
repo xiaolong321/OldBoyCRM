@@ -146,6 +146,7 @@ class CourseRecord(models.Model):
     day_num = models.IntegerField(u"节次",help_text=u"此处填写第几节课或第几天课程...,必须为数字")
     date = models.DateField(auto_now_add=True,verbose_name=u"上课日期")
     teacher = models.ForeignKey(UserProfile,verbose_name=u"讲师")
+    has_homework = models.BooleanField(default=True,verbose_name=u"本节有作业")
     def __unicode__(self):
         return u"%s 第%s天" %(self.course,self.day_num)
     class Meta:

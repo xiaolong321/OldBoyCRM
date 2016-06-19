@@ -154,7 +154,7 @@ def stu_faq(request):
     return render(request,"crm/stu_faq.html")
 
 
-@login_required
+#@login_required
 def get_grade_chart(request,stu_id):
     stu_obj = models.Customer.objects.get(id=stu_id)
     #print('---stuid', stu_obj)
@@ -175,6 +175,14 @@ def get_grade_chart(request,stu_id):
                         'value':score_dic['score_count'],
                         'name':score_dic['student__name']
                     })'''
+        #添加及格线
+        class_course_records = class_obj.courserecord_set.select_related().filter(has_homework=True)
+        qualifiy_benchmark = (class_course_records.count() * 100) *0.7
+        class_grade_dic[class_obj.id]['record_count'].append([
+            -1,u'及格线',qualifiy_benchmark
+        ])
+        print("---qualify benchmark ", qualifiy_benchmark)
+
         #加上排名
         class_grade_dic[class_obj.id]['record_count'] = sorted(class_grade_dic[class_obj.id]['record_count'],key=lambda x:x[2])
     print(class_grade_dic)

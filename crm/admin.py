@@ -87,6 +87,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
                     "get_total_noshow_num",
                     "get_total_late_num",
                     "get_total_leave_early_num",
+                    'has_homework'
                     )
     list_filter = ('course','day_num','teacher')
 
