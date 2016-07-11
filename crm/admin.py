@@ -118,7 +118,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
 
 class StudyRecordAdmin(admin.ModelAdmin):
     list_display = ('course_record','get_stu_name','get_stu_id','record','colored_record','colored_score','score','date','note')
-    list_filter = ("course_record__course__course","course_record","score","record")
+    list_filter = ("course_record__course__course","score","record")
     search_fields = ('student__name','student__stu_id')
     list_editable = ("score","record","note")
     actions = ["set_to_late","set_to_noshow","set_to_leave_early","set_to_checked"]
@@ -188,8 +188,13 @@ class CompliantAdmin(admin.ModelAdmin):
 class StudentFAQAdmin(admin.ModelAdmin):
     list_display = ('title','author','date')
 
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('customer','course_grade','contract_agreed','contract_approved','enrolled_date','enrollment_link')
+    raw_id_fields = ('customer',)
+
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)
+admin.site.register(models.Enrollment,EnrollmentAdmin)
 admin.site.register(models.ConsultRecord,ConsultRecordAdmin)
 admin.site.register(models.PaymentRecord,PaymentRecordAdmin)
 admin.site.register(models.ClassList,ClassListAdmin)
@@ -200,3 +205,4 @@ admin.site.register(models.Survery,SurveryAdmin)
 admin.site.register(models.SurveryItem)
 admin.site.register(models.Compliant,CompliantAdmin)
 admin.site.register(models.StudentFAQ,StudentFAQAdmin)
+admin.site.register(models.ContractTemplate)

@@ -118,6 +118,7 @@ AUTH_USER_MODEL = 'crm.UserProfile'
 
 LOGIN_URL = '/admin/login/'
 
+ENROLL_DATA_DIR = "%s/enrolled_data"  % BASE_DIR
 
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作

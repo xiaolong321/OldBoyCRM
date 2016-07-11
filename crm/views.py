@@ -1,14 +1,15 @@
 #_*_coding:utf-8_*_
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
+from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 import models
-import json
+import json,os
 import survery_handle
 import class_grade
 import forms
 from django.db.models import Sum,Count
-
+from OldboyCRM import settings
 # Create your views here.
 
 
@@ -177,7 +178,7 @@ def get_grade_chart(request,stu_id):
                     })'''
         #添加及格线
         class_course_records = class_obj.courserecord_set.select_related().filter(has_homework=True)
-        qualifiy_benchmark = (class_course_records.count() * 100) *0.7
+        qualifiy_benchmark = (class_course_records.count() * 100) *0.65
         class_grade_dic[class_obj.id]['record_count'].append([
             -1,u'及格线',qualifiy_benchmark
         ])
@@ -187,3 +188,92 @@ def get_grade_chart(request,stu_id):
         class_grade_dic[class_obj.id]['record_count'] = sorted(class_grade_dic[class_obj.id]['record_count'],key=lambda x:x[2])
     print(class_grade_dic)
     return HttpResponse(json.dumps(class_grade_dic))
+
+
+def stu_enrollment(request):
+
+    qq = request.GET.get('stu_qq')
+    if request.method == "GET":
+        if qq:
+            try:
+                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
+                customer_form = forms.CustomerForm(instance=enroll_obj.customer)
+                enroll_form = forms.EnrollmentForm(instance=enroll_obj)
+                return render(request,'crm/enroll_page.html',{'enroll_form':enroll_form,'customer_form':customer_form})
+            except ObjectDoesNotExist as e:
+                try:
+                    enroll_obj = models.Enrollment.objects.get(customer__qq=qq)
+                    if enroll_obj.contract_approved:
+                        return HttpResponse("培训协议已生成,请到首页查询")
+                except ObjectDoesNotExist as e:
+                    return HttpResponse("报名表不存在")
+                return HttpResponse("报名表正在审核中")
+
+        else:
+            return HttpResponse("请求错误,qq号未提供")
+    else:
+        if qq:
+            enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
+            upload_path = '%s/%s'%(settings.ENROLL_DATA_DIR,enroll_obj.customer.id)
+
+            if request.FILES:
+                if not os.path.exists(upload_path):
+                    os.mkdir(upload_path)
+                abs_filepath = "%s/%s" %(upload_path,request.FILES['file'].name)
+
+                if len(os.listdir(upload_path)) < 4:
+                    if request.FILES['file'].size < 5*1024*1024: #5MB
+                        with open(abs_filepath,'wb') as f:
+                            for chunk in request.FILES['file'].chunks():
+                                f.write(chunk)
+                        return HttpResponse('upload success')
+
+                    else:
+                        return HttpResponseForbidden('文件大小不能超过5MB')
+                else:
+                    return HttpResponseForbidden('最多上传不超过4个文件')
+            else:
+                enroll_form = forms.EnrollmentForm(request.POST,instance=enroll_obj)
+                customer_form = forms.CustomerForm(request.POST,instance=enroll_obj.customer)
+                if enroll_form.is_valid() and customer_form.is_valid():
+
+                    #check whether file has uploaded or not
+                    file_sources_upload_path = "%s/%s" %(settings.ENROLL_DATA_DIR,enroll_obj.customer.id)
+                    file_uploaded = False
+                    try:
+                        if len(os.listdir(file_sources_upload_path)) >0:#has file in this dir
+                            enroll_form.save()
+                            customer_form.save()
+                            file_uploaded = True
+                    except OSError as e:
+                        file_uploaded = False
+                    if file_uploaded == False:
+                        return render(request,'crm/enroll_page.html',{'enroll_form':enroll_form,
+                                                                  'customer_form':customer_form,
+                                                                  'file_upload_err':u'证件资料未上传!'    })
+                    return HttpResponse('<h4>报名表已提交,待审批通过后可到<a href="http://crm.oldboyedu.com/crm/training_contract/">培训协议查询</a>查询生成的培训合同</h4>')
+                else:
+
+                    uploaded_files = []
+                    if  os.path.exists(upload_path):
+                        uploaded_files = os.listdir(upload_path)
+                    return render(request,'crm/enroll_page.html',{'enroll_form':enroll_form,
+                                                                  'customer_form':customer_form,
+                                                                  'uploaded_files':uploaded_files})
+
+
+def training_contract(request):
+    errors = ''
+    if request.method == "POST":
+        qq_num = request.POST.get('qq_num')
+        check_passwd = request.POST.get('check_passwd')
+        if not qq_num or not check_passwd:
+            errors = "不合法的qq号或查询密码!"
+        if not errors:
+            try:
+                enroll_obj = models.Enrollment.objects.get(customer__qq=qq_num,check_passwd=check_passwd)
+                return render(request,"crm/contract_check.html",{'enroll_obj':enroll_obj})
+
+            except ObjectDoesNotExist as e:
+                errors =  "不合法的qq号或查询密码!"
+    return render(request,"crm/contract_check.html",{'errors':errors})

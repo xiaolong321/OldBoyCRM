@@ -1,0 +1,264 @@
+{% extends 'crm/index.html' %}
+
+{% block header-resource-files %}
+
+    <link href="/static/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+    <script src="/static/plugins/dropzone/dropzone.min.js"></script>
+
+{% endblock %}
+{% block page-content-title %}报名及学习协议签署{% endblock %}
+
+
+{% block page-content %}
+
+    <h3>个人基本信息
+        {% if enroll_form.errors or customer_form.errors or file_upload_err %}
+        <span style="color: red">请更正以下红字标注的错误后再提交</span>
+        {% endif %}
+    </h3>
+
+
+    <form id="enrollment-form" class="form-horizontal" method="POST"  >{% csrf_token %}
+        <div class="panel-body">
+            <div class="row">
+            {%  for field in customer_form %}
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {% if field.field.required %}
+                                <label class="control-label"><b>*{{field.label  }}</b></label>
+                            {% else %}
+                                <label class="control-label">{{field.label  }}</label>
+                            {% endif %}
+                            {{ field.name }}
+                            {% if field.name == 'qq' %}
+                                <select class="form-control" id="id_qq" name="qq">
+                                    <option value="{{ field.value }}">{{ field.value }}</option>
+                                </select>
+                            {% elif field.name == 'consultant' %}
+                                <select class="form-control" id="id_consultant" name="consultant">
+                                    <option value="{{ field.value }}">{{ customer_form.instance.consultant.name }}</option>
+                                </select>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.errors %}
+                                <span style="color:red">{{ field.errors }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+            {% endfor %}
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {%  if enroll_form.why_us.required %}
+                            <label class="control-label"><b>*{{ enroll_form.why_us.label }}</b></label>
+                        {% else %}
+                            <label class="control-label">{{ enroll_form.why_us.label }}</label>
+                        {% endif %}
+                        {{ enroll_form.why_us }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {%  if enroll_form.your_expectation.required %}
+                            <label class="control-label"><b>*{{ enroll_form.your_expectation.label }}</b></label>
+                        {% else %}
+                            <label class="control-label">{{ enroll_form.your_expectation.label }}</label>
+                        {% endif %}
+                        {{ enroll_form.your_expectation }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row ">
+                 <div class="col-sm-6">
+                    <div class="form-group">
+                            <label class="control-label"><b>*{{ enroll_form.course_grade.label }}</b></label>
+
+                        <select class="form-control" id="id_course_grade" name="course_grade" placeholder="" >
+                            <option value="{{ enroll_form.instance.course_grade_id}}" selected="selected">{{ enroll_form.instance.course_grade}}</option>
+                        </select>
+                        <input name="test-file" value="test fff">
+                    </div>
+                </div>
+                 <div class="col-sm-6 ">
+                    <div class="form-group">
+                        <label class="control-label"><b>*课程费用</b></label>
+
+                        <input type="text" class="form-control" value="RMB{{ enroll_form.instance.course_grade.price }}" disabled>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row ">
+                 <div class="col-sm-12" style="height: 400px;overflow: auto" >
+
+                    <pre>{{ enroll_form.instance.course_grade.contract.content }}</pre>
+
+                </div>
+            </div>
+
+            <div class="row ">
+                 <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ enroll_form.contract_agreed }}
+                            <label class="control-label"><b>*{{ enroll_form.contract_agreed.label }}</b></label>
+                        {% if enroll_form.contract_agreed.errors %}
+                            <span style="color:red">必须勾选同意才能继续!</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-9 col-sm-offset-3">
+                    <button class="btn btn-danger  btn-rounded" type="submit">提交报名表</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title">证件信息上传 {% if file_upload_err %}<span style="color: red">{{ file_upload_err }}</span>{% endif %}</h3>
+        </div>
+        <div class="panel-body">
+             <div class="row">
+                {% if uploaded_files %}
+                <h5>已上传文件</h5>
+                    <ul>
+                     {% for file in uploaded_files %}
+                         <li>{{ file }}</li>
+                     {% endfor %}
+                    </ul>
+                {% endif %}
+             </div>
+            <!--Dropzonejs-->
+            <!--===================================================-->
+            <form id="demo-dropzone" action="#" class="dropzone dz-clickable">{% csrf_token %}
+                <div class="dz-default dz-message">
+                    <div class="dz-icon icon-wrap icon-circle icon-wrap-md">
+                        <i class="fa fa-cloud-upload fa-3x"></i>
+                    </div>
+                    <div>
+                        <p class="dz-text">将文件拖拽到此区域或点击上传按钮</p>
+                        <p class="text-muted">请将身份证正反面拍照并上传</p>
+                    </div>
+                </div>
+
+            </form>
+            <!--===================================================-->
+            <!-- End Dropzonejs -->
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block bottom-js %}
+<script src="/static/plugins/bootstrap-validator/bootstrapValidator.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+
+        var faIcon = {
+            valid: 'fa fa-check-circle fa-lg text-success',
+            invalid: 'fa fa-times-circle fa-lg',
+            validating: 'fa fa-refresh'
+        }
+
+
+
+        $('#compliant-form').bootstrapValidator({
+            excluded: [':disabled'],
+            feedbackIcons: faIcon,
+            fields: {
+            title: {
+                validators: {
+                    notEmpty: {
+                        message: 'The title is required'
+                    },
+				stringLength: {
+					min: 4,
+					max: 128,
+					message: 'The title must be more than 4 and less than 128 characters long'
+				},
+
+                }
+            },
+            content: {
+                validators: {
+                    notEmpty: {
+                        message: 'The content is required'
+                    },
+				stringLength: {
+					min: 15,
+					max: 1024,
+					message: 'The content must be more than 15 and less than 1024 characters long'
+				},
+                }
+            },
+            memberType: {
+                validators: {
+                    notEmpty: {
+                        message: 'Please choose the membership type that best meets your needs'
+                    }
+                }
+            },
+            address: {
+                validators: {
+                    notEmpty: {
+                        message: 'The address is required'
+                    }
+                }
+            },
+            city: {
+                validators: {
+                    notEmpty: {
+                        message: 'The city is required'
+                    }
+                }
+            },
+            country: {
+                validators: {
+                    notEmpty: {
+                        message: 'The city is required'
+                    }
+                }
+            }
+            }
+        }).on('status.field.bv', function(e, data) {
+            var $form     = $(e.target),
+            validator = data.bv,
+            $tabPane  = data.element.parents('.tab-pane'),
+            tabId     = $tabPane.attr('id');
+
+            if (tabId) {
+            var $icon = $('a[href="#' + tabId + '"][data-toggle="tab"]').parent().find('i');
+
+            // Add custom class to tab containing the field
+            if (data.status == validator.STATUS_INVALID) {
+                $icon.removeClass(faIcon.valid).addClass(faIcon.invalid);
+            } else if (data.status == validator.STATUS_VALID) {
+                var isValidTab = validator.isValidContainer($tabPane);
+                $icon.removeClass(faIcon.valid).addClass(isValidTab ? faIcon.valid : faIcon.invalid);
+            }
+            }
+        });
+
+    });//end document ready
+
+</script>
+
+{% endblock %}

@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^stu_faq/',views.stu_faq,name="stu_faq"),
     url(r'^stu_lack_check_records/',views.stu_lack_check_records,name="stu_lack_check_records"),
     url(r'^grade_chart/(\d+)/',views.get_grade_chart,name="get_grade_chart"),
+    url(r'^enrollment/',views.stu_enrollment,name="stu_enrollment"),
+    url(r'^training_contract/',views.training_contract,name="training_contract"),
 ]

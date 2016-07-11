@@ -30,11 +30,21 @@ class_type_choices= (('online',u'网络班'),
 class Customer(models.Model):
     qq = models.CharField(max_length=64,unique=True,help_text=u'QQ号必须唯一')
     qq_name = models.CharField(u'QQ名称',max_length=64,blank=True,null=True)
-    name = models.CharField(u'姓名',max_length=32,blank=True,null=True)
+    name = models.CharField(u'姓名',max_length=32,default=None)
+    sex_type = (('male',u'男'),('female',u'女'))
+    sex = models.CharField(u"性别",choices=sex_type,default='male',max_length=32)
+    birthday = models.DateField(u'出生日期',max_length=64,default=None,help_text="格式yyyy-mm-dd")
     phone = models.BigIntegerField(u'手机号',blank=True,null=True)
+    email = models.EmailField(u'常用邮箱',default='youremail@some_web.com')
+    id_num = models.CharField(u'身份证号',max_length=64,default=0)
+
     stu_id = models.CharField(u"学号",blank=True,null=True,max_length=64)
     source_type = (('qq',u"qq群"),
                    ('referral',u"内部转介绍"),
+                   ('website',u"官方网站"),
+                   ('baidu_ads',u"百度广告"),
+                   ('qq_class',u"腾讯课堂"),
+                   ('school_propaganda',u"高校宣讲"),
                    ('51cto',u"51cto"),
                    ('others',u"其它"),
                    )
@@ -45,8 +55,10 @@ class Customer(models.Model):
     class_type = models.CharField(u"班级类型",max_length=64,choices=class_type_choices)
 
     customer_note = models.TextField(u"客户咨询内容详情",help_text=u"客户咨询的大概情况,客户个人信息备注等...")
-    #id_num = models.CharField(u'身份证号',max_length=64,blank=True,null=True)
-
+    work_status_choices = (('employed','在职'),('unemployed','无业'))
+    work_status = models.CharField(u"职业状态",choices=work_status_choices,max_length=32,default='employed')
+    company = models.CharField(u"目前就职公司",max_length=64,blank=True,null=True)
+    salary = models.CharField(u"当前薪资",max_length=64,blank=True,null=True)
     status_choices = (('signed',u"已报名"),
                       ('unregistered',u"未报名"),
                       ('paid_in_full',u"学费已交齐"))
@@ -54,7 +66,6 @@ class Customer(models.Model):
     status = models.CharField(u"状态",choices=status_choices,max_length=64,default=u"unregistered",help_text=u"选择客户此时的状态")
     consultant = models.ForeignKey(UserProfile,verbose_name=u"课程顾问")
     date = models.DateField(u"咨询日期",auto_now_add=True)
-
     class_list = models.ManyToManyField('ClassList',verbose_name=u"已报班级",blank=True)
 
     def colored_status(self):
@@ -78,6 +89,35 @@ class Customer(models.Model):
         verbose_name = u'客户信息表'
         verbose_name_plural = u"客户信息表"
 
+class Enrollment(models.Model):
+    '''
+    store all the enrolled student info
+    '''
+    customer = models.ForeignKey(Customer)
+    course_grade =  models.ForeignKey("ClassList",verbose_name=u"所报班级")
+    why_us = models.TextField(u"为什么报名老男孩",max_length=1024,default=None)
+    your_expectation = models.TextField(u"学完想达到的具体期望",max_length=1024)
+    contract_agreed = models.BooleanField(u"我已认真阅读完培训协议并同意全部协议内容")
+    contract_approved = models.BooleanField(u"审批通过",help_text=u"在审阅完学员的资料无误后勾选此项,合同即生效")
+    check_passwd = models.CharField(u"合同查询密码",max_length=64,blank=True,null=True,help_text=u"学员用这个密码来查询自己的合同信息,密码会自动生成,勿动")
+    enrolled_date = models.DateTimeField(auto_now_add=True,auto_created=True,verbose_name="报名日期")
+    memo = models.TextField(u'备注',blank=True,null=True)
+    def __unicode__(self):
+        return self.customer.qq
+    class Meta:
+        verbose_name = u'学员报名表'
+        verbose_name_plural = u"学员报名表"
+
+
+    def enrollment_link(self):
+        if self.contract_approved:
+            html = u"报名协议已签"
+        else:
+            html = u"<a href='/crm/enrollment/?stu_qq=%s'>在线报名地址</a>" % self.customer.qq
+        return html
+    enrollment_link.allow_tags = True
+
+    enrollment_link.short_description = u'报名地址'
 class ConsultRecord(models.Model):
     customer = models.ForeignKey(Customer,verbose_name=u"所咨询客户")
     note = models.TextField(u"跟进内容...")
@@ -126,8 +166,10 @@ class PaymentRecord(models.Model):
 class ClassList(models.Model):
     course = models.CharField(u"课程名称",max_length=64,choices=course_choices)
     semester = models.IntegerField(u"学期")
+    price = models.IntegerField(u"学费",default=10000)
     start_date = models.DateField(u"开班日期")
     graduate_date = models.DateField(u"结业日期",blank=True,null=True)
+    contract = models.ForeignKey('ContractTemplate',verbose_name=u"选择合同模版",blank=True,null=True)
     teachers = models.ManyToManyField(UserProfile,verbose_name=u"讲师")
 
 
@@ -334,3 +376,14 @@ class StudentFAQ(models.Model):
     class Meta:
         verbose_name = u"学员常见问题汇总"
         verbose_name_plural = u"学员常见问题汇总"
+
+
+class ContractTemplate(models.Model):
+    name = models.CharField(u"合同名称",max_length=128,unique=True)
+    content = models.TextField(u"合同内容")
+    date = models.DateField(auto_now_add=True)
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        verbose_name = u"合同模版"
+        verbose_name_plural = u"合同模版"

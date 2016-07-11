@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block header-resource-files %}
+{% endblock %}
+
+{% load custom_tag %}
+
+
+{% block body-container %}
+
+ 	<div id="container" class="cls-container">
+
+		<!-- HEADER -->
+		<!--===================================================-->
+		<div class="cls-header">
+			<div class="cls-brand">
+				<a class="box-inline" href="index.html">
+					<span class="brand-title">老男孩IT教育 <span class="text-thin">| 只培养技术精英</span></span>
+				</a>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<!--===================================================-->
+		<div class="cls-content">
+			<h3 class="text-danger">培训协议查询</h3>
+            {% if errors %}
+                <p class="h4 text-thin pad-btm mar-btm">
+                    <i class="fa fa-cog fa-fw"></i>
+                      {{ errors }}
+                </p>
+            {% endif %}
+
+
+			<div class="row mar-btm">
+				<form class="col-xs-12 col-sm-10 col-sm-offset-1" method="post" >{% csrf_token %}
+					<input name="qq_num" type="text" placeholder="输入学员QQ号" class="form-control input-lg error-search">
+					<input name="check_passwd" type="text" placeholder="输入查询密码" class="form-control input-lg error-search">
+                    <br>
+                    <button class="btn btn-info " type="submit">查询合同状态</button>
+
+				</form>
+
+
+
+			</div>
+
+			<br>
+			<div class="pad-top"><a class="btn-link" href="/">Back to Homepage</a></div>
+
+		</div>
+
+
+        {% if enroll_obj %}
+        <div class="row">
+            <div style="margin-left: 5%;margin-right: 5%;width: 90%" class=" align-center">
+                <div class="panel" style="color: gray">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">查询结果</h3>
+                    </div>
+                    <div class="panel-body text-left">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><b>学号: </b>{{ enroll_obj.customer.stu_id }}</p>
+                                <p><b>姓名: </b>{{  enroll_obj.customer.name }}</p>
+                                <p><b>QQ: </b>{{  enroll_obj.customer.qq }}</p>
+                                <p><b>所报课程: </b>{{  enroll_obj.course_grade.get_course_display }}</p>
+
+                                <p><b>合同状态:</b>
+                                    {% if enroll_obj.contract_approved %}
+                                        已签订
+                                    {% else %}
+                                        审批中
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><b>性别: </b>{{ enroll_obj.customer.sex }}</p>
+                                <p><b>生日: </b>{{  enroll_obj.customer.birthday }}</p>
+                                <p><b>邮箱: </b>{{  enroll_obj.customer.email }}</p>
+                                <p><b>所报学期: </b>第{{  enroll_obj.course_grade.semester }}期</p>
+                            </div>
+                        </div>
+
+                    <div class="row">
+
+                        {% if enroll_obj.contract_approved  %}
+                            <hr/>
+
+                            <h4>{{ enroll_obj.course_grade.contract.name }}</h4>
+                            <p>合同正文:</p>
+
+                            <pre>
+                            {{ enroll_obj.course_grade.contract.content }}
+                            </pre>
+
+                        {% endif %}
+                    </div>
+
+
+
+                    </div>
+                </div>
+            </div> <!--end col-lg-9-->
+        {% endif %}
+
+        </div>
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+
+
+{% endblock %}
+
+
+
+{% block bottom-js %}
+{% if stu_obj %}
+    <script>
+    $(document).ready(function(){
+
+
+
+    });//end doc ready
+
+
+
+
+
+
+    </script>
+{% endif %}
+
+{% endblock %}
+
