@@ -191,6 +191,21 @@ class StudentFAQAdmin(admin.ModelAdmin):
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ('customer','course_grade','contract_agreed','contract_approved','enrolled_date','enrollment_link')
     raw_id_fields = ('customer',)
+    
+    def get_actions(self, request):
+        actions = super(EnrollmentAdmin, self).get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+class ContractTemplateAdmin(admin.ModelAdmin):
+
+    def get_actions(self, request):
+        actions = super(ContractTemplateAdmin, self).get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)
@@ -205,4 +220,4 @@ admin.site.register(models.Survery,SurveryAdmin)
 admin.site.register(models.SurveryItem)
 admin.site.register(models.Compliant,CompliantAdmin)
 admin.site.register(models.StudentFAQ,StudentFAQAdmin)
-admin.site.register(models.ContractTemplate)
+admin.site.register(models.ContractTemplate,ContractTemplateAdmin)
