@@ -10,6 +10,10 @@ import class_grade
 import forms
 from django.db.models import Sum,Count
 from OldboyCRM import settings
+from django.http import FileResponse
+from django.utils.encoding import smart_str
+import zipfile
+
 # Create your views here.
 
 
@@ -277,3 +281,32 @@ def training_contract(request):
             except ObjectDoesNotExist as e:
                 errors =  "不合法的qq号或查询密码!"
     return render(request,"crm/contract_check.html",{'errors':errors})
+
+
+@login_required
+def file_download(request):
+
+    customer_file_path = request.GET.get('file_path')
+    if customer_file_path:
+
+        filename = '%s.zip'  %customer_file_path.split('/')[-1] #compress filename
+
+        file_list = os.listdir(customer_file_path)
+        print('filelist',file_list)
+        zipfile_obj = zipfile.ZipFile("%s/%s" %(settings.ENROLL_DATA_DIR,filename) ,'w',zipfile.ZIP_DEFLATED)
+        for f_name in file_list:
+            zipfile_obj.write("%s/%s" % (customer_file_path,f_name),f_name)
+        zipfile_obj.close()
+
+        response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
+        #response = HttpResponse(content_type='application/force-download') # mimetype is replaced by content_type for django 1.7
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        response['X-Sendfile'] = smart_str(customer_file_path)
+        #response['Content-Length'] = os.stat(file_path).st_size
+        # It's usually a good idea to set the 'Content-Length' header too.
+        # You can also set any other required headers: Cache-Control, etc.
+
+        return response
+
+    else:
+        raise  KeyError

@@ -4,7 +4,8 @@ from django.db import models
 
 # Create your models here.
 from django.utils.html import format_html
-
+from OldboyCRM import settings
+import os
 from myauth import UserProfile
 
 
@@ -108,6 +109,18 @@ class Enrollment(models.Model):
         verbose_name = u'学员报名表'
         verbose_name_plural = u"学员报名表"
 
+    def customer_info_download(self):
+        customer_info_dir = "%s/%s" %(settings.ENROLL_DATA_DIR,self.customer.id)
+        if os.path.exists(customer_info_dir):
+            if len(os.listdir(customer_info_dir)) > 0:
+                html = u"<a href='/crm/file_download/?file_path=%s'>学员证件信息下载</a>" %(customer_info_dir)
+            else:
+                html = u"学员未上传任何资料"
+        else:
+            html = u"学员未上传任何资料"
+        return html
+    customer_info_download.allow_tags = True
+    customer_info_download.short_description = u"学员信息下载"
 
     def enrollment_link(self):
         if self.contract_approved:
@@ -116,8 +129,10 @@ class Enrollment(models.Model):
             html = u"<a href='/crm/enrollment/?stu_qq=%s'>在线报名地址</a>" % self.customer.qq
         return html
     enrollment_link.allow_tags = True
-
     enrollment_link.short_description = u'报名地址'
+
+
+
 class ConsultRecord(models.Model):
     customer = models.ForeignKey(Customer,verbose_name=u"所咨询客户")
     note = models.TextField(u"跟进内容...")

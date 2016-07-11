@@ -189,9 +189,9 @@ class StudentFAQAdmin(admin.ModelAdmin):
     list_display = ('title','author','date')
 
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('customer','course_grade','contract_agreed','contract_approved','enrolled_date','enrollment_link')
+    list_display = ('customer','course_grade','contract_agreed','contract_approved','enrolled_date','enrollment_link','customer_info_download')
     raw_id_fields = ('customer',)
-    
+
     def get_actions(self, request):
         actions = super(EnrollmentAdmin, self).get_actions(request)
 

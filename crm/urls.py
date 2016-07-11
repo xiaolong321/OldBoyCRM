@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^grade_chart/(\d+)/',views.get_grade_chart,name="get_grade_chart"),
     url(r'^enrollment/',views.stu_enrollment,name="stu_enrollment"),
     url(r'^training_contract/',views.training_contract,name="training_contract"),
+    url(r'^file_download/',views.file_download,name="file_download"),
 ]
