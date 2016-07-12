@@ -118,8 +118,8 @@ class UserProfile(AbstractBaseUser,PermissionsMixin):
     '''
 
     class Meta:
-        verbose_name = u'用户信息'
-        verbose_name_plural = u"用户信息"
+        verbose_name = u'账户信息'
+        verbose_name_plural = u"账户信息"
     def __unicode__(self):
         return self.name
 

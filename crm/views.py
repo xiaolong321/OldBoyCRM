@@ -12,7 +12,7 @@ from django.db.models import Sum,Count
 from OldboyCRM import settings
 from django.http import FileResponse
 from django.utils.encoding import smart_str
-import zipfile
+import zipfile,random
 
 # Create your views here.
 
@@ -195,7 +195,6 @@ def get_grade_chart(request,stu_id):
 
 
 def stu_enrollment(request):
-
     qq = request.GET.get('stu_qq')
     if request.method == "GET":
         if qq:
@@ -217,9 +216,11 @@ def stu_enrollment(request):
             return HttpResponse("请求错误,qq号未提供")
     else:
         if qq:
-            enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
-            upload_path = '%s/%s'%(settings.ENROLL_DATA_DIR,enroll_obj.customer.id)
-
+            try:
+                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
+                upload_path = '%s/%s'%(settings.ENROLL_DATA_DIR,enroll_obj.customer.id)
+            except ObjectDoesNotExist as e:
+                return HttpResponse(u"未查到相应的报名表,也有可能是报名表正在审批中,请到首页查询")
             if request.FILES:
                 if not os.path.exists(upload_path):
                     os.mkdir(upload_path)
@@ -246,8 +247,11 @@ def stu_enrollment(request):
                     file_uploaded = False
                     try:
                         if len(os.listdir(file_sources_upload_path)) >0:#has file in this dir
+                            new_check_password = ''.join(random.sample('zyxwvutsrqponmlkjihgfedcba1234567890~!@#$%^&*',8))
                             enroll_form.save()
                             customer_form.save()
+                            enroll_obj.check_passwd = new_check_password
+                            enroll_obj.save()
                             file_uploaded = True
                     except OSError as e:
                         file_uploaded = False
@@ -255,7 +259,8 @@ def stu_enrollment(request):
                         return render(request,'crm/enroll_page.html',{'enroll_form':enroll_form,
                                                                   'customer_form':customer_form,
                                                                   'file_upload_err':u'证件资料未上传!'    })
-                    return HttpResponse('<h4>报名表已提交,待审批通过后可到<a href="http://crm.oldboyedu.com/crm/training_contract/">培训协议查询</a>查询生成的培训合同</h4>')
+                    return HttpResponse('''<h4>报名表已提交,待审批通过后可到<a href="http://crm.oldboyedu.com/crm/training_contract/">培训协议查询</a>
+                                                查询生成的培训合同,查询密码为 <span style='color:red'>%s</span> </h4>''' %new_check_password)
                 else:
 
                     uploaded_files = []
