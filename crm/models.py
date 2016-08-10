@@ -402,3 +402,49 @@ class ContractTemplate(models.Model):
     class Meta:
         verbose_name = u"合同模版"
         verbose_name_plural = u"合同模版"
+
+
+class Assistant(models.Model):
+    name = models.CharField(u"姓名",max_length=64,unique=True)
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        verbose_name = u"助教"
+        verbose_name_plural = u"助教"
+
+    def get_ungraduated_stu_counts(self):
+        total_shows = self.onlinesturecords_set.select_related().filter(graduated=False).count()
+        return "<a href='../onlinesturecords/?assistant__id__exact=%s&graduated__exact=0' >%s</a>" % (self.id,total_shows)
+
+    def get_graduated_stu_counts(self):
+        total_shows = self.onlinesturecords_set.select_related().filter(graduated=True).count()
+        return "<a href='../onlinesturecords/?assistant__id__exact=%s&graduated__exact=1' >%s</a>" % (self.id,total_shows)
+    #admin/crm/onlinesturecords/?graduated__exact=1
+    get_ungraduated_stu_counts.allow_tags = True
+    get_graduated_stu_counts.allow_tags = True
+
+    get_ungraduated_stu_counts.short_description = u"未毕业学员数量"
+    get_graduated_stu_counts.short_description = u"已毕业学员数量"
+
+
+class OnlineStuRecords(models.Model):
+    name = models.CharField(u"姓名",max_length=64)
+    qq = models.CharField(u"qq",max_length=64,unique=True)
+    stu_type_choices = (
+        ('py_fullstack',"PY全栈"),
+        ('py_devops',"PY自动化51"),
+        ('py_devops_internal',"PY自动化(内部)"),
+    )
+    stu_type = models.CharField(u"学员类型",choices=stu_type_choices,max_length=64)
+    enroll_date = models.DateField(u"报名日期")
+    assistant = models.ForeignKey(Assistant,verbose_name=u"助教")
+    account_51 = models.CharField(u"51账号",max_length=128,blank=True,null=True)
+    stu_id_51 = models.IntegerField(u"51学号",blank=True,null=True)
+    graduated = models.BooleanField(u"已毕业",default=False)
+    note = models.TextField(u"备注",blank=True,null=True)
+
+    class Meta:
+        verbose_name = u"随到随学学员助教分配记录"
+        verbose_name_plural = u"随到随学学员助教分配记录"
+
+

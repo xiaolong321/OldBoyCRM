@@ -198,11 +198,30 @@ class EnrollmentAdmin(admin.ModelAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
-class ContractTemplateAdmin(admin.ModelAdmin):
 
+class ContractTemplateAdmin(admin.ModelAdmin):
     def get_actions(self, request):
         actions = super(ContractTemplateAdmin, self).get_actions(request)
 
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+
+class AssistantAdmin(admin.ModelAdmin):
+    list_display = ('name','get_ungraduated_stu_counts','get_graduated_stu_counts')
+    def get_actions(self, request):
+        actions = super(AssistantAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+
+class OnlineStuRecordsAdmin(admin.ModelAdmin):
+    list_display = ('id','name','qq','stu_type','assistant','enroll_date','stu_id_51','graduated')
+    list_filter = ('assistant','enroll_date','stu_type','graduated')
+    def get_actions(self, request):
+        actions = super(OnlineStuRecordsAdmin, self).get_actions(request)
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
@@ -221,3 +240,5 @@ admin.site.register(models.SurveryItem)
 admin.site.register(models.Compliant,CompliantAdmin)
 admin.site.register(models.StudentFAQ,StudentFAQAdmin)
 admin.site.register(models.ContractTemplate,ContractTemplateAdmin)
+admin.site.register(models.Assistant,AssistantAdmin)
+admin.site.register(models.OnlineStuRecords,OnlineStuRecordsAdmin)
