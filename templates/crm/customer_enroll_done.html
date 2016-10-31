@@ -1,0 +1,145 @@
+{% extends 'crm/dashboard.html'%}
+
+
+
+{% block dash-content%}
+
+<div id="page-title">
+					<h1 class="page-header text-overflow"></h1>
+
+					<!--Searchbox-->
+					<div class="searchbox">
+						<div class="input-group custom-search-form">
+							<!--<input type="text" class="form-control" placeholder="Search..">-->
+							<span class="input-group-btn">
+								<!--<button class="text-muted" type="button"><i class="fa fa-search"></i></button>-->
+			</span>
+		</div>
+	</div>
+</div>
+
+<div id="page-content" >
+<div class="row" >
+	<div class="col-lg-6">
+        <div class="panel">
+            <!--Panel heading-->
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#demo-tabs-box-1" data-toggle="tab">在线报名地址</a></li>
+
+                    </ul>
+                </div>
+                <h3 class="panel-title">客户报名相关信息</h3>
+            </div>
+
+            <!--Panel body-->
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="demo-tabs-box-1">
+                        <div class="table-responsive">
+
+                               <!--首次咨询-->
+                             <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">请将如下网址发给客户，以供其网上报名</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>http://localhost:8000/crm/enrollment/?stu_qq={{customer.qq}} </p>
+                            </div>
+                        </div>
+                            <h4 style="color: purple">缴费记录</h4>
+                            {%if payment_records%}
+                            {%for item in payment_records %}
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <div class="panel-control"style="text-align: center">
+                                        <span> <i class="fa fa-jpy" aria-hidden="true"></i>&ensp;{{item.paid_fee}}</span>
+                                         <span>课程顾问：{{item.consultant.name}}</span>
+                                        &emsp13;
+                                        <em class="text-muted"><small>{{item.date}}</small></em>
+                                    </div>
+                                    <h3 class="panel-title">{{item.get_pay_type_display}}：</h3>
+
+                                </div>
+                                <div class="panel-body">
+                                <p>{{item.note}}</p>
+                            </div>
+                            </div>
+                            {%endfor%}
+                            {%else%}
+                            <h5 class="panel-title">&ensp;暂无缴费记录</h5>
+                            {%endif%}
+						</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+	</div>
+     <div class="col-sm-6 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">请填写如下表格</h3>
+            </div>
+            {%if error %}
+            <h1>{{error}}</h1>
+            {%endif%}
+            <!--Horizontal Form-->
+            <!--===================================================-->
+            <form class="form-horizontal" action=" " method="POST">
+            {% csrf_token %}
+                <div class="panel-body ">
+                    {%for field in form%}
+                    <div class="form-group text-left">
+                        {%if field.field.required %}
+                        <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                        {%else%}
+                        <label class="col-lg-3 control-label">{{field.label}}</label>
+                        {%endif%}
+
+                        <div class="col-sm-6 ">
+                            {%if field.name == 'customer'%}
+                            <select class="form-control" id="id_customer" name="customer">
+                                <option value="{{form.instance.id}}" selected="selected">{{form.instance.name}}</option>
+                            </select>
+
+                            {%elif field.name == 'consultant'%}
+                              <select class="form-control form-icon" id="id_consultant" name="consultant">
+                                <option value="{{form.instance.consultant.id}}" selected="selected">{{form.instance.consultant.name}}</option>
+                            </select>
+
+                            {%else%}
+                            {{field}}
+                            {%endif%}
+                        </div>
+                        <div class="col-sm-3">
+                            {{field.errors}}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="提交" >
+                </div>
+            </form>
+            <!--===================================================-->
+            <!--End Horizontal Form-->
+
+        </div>
+</div>
+</div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{%block dash-footer-js%}
+
+
+
+{%endblock%}

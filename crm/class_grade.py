@@ -2,7 +2,7 @@
 __author__ = 'Alex Li'
 
 
-import models
+from crm import models
 from django.core.exceptions import ObjectDoesNotExist
 
 

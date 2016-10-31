@@ -1,6 +1,6 @@
 
 from django.conf.urls import include, url
-import views
+from crm import views
 
 
 urlpatterns = [
@@ -17,4 +17,23 @@ urlpatterns = [
     url(r'^enrollment/',views.stu_enrollment,name="stu_enrollment"),
     url(r'^training_contract/',views.training_contract,name="training_contract"),
     url(r'^file_download/',views.file_download,name="file_download"),
+        url(r'^dashboard/$',views.dashboard,name='dashboard'),#销售基页
+
+    url(r'^tracking-(?P<source>\S+)-(?P<course>\S+)-(?P<class_type>\S+)-(?P<status>\S+)-(?P<filter_date>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.tracking, name='tracking'),  # 跟踪用户
+    url(r'^signed-(?P<source>\S+)-(?P<course>\S+)-(?P<class_type>\S+)-(?P<status>\S+)-(?P<filter_date>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.signed, name='signed'),  # 已签约客户
+
+
+    url(r'^customers_library-(?P<source>\S+)-(?P<course>\S+)-(?P<class_type>\S+)-(?P<status>\S+)-(?P<filter_date>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.customers_library,name='customers_library'),#客户库
+    url(r'^sale_table/$',views.sale_table,name='sale_table'),# dashboard表销售直方图
+    url(r'^addcustomer/$',views.addcustomer,name='addcustomer'),
+    url(r'^cus_enroll/(?P<id>\d+)/$',views.cus_enroll,name='cus_enroll'),
+    url(r'^enroll_done/(?P<qq>\d+)/$',views.enroll_done,name='enroll_done'),
+    url(r'^consult_record/(?P<id>\d+)/$',views.consult_record,name='consult_record'),
+    url(r'^login/$',views.my_login,name='my_login'),
+    url(r'^logout/$',views.my_logout,name='my_logout'),
+    url(r'^error/$',views.error,name='error'),
+    url(r'^customer_detail/(?P<id>\d+)/$',views.customer_detail,name='customer_detail'),
+    url(r'^class_list/$',views.class_list,name='class_list'),
+    url(r'^class_detail-(?P<id>\d+)-(?P<status>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.class_detail,name='class_detail')
+
 ]

@@ -1,0 +1,159 @@
+{% extends 'crm/dashboard.html'%}
+
+
+
+{% block dash-content%}
+
+<div id="page-title">
+					<h1 class="page-header text-overflow"></h1>
+
+					<!--Searchbox-->
+					<div class="searchbox">
+						<div class="input-group custom-search-form">
+							<!--<input type="text" class="form-control" placeholder="Search..">-->
+							<span class="input-group-btn">
+								<!--<button class="text-muted" type="button"><i class="fa fa-search"></i></button>-->
+			</span>
+		</div>
+	</div>
+</div>
+
+<div id="page-content">
+<div class="row" >
+	<div class="col-lg-6">
+        <div class="panel">
+            <!--Panel heading-->
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#demo-tabs-box-1" data-toggle="tab">客户信息</a></li>
+                        <li><a href="#demo-tabs-box-2" data-toggle="tab">跟进记录</a></li>
+                    </ul>
+                </div>
+                <h3 class="panel-title">客户信息及跟进记录</h3>
+            </div>
+
+            <!--Panel body-->
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="demo-tabs-box-1">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>QQ</th>
+                                        <th>姓名</th>
+                                        <th>咨询课程</th>
+                                        <th>班级类型</th>
+                                        <th>联系方式</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{customer.qq}}</td>
+                                        <td>{{customer.name}}</td>
+                                        <td>{{customer.get_course_display}}</td>
+                                        <td>{{customer.get_class_type_display}}</td>
+                                        {%if customer.phone%}
+                                        <td>{{customer.phone}}</td>
+                                        {%else%}
+                                        <td>{{customer.email}}</td>
+                                        {%endif%}
+                                    </tr>
+                                </tbody>
+                            </table>
+                               <!--首次咨询-->
+                             <div class="panel  panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">客户首次咨询问题</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>{{customer.customer_note}} </p>
+                            </div>
+                        </div>
+						</div>
+                    </div>
+                    <div class="tab-pane fade" id="demo-tabs-box-2">
+                        <!--跟进记录-->
+                        {%for item in customer_record %}
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <div class="panel-control">
+                                    <span>跟进人：{{username}}</span>
+                                    &emsp;&emsp;&emsp;
+                                    <em class="text-muted"><small>{{item.date}}</small></em>
+
+
+                                </div>
+
+                                <h3 class="panel-title">{{item.get_status_display}}</h3>
+
+                            </div>
+                            <div class="panel-body">
+                            <p>{{item.note}}</p>
+                        </div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+    <div class="col-sm-6 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">请填写如下表格</h3>
+            </div>
+
+            <!--Horizontal Form-->
+            <!--===================================================-->
+            <form class="form-horizontal" action=" " method="POST">
+            {% csrf_token %}
+                <div class="panel-body ">
+                    {%for field in form%}
+                    <div class="form-group text-left">
+                        {%if field.field.required %}
+                        <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                        {%else%}
+                        <label class="col-lg-3 control-label">{{field.label}}</label>
+                        {%endif%}
+
+                        <div class="col-sm-6 ">
+                            {%if field.name == 'customer'%}
+                            <select class="form-control" id="id_customer" name="customer">
+                                <option value="{{form.instance.id}}" selected="selected">{{form.instance.name}}</option>
+                            </select>
+                            {%else%}
+                            {{field}}
+                            {%endif%}
+                        </div>
+                        <div class="col-sm-3">
+                            {{field.errors}}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                <input class="btn btn-info" type="submit" value="提交">
+                </div>
+            </form>
+            <!--===================================================-->
+            <!--End Horizontal Form-->
+
+        </div>
+</div>
+</div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{%block dash-footer-js%}
+
+
+
+{%endblock%}

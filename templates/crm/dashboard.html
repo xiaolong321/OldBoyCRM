@@ -1,0 +1,686 @@
+{% extends 'base.html'%}
+{%load humanize %}
+{%load static %}
+{%load custom_tag %}
+	{% block header-resource-files %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>old boy</title>
+
+
+    <!--STYLESHEET-->
+    <!--=================================================-->
+
+    <!--Open Sans Font [ OPTIONAL ]-->
+     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">
+
+
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <!--<link href="/static/css/bootstrap.min.css" rel="stylesheet">-->
+
+
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <!--<link href="/static/css/nifty.min.css" rel="stylesheet">-->
+
+
+    <!--Font Awesome [ OPTIONAL ]-->
+    <!--<link href="/static/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">-->
+
+
+    <!--Switchery [ OPTIONAL ]-->
+    <link href="{% get_static_prefix %}plugins/switchery/switchery.min.css" rel="stylesheet">
+
+
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="/static/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
+
+	<!--dashboard css-->
+	<link href="/static/css/dash_customer.css" rel="stylesheet">
+
+    <!--Page Load Progress Bar [ OPTIONAL ]-->
+    <link href="/static/plugins/pace/pace.min.css" rel="stylesheet">
+    <script src="/static/plugins/pace/pace.min.js"></script>
+
+
+	<!--dashboard子模版继承填充头部样式-->
+	{%block dash-header%}
+
+	{%endblock%}
+
+{%endblock%}
+
+<!--</head>-->
+
+<!--TIPS-->
+<!--You may remove all ID or Class names which contain "demo-", they are only used for demonstration. -->
+
+<!--<body>-->
+{% block body-container %}
+	<div id="container" class="effect mainnav-lg mainnav-fixed">
+		<!--aside-in aside-bright-->
+		<!--NAVBAR-->
+		<!--===================================================-->
+		<header id="navbar">
+			<div id="navbar-container" class="boxed">
+				<div class="navbar-header">
+					<a href="{% url 'dashboard'%}" class="navbar-brand" title="返回销售主页">
+						<img src="/static/img/old-boy.png" alt="Old Boy Logo" class="brand-icon" style="width: 218px;height: 50px">
+
+					</a>
+				</div>
+				<div class="navbar-content clearfix">
+					<ul class="nav navbar-top-links pull-left">
+						<li class="tgl-menu-btn">
+							<a class="mainnav-toggle" href="#">
+								<i class="fa fa-navicon fa-lg"></i>
+							</a>
+						</li>
+						<li class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+								<i class="fa fa-envelope fa-lg"></i>
+								<span class="badge badge-header badge-warning"></span>
+							</a>
+						</li>
+						<li class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+								<i class="fa fa-bell fa-lg"></i>
+								<span class="badge badge-header badge-danger"></span>
+							</a>
+						</li>
+
+					</ul>
+					<ul class="nav navbar-top-links pull-right">
+
+						<li id="dropdown-user" class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+								<span class="pull-right">
+									<img class="img-circle img-user media-object" src="/static/img/av1.png" alt="Profile Picture">
+								</span>
+								<div class="username hidden-xs">{{request.session.username}} &nbsp;</div>
+							</a>
+							<div class="dropdown-menu dropdown-menu-xs dropdown-menu-right with-arrow panel-default">
+								<div class="pad-all text-center">
+									<a href="{%url 'my_logout'%}" class="btn btn-primary">
+										<i class="fa fa-sign-out fa-fw"></i> Logout
+									</a>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</header>
+		<div class="boxed">
+			<div id="content-container">
+				<div style="background:white;height: auto;width: auto;margin: 30px 30px 0px 30px">
+				{%block dash-filter%}
+
+				{% endblock %}
+
+
+				</div>
+			{% block dash-content%}
+			<div id="page-content">
+				<div class="row" >
+					<div class="col-lg-6">
+					<div class="panel">
+						<div class="panel-heading">
+							<h3 class="panel-title"><b style="color: #553e53">建议跟进……</b></h3>
+						</div>
+
+						<!--Data Table-->
+						<!--===================================================-->
+						<div class="panel-body">
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by='id'>QQ</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px ">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="course">咨询课程</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down " aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>最后跟进日期</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+												</div>
+												</a>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="status">最近状态</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="status">最近记录</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+									{%for customer in customers%}
+									<tr>
+
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
+											<td><span class="text-muted">{{customer.get_course_display}} </span></td>
+											<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.date|naturalday:'SHORT_DATE_FORMAT'| default:'---'}}</div></a></td>
+
+											<td  class=" btn-hover-success">
+												<div><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.get_status_display | default:'---'}}</div></a></div>
+											</td>
+										<td><div>
+ {{customer.consultrecord_set.last.note|truncatechars:9 |default:'---'}}</div></td>
+									</tr>
+									{%endfor%}
+									</tbody>
+								</table>
+
+							</div>
+						</div>
+						<!--===================================================-->
+						<!--End Data Table-->
+
+
+						<!--fenye-->
+						<div class="text-center">
+							<ul class="pagination">
+								{{fenye}}
+							</ul>
+						</div>
+					</div>
+					</div>
+					<div class="col-lg-6">
+					<div class="panel">
+						<div class="panel-heading">
+							<h3 id='aaaaa' class="panel-title"><b style="color: #553e53">本月销售排名……</b></h3>
+						</div>
+
+						<!--Data Table-->
+						<!--===================================================-->
+						<div class="panel-body">
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span >姓名</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px ">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="{{curr_url}}?o=0" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span da_sort="track">正跟进</span>
+													</div>
+													<div class="div2-ico-sort ">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px ">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="{{curr_url}}?o=1" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span da_sort="signed">已签约客户</span>
+													</div>
+													<div class="div2-ico-sort ">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px ">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="{{curr_url}}?o=2" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span da_sort="2">客户总数</span>
+													</div>
+													<div class="div2-ico-sort ">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down " aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="{{curr_url}}?o=3" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span da_sort="suc_per">成单率</span>
+													</div>
+													<div class="div2-ico-sort  ">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid " aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+
+										</tr>
+									</thead>
+									<tbody>
+									{%for sale in sale_list%}
+
+											{%if sale.0 == request.session.username%}
+											<tr style="background-color:#8A2BE2;color: white">
+												<td >{{sale.0}}</td>
+												<td>{{sale.1.0}}</td>
+												<td >{{sale.1.1}}</td>
+												<td>{{sale.1.2}}</td>
+												<td>{{sale.1.3}}</td>
+											</tr>
+											{%else%}
+											<tr >
+												<td>{{sale.0}}</td>
+												<td>{{sale.1.0}}</td>
+												<td>{{sale.1.1}}</td>
+												<td>{{sale.1.2}}</td>
+												<td>{{sale.1.3}}</td>
+											</tr>
+											{%endif%}
+
+									{%endfor%}
+									</tbody>
+								</table>
+								<!--<span>共&emsp13;{{count}}&emsp14;条记录</span>-->
+							</div>
+						</div>
+						<!--===================================================-->
+						<!--End Data Table-->
+
+
+						<!--fenye-->
+						<div class="text-center">
+							<ul class="pagination">
+								{{fenye}}
+							</ul>
+						</div>
+					</div>
+					</div>
+					</div>
+					<div id="sales_chart" class="row" style="margin:0px;height:600px;"></div>
+				</div>
+			{% endblock %}
+			</div>
+			<nav id="mainnav-container" >
+				<div id="mainnav" style="height:1000px">
+					<!--Menu-->
+					<!--================================-->
+					<div id="mainnav-menu-wrap">
+						<div class="nano">
+							<div class="nano-content">
+								<ul id="mainnav-menu" class="list-group">
+
+									<!--Category name-->
+									<li class="list-header">菜单栏</li>
+									<li>
+										<a href="{%url 'customers_library' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
+
+											<i class="fa fa-database"></i>
+											<span class="menu-title">
+												<strong>客户库</strong>
+											</span>
+										</a>
+
+									</li>
+									<!--Menu list item-->
+									<li>
+										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
+											<i class="fa fa-dashboard"></i>
+											<span class="menu-title">
+												<strong>正跟进客户</strong>
+												<!--<span class="label label-success pull-right">New</span>-->
+											</span>
+										</a>
+									</li>
+
+									<!--Menu list item-->
+									<li>
+										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
+											<i class="fa fa-th"></i>
+											<span class="menu-title">
+												<strong>已签约客户</strong>
+
+											</span>
+										</a>
+
+									</li>
+
+									<li>
+										<a href="{%url 'class_list'%}">
+
+											<i class="fa fa-list-ul"></i>
+											<span class="menu-title">
+												<strong>班级列表</strong>
+											</span>
+										</a>
+
+									</li>
+									<li>
+										<a href="#">
+
+											<i class="fa fa-area-chart"></i>
+											<span class="menu-title">
+												<strong>销售统计</strong>
+											</span>
+										</a>
+
+									</li>
+
+
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+
+
+        <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+
+
+
+	</div>
+
+{% endblock  %}
+
+
+
+
+{% block bottom-js %}
+
+	<!--JAVASCRIPT-->
+	<!--=================================================-->
+
+	<!--jQuery [ REQUIRED ]-->
+	<!--base.html 中已经有了，不能重复-->
+	<!--<script src="/static/js/jquery-2.1.1.min.js"></script>-->
+
+
+	<!--BootstrapJS [ RECOMMENDED ]-->
+	<!--base.html 中已经有了，不能重复-->
+	<!--<script src="/static/js/bootstrap.min.js"></script>-->
+
+
+	<!--Fast Click [ OPTIONAL ]-->
+	<script src="/static/js/fastclick.min.js"></script>
+
+
+	<!--Nifty Admin [ RECOMMENDED ]-->
+	<!--base.html 中已经有了，不能重复-->
+	<!--<script src="/static/js/nifty.min.js"></script>-->
+
+
+	<!--Switchery [ OPTIONAL ]-->
+	<script src="/static/js/switchery.min.js"></script>
+
+
+	<!--Bootstrap Select [ OPTIONAL ]-->
+	<script src="/static/js/bootstrap-select.min.js"></script>
+
+	<!--dashboard js-->
+	<script src="/static/js/dash_customer.js"></script>
+	<script src="/static/plugins/echart/echarts.common.min.js"></script>
+	<!--dashboard子模版继承填充尾部js样式-->
+	{%block dash-footer-js%}
+
+	{%endblock%}
+<script>
+		$(function($){
+			console.log($.cookie());
+			var sale_name= [];
+			var	 sale_signed= [];
+			$.getJSON("{%url 'sale_table' %}",function (data) {
+				$.each(data,function (k,v) {
+					sale_name.push(k);
+					sale_signed.push(v[1]);
+				});
+			     // 基于准备好的dom，初始化echarts图表
+        var myChart = echarts.init(document.getElementById('sales_chart'));
+
+        var option = {
+        	color:['#00FF00'],
+        	backgroundColor:'white',
+			title : {
+        		x:'center',
+				text: '本月销售统计',
+				style:{
+        		fontSize:50,
+				color:'black'	,
+				fontStyle:'italic'
+				}
+
+			},
+			tooltip : {
+				trigger: 'item'
+			},
+			legend: {
+				show:true,
+				x:'left',
+				data:['已签约客户']
+			},
+			toolbox: {
+				show : true,
+				feature : {
+					mark : {show: true},
+					dataView : {show: true, readOnly: true},
+					restore : {show: true},
+					saveAsImage : {show: true}
+				}
+			},
+			calculable : true,
+			xAxis : [
+				{
+					type : 'category',
+					data : sale_name
+
+				}
+			],
+			yAxis : [
+				{
+					type : 'value'
+				}
+			],
+			series : [
+
+				{
+					name:'已签约客户',
+					type:'bar',
+					data:sale_signed
+				}
+			]
+		};
+
+
+		// 为echarts对象加载数据
+		myChart.setOption(option);
+	});
+		});
+
+
+
+
+
+
+</script>
+{% endblock %}

@@ -111,9 +111,10 @@
                     </div>
                 </div>
             </div> <!--end col-lg-9-->
+		</div>
         {% endif %}
 
-        </div>
+    
 	</div>
 	<!--===================================================-->
 	<!-- END OF CONTAINER -->
@@ -145,6 +146,7 @@
                 // 指定图表的配置项和数据
                 var option = {
                     title: {
+						x:'center',
                         text: '班级整体成绩'
                     },
                     tooltip: {},
@@ -152,7 +154,7 @@
                         data:['成绩']
                     },
                     xAxis: {
-                        data: student_name_list,
+                        data: student_name_list
 
                     },
                     yAxis: {},

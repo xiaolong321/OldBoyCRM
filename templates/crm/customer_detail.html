@@ -1,0 +1,65 @@
+{%extends 'crm/dashboard.html'%}
+
+{% block dash-content%}
+
+<div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">请填写如下表格(加粗字体为必填项)</h3>
+            </div>
+            <!--Horizontal Form-->
+            <!--===================================================-->
+            <form class="form-horizontal" action=" " method="POST">
+            {% csrf_token %}
+                <div class="panel-body ">
+                    {%for field in form%}
+                    <div class="form-group text-left">
+                        {%if field.field.required%}
+                        <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                        {%else%}
+                        <label class="col-lg-3 control-label">{{field.label}}</label>
+                        {%endif%}
+                        {%if field.name == 'consultant'%}
+                        <div class="col-sm-6">
+                            <select class="form-control" id="id_consultant" name="consultant">
+<option value="{{curr_user.id}}" selected="selected">{{curr_user.name}}</option>
+</select>
+                        </div>
+                        {%elif field.name == 'qq' %}
+                         <div class="col-sm-6">
+                        <input class="form-control" id="id_qq" maxlength="64" name="qq" placeholder="QQ号必须唯一" value="{{customer.qq}}" type="text"  readonly/>
+                             </div>
+                        {%elif field.name == 'customer_note' %}
+                        <div class="col-sm-6">
+                        <textarea class="form-control" cols="40" id="id_customer_note" name="customer_note" placeholder="客户咨询的大概情况,客户个人信息备注等..." rows="10" readonly>{{customer.customer_note}}
+                        </textarea>
+                            </div>
+                         {%else%}
+                        <div class="col-sm-6">
+
+                            {{field}}
+                        </div>
+                        {%endif%}
+                        <div class="col-sm-3" style="color:red">
+                          {%for error in field.errors%}
+                            {{error}}
+                            {%endfor%}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="确认修改">
+                </div>
+            </form>
+            <!--===================================================-->
+            <!--End Horizontal Form-->
+
+        </div>
+</div>
+
+
+
+
+
+{% endblock %}

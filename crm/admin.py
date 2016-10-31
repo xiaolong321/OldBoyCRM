@@ -1,13 +1,10 @@
 #_*_coding:utf-8_*_
 from django.contrib import admin
-
-# Register your models here.
-
-import models
-from myauth_admin import  UserProfileAdmin
-
+from crm.myauth_admin import  UserProfileAdmin
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect,HttpResponse
+from crm import models
+from django.contrib.admin.actions import delete_selected
 
 
 class ConsultRecordInline(admin.TabularInline):

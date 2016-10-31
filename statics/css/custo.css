@@ -1,0 +1,14 @@
+  .signed{
+      background-color: coral;
+  }
+  .unregistered{
+      background-color: yellow;
+  }
+
+  .graduated{
+      background-color: antiquewhite;
+  }
+  .drop{
+      background-color: cyan;
+  }
+  /*虽然源是 drop off 这两个单词，但是 class='drop off' 也是可以匹配 .drop 这个样式表的。*/
