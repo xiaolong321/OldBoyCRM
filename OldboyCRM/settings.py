@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'OldboyCRM',
         'HOST':'',
         'PORT':'',
-        'USER':'root',
-        'PASSWORD':'123456',
+        'USER':'',
+        'PASSWORD':'',
     }
 }
 
