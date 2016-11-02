@@ -75,19 +75,6 @@
 								<i class="fa fa-navicon fa-lg"></i>
 							</a>
 						</li>
-						<li class="dropdown">
-							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-								<i class="fa fa-envelope fa-lg"></i>
-								<span class="badge badge-header badge-warning"></span>
-							</a>
-						</li>
-						<li class="dropdown">
-							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
-								<i class="fa fa-bell fa-lg"></i>
-								<span class="badge badge-header badge-danger"></span>
-							</a>
-						</li>
-
 					</ul>
 					<ul class="nav navbar-top-links pull-right">
 
@@ -262,8 +249,7 @@
 											<td  class=" btn-hover-success">
 												<div><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.get_status_display | default:'---'}}</div></a></div>
 											</td>
-										<td><div>
- {{customer.consultrecord_set.last.note|truncatechars:9 |default:'---'}}</div></td>
+										<td><div>{{customer.consultrecord_set.last.note|truncatechars:9 |default:'---'}}</div></a></td>
 									</tr>
 									{%endfor%}
 									</tbody>
@@ -444,7 +430,7 @@
 												<td>{{sale.1.0}}</td>
 												<td >{{sale.1.1}}</td>
 												<td>{{sale.1.2}}</td>
-												<td>{{sale.1.3}}</td>
+												<td>{% add_persent sale.1.3 %}</td>
 											</tr>
 											{%else%}
 											<tr >
@@ -452,7 +438,7 @@
 												<td>{{sale.1.0}}</td>
 												<td>{{sale.1.1}}</td>
 												<td>{{sale.1.2}}</td>
-												<td>{{sale.1.3}}</td>
+												<td>{% add_persent sale.1.3 %}</td>
 											</tr>
 											{%endif%}
 
@@ -490,7 +476,7 @@
 
 									<!--Category name-->
 									<li class="list-header">菜单栏</li>
-									<li>
+									<li id="customers_library">
 										<a href="{%url 'customers_library' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 
 											<i class="fa fa-database"></i>
@@ -500,30 +486,30 @@
 										</a>
 
 									</li>
-									<!--Menu list item-->
-									<li>
+
+									<li id="tracking">
 										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 											<i class="fa fa-dashboard"></i>
 											<span class="menu-title">
-												<strong>正跟进客户</strong>
+												<strong>我的跟进</strong>
 												<!--<span class="label label-success pull-right">New</span>-->
 											</span>
 										</a>
 									</li>
 
-									<!--Menu list item-->
-									<li>
+
+									<li id="signed">
 										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 											<i class="fa fa-th"></i>
 											<span class="menu-title">
-												<strong>已签约客户</strong>
+												<strong>我的客户</strong>
 
 											</span>
 										</a>
 
 									</li>
 
-									<li>
+									<li id="class_list">
 										<a href="{%url 'class_list'%}">
 
 											<i class="fa fa-list-ul"></i>
@@ -533,8 +519,8 @@
 										</a>
 
 									</li>
-									<li>
-										<a href="#">
+									<li id="statistical">
+										<a href="{% url 'statistical' %}">
 
 											<i class="fa fa-area-chart"></i>
 											<span class="menu-title">
@@ -607,7 +593,14 @@
 	{%endblock%}
 <script>
 		$(function($){
-			console.log($.cookie());
+			// 高亮当前选中菜单栏
+		var cur_url_name=location.pathname.split('/')[2].split('-')[0];
+		$('#mainnav-menu li').each(function (i,n) {
+			if($(this).attr('id')== cur_url_name){
+				$(this).css({'background':'#000000','color':'black'})
+			}
+		});
+			//eChart 生成图表js
 			var sale_name= [];
 			var	 sale_signed= [];
 			$.getJSON("{%url 'sale_table' %}",function (data) {
@@ -639,15 +632,7 @@
 				x:'left',
 				data:['已签约客户']
 			},
-			toolbox: {
-				show : true,
-				feature : {
-					mark : {show: true},
-					dataView : {show: true, readOnly: true},
-					restore : {show: true},
-					saveAsImage : {show: true}
-				}
-			},
+
 			calculable : true,
 			xAxis : [
 				{

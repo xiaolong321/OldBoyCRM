@@ -162,23 +162,23 @@
 													<a href="#" class="a-ico-sort">
 													<div>
 
-														<div style="float:left;text-align: center;line-height: 35px">
-															<span>姓名</span>
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>QQ</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
 														</div>
-														<div  class="div2-ico-sort">
-															<div class="div-ico-sort ">
-															<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-															</div>
-															<div class="div-ico-sort">
-															<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-															</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
 														</div>
+													</div>
 
 													</div>
 												</a>
 												</div>
 												<div style="float: left;text-align: center;line-height: 34px">
-													<a>
+													<a href="#">
 														<i class="fa fa-ban hid" aria-hidden="true">
 														</i>
 													</a>
@@ -279,13 +279,13 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by="class_list">已报班级</span>
+														<span sort_by="source">客户来源</span>
 													</div>
 													<div  class="div2-ico-sort">
-														<div class="div-ico-sort hid">
-														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
 														</div>
-														<div class="div-ico-sort hid">
+														<div class="div-ico-sort">
 														<i class="fa fa-caret-down" aria-hidden="true"></i>
 														</div>
 													</div>
@@ -294,42 +294,13 @@
 												</a>
 												</div>
 												<div style="float: left;text-align: center;line-height: 34px">
-													<a href=""  title="取消过滤">
-														<i class="fa fa-ban hid" aria-hidden="true">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban" aria-hidden="true">
 														</i>
 													</a>
 												</div>
 												<div style="clear: both"></div>
-											</th>
-											<th>
-
-												<div style="float: left;margin-right: 3px">
-													<a href="#" class="a-ico-sort">
-												<div>
-
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span>QQ</span>
-													</div>
-													<div  class="div2-ico-sort">
-														<div class="div-ico-sort ">
-														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-														</div>
-													</div>
-
-												</div>
-												</a>
-												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="#">
-														<i class="fa fa-ban hid" aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
+											</th>								
 											<th>
 
 												<div style="float: left;margin-right: 3px">
@@ -391,11 +362,69 @@
 											<th>
 
 												<div style="float: left;margin-right: 3px">
+													<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>首次咨询内容</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href=""  title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+
+												<div style="float: left;margin-right: 3px">
 													<a href="#" class="a-ico-sort">
 													<div>
 
 														<div style="float:left;text-align: center;line-height: 35px">
 															<span>最后跟进日期</span>
+														</div>
+														<div  class="div2-ico-sort">
+															<div class="div-ico-sort ">
+															<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+															</div>
+															<div class="div-ico-sort">
+															<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+															</div>
+														</div>
+
+													</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a >
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+
+												<div style="float: left;margin-right: 3px">
+													<a href="#" class="a-ico-sort">
+													<div>
+
+														<div style="float:left;text-align: center;line-height: 35px">
+															<span>最后跟进记录</span>
 														</div>
 														<div  class="div2-ico-sort">
 															<div class="div-ico-sort ">
@@ -424,7 +453,7 @@
 									{%for customer in customers  %}
 										<tr>
 											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
 											<td><span class="text-muted"> {{customer.get_course_display}}</span></td>
 											<td>{{customer.get_class_type_display}}</td>
 											<td>
@@ -436,23 +465,18 @@
 												<div class="label label-table label-pink">{{customer.get_status_display}}</div>
 												{%endif%}
 											</td>
+											<td>{{customer.get_source_display}}</td>
 
-											<td>
 
-												{%for item in customer.class_list.all%}
-
-                              						<ul style="list-style-type:none;margin-left: -40px">
-														<li>{{item}}</li>
-													</ul>
-
-                           						 {%endfor%}
-
-											</td>
-
-											<td>{{customer.qq}}</td>
 											<td><div>{{customer.consultant.name}}</div></td>
 											<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.date|naturalday:'SHORT_DATE_FORMAT'}}</div></a></td>
+												<td>
+											{{customer.customer_note|truncatechars:9}}
+											</td>
 											<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.date|naturalday:'SHORT_DATE_FORMAT'|default:'----'}}</div></a></td>
+
+										<td>{{customer.consultrecord_set.last.note|truncatechars:9}}</td>
+
 										</tr>
 									{% endfor %}
 

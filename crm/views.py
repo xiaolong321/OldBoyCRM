@@ -1,5 +1,6 @@
 #_*_coding:utf-8_*_
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect,redirect,resolve_url
+from django.core.urlresolvers import resolve
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -28,7 +29,7 @@ def survery(request,survery_id):
         except ObjectDoesNotExist:
             return HttpResponse(u"问卷不存在")
     elif request.method == "POST":
-        print(dir(request))
+        #print(dir(request))
         client_id =  request.COOKIES.get("csrftoken")
         #print request.environ 8Jilt6JfSO0XCVe2oMViKbbV1faEI2KM
         #print request.environ 8Jilt6JfSO0XCVe2oMViKbbV1faEI2KM
@@ -185,11 +186,11 @@ def get_grade_chart(request,stu_id):
         class_grade_dic[class_obj.id]['record_count'].append([
             -1,u'及格线',qualifiy_benchmark
         ])
-        print("---qualify benchmark ", qualifiy_benchmark)
+        #print("---qualify benchmark ", qualifiy_benchmark)
 
         #加上排名
         class_grade_dic[class_obj.id]['record_count'] = sorted(class_grade_dic[class_obj.id]['record_count'],key=lambda x:x[2])
-    print(class_grade_dic)
+    #print(class_grade_dic)
     return HttpResponse(json.dumps(class_grade_dic))
 
 
@@ -296,7 +297,7 @@ def file_download(request):
         filename = '%s.zip'  %customer_file_path.split('/')[-1] #compress filename
 
         file_list = os.listdir(customer_file_path)
-        print('filelist',file_list)
+        #print('filelist',file_list)
         zipfile_obj = zipfile.ZipFile("%s/%s" %(settings.ENROLL_DATA_DIR,filename) ,'w',zipfile.ZIP_DEFLATED)
         for f_name in file_list:
             zipfile_obj.write("%s/%s" % (customer_file_path,f_name),f_name)
@@ -931,7 +932,7 @@ def consult_record(request,id):
 
 
 def my_login(request):
-    curr_url = request.GET.get('next','/crm/dashboard')
+    curr_url = request.GET.get('next','/crm')
 
     error=''
     if request.method =='POST':
@@ -990,10 +991,6 @@ def class_list(request,*args,**kwargs):
     class_lists = models.ClassList.objects.all()
     count = models.ClassList.objects.all().count()
     # students = models.Customer.objects.filter(class_list=).count()
-    b=class_lists[0]
-    c=b.teachers.all()
-
-    print('b==>> ',c,type(c))
     return render(request,'crm/class_list.html',{'class_lists':class_lists,'count':count})
 
 @login_required
@@ -1050,5 +1047,7 @@ def class_detail(request,*args,**kwargs):
     result.update(res)
     return render(request,'crm/class_detail.html',result)
 
-        
-        
+
+def Statistical(request):
+    return render(request,'crm/statistical.html')
+

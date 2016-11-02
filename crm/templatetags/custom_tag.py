@@ -115,3 +115,9 @@ def action_all(current_url,index,type_name):
     url_path = '-'.join(url_part_list)
     temp = temp %(url_path,type_name)
     return mark_safe(temp)
+
+@register.simple_tag
+def add_persent(number_no):
+    cur_num=str(number_no)
+    cur_num=cur_num+'%'
+    return cur_num

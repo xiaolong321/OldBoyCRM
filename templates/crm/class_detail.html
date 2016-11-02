@@ -71,27 +71,6 @@
 						<!--Data Table-->
 						<!--===================================================-->
 						<div class="panel-body">
-							<div class="pad-btm form-inline">
-								<div class="row">
-									<div class="col-sm-6 table-toolbar-left">
-										<!--<a href="#" id="demo-btn-addrow" class="btn btn-purple btn-labeled fa fa-plus"></a>-->
-										<!--<button class="btn btn-default"><i class="fa fa-print"></i> 打印</button>-->
-										<!--<div class="btn-group">-->
-											<!--<button class="btn btn-default"><i class="fa fa-exclamation-circle"></i> 告警</button>-->
-											<!--<button class="btn btn-default"><i class="fa fa-trash"></i> 删除</button>-->
-										<!--</div>-->
-									</div>
-									<div class="col-sm-6 table-toolbar-right">
-										<div class="form-group">
-											<!--<form action="" method="GET">-->
-											<!--<input id="input-search2" name="qq" type="text" placeholder="请输入QQ号" class="form-control" autocomplete="off">-->
-											<!--<input class="form-control" type="submit" value="查询"/>-->
-											<!--</form>-->
-											<span style="color: red;position: relative;left: -160px">{{qq_num_error}}</span>
-										</div>
-									</div>
-								</div>
-							</div>
 							<div class="table-responsive">
 								<table class="table table-striped">
 									<thead>
@@ -104,6 +83,33 @@
 
 													<div style="float:left;text-align: center;line-height: 35px">
 														<span sort_by='id'>ID</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by='stu_id'>学号</span>
 													</div>
 													<div class="div2-ico-sort">
 														<div class="div-ico-sort">
@@ -265,6 +271,7 @@
 									{%for customer in customers%}
 									<tr>
 											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
+											<td>{{customer.stu_id}}</td>
 											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
 											<td>{{customer.qq}}</td>
 											<td>{{customer.consultant.name}}</td>
