@@ -28,7 +28,6 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>QQ</th>
                                         <th>姓名</th>
                                         <th>咨询课程</th>
@@ -38,8 +37,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
-                                        <td>{{customer.qq}}</td>
+                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
                                         <td>{{customer.name}}</td>
                                         <td>{{customer.get_course_display}}</td>
                                         <td>{{customer.get_class_type_display}}</td>

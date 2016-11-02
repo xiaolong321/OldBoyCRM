@@ -327,15 +327,17 @@ def dashboard(request):
         if last_consult == None: #无跟进记录，以录入日期为准
             consultant_date = customer.date  #  录入日期
             midd_date = today - consultant_date  # 录入日期距 今天多久
-            max_day = datetime.timedelta(days=15)  # 预期最大间隔时间
-            if midd_date <= max_day:  # 距今间隔 < 预期间隔
-                customers.append(customer)   # 只截取最近15天内的跟进客户
+            max_day = datetime.timedelta(days=90)  # 预期最大间隔时间
+            min_day = datetime.timedelta(days=7)  # 预期最小间隔时间
+            if min_day<=midd_date <= max_day:  # 最小间隔时间< 距今间隔 < 最大预期间隔
+                customers.append(customer)   # 只截取距今天 7 天以外，90 天以内的跟进客户
 
         else:  #有跟进记录,以最后跟进记录日期为准
             last_date = customer.consultrecord_set.last().date  # 最后跟进日期
             midd_date = today - last_date  # 最后跟进日期距 今天多久
-            max_day = datetime.timedelta(days=15)  # 预期最大间隔时间，
-            if midd_date <= max_day:   #距今间隔 < 预期间隔
+            max_day = datetime.timedelta(days=90)  # 预期最大间隔时间， 90 天
+            min_day = datetime.timedelta(days=7)  # 预期最小间隔时间， 7 天
+            if min_day<= midd_date <= max_day:   # 最小间隔时间< 距今间隔 < 最大预期间隔
                 customers.append(customer)  #只截取最近15天内的跟进客户
 
     random.shuffle(customers) # 打乱客户随机顺序
@@ -520,7 +522,7 @@ def tracking(request,page,*args,**kwargs):
                         ord.append(key)
 
         count = models.Customer.objects.filter(**direct_org).count()
-        pageObj = PageInfo(page, count, 30)
+        pageObj = PageInfo(page, count, 50)
         customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
@@ -645,7 +647,7 @@ def signed(request,page,*args,**kwargs):
                         ord.append('-' + key)
 
         count = models.Customer.objects.filter(**direct_org).exclude(**exc).count()
-        pageObj = PageInfo(page, count, 30)
+        pageObj = PageInfo(page, count, 50)
 
 
         customers = models.Customer.objects.filter(**direct_org).exclude(**exc).select_related().order_by(*ord)[pageObj.start:pageObj.end]
@@ -755,7 +757,7 @@ def customers_library(request,page,*args,**kwargs):
             page = int(page)
         except:
             page = 1
-        pageObj = PageInfo(page, count, 30)
+        pageObj = PageInfo(page, count, 50)
 
         for key in request.COOKIES.keys():
 
@@ -1011,7 +1013,7 @@ def class_detail(request,*args,**kwargs):
         ord.remove('-date')
 
     count = models.Customer.objects.filter(**direct_org ).count()
-    pageObj = PageInfo(page, count,50)
+    pageObj = PageInfo(page, count,100)
     customers = models.Customer.objects.filter(**direct_org).order_by(*ord)[pageObj.start:pageObj.end]
     fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 

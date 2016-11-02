@@ -2,7 +2,12 @@
 $(document).ready(
     function () {
         var da = $.cookie('date');
-        if (da == undefined){
+        var cur_url_name=location.pathname.split('/')[2].split('-')[0];
+        var page_content_hr = $('#page-content').attr('href_pathname');
+
+       // 页面为dashboard页面时,不要在cookie中添加date键，否则会扰乱其他页面默认排序
+       // 当新页面cookie中没有 date 键时，且配需中有按date默认排序的需求时要自动添加date，实现默认排序
+      if (da == undefined && cur_url_name ==page_content_hr ){
             $.cookie('date','desc');
             location.reload()
         }
