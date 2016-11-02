@@ -114,7 +114,6 @@
 									<div class="col-sm-6 table-toolbar-right">
 										<div class="form-group" id="test1">
 											<form action="" method="GET">
-
 											<input id="input-search2" name="qq" type="text" placeholder="请输入QQ号" class="form-control" autocomplete="off">
 											<input class="form-control" type="submit" value="查询"/>
 											</form>
@@ -160,7 +159,7 @@
 
 												<div style="float: left;margin-right: 3px">
 													<a href="#" class="a-ico-sort">
-													<div>
+												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
 														<span>QQ</span>
@@ -174,7 +173,7 @@
 														</div>
 													</div>
 
-													</div>
+												</div>
 												</a>
 												</div>
 												<div style="float: left;text-align: center;line-height: 34px">
@@ -300,7 +299,7 @@
 													</a>
 												</div>
 												<div style="clear: both"></div>
-											</th>								
+											</th>
 											<th>
 
 												<div style="float: left;margin-right: 3px">
@@ -330,6 +329,7 @@
 												</div>
 												<div style="clear: both"></div>
 											</th>
+
 											<th>
 
 												<div style="float: left;margin-right: 3px">
@@ -366,7 +366,7 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span>首次咨询内容</span>
+														<span>首次咨询问题</span>
 													</div>
 													<div  class="div2-ico-sort">
 														<div class="div-ico-sort hid">
@@ -456,6 +456,7 @@
 											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
 											<td><span class="text-muted"> {{customer.get_course_display}}</span></td>
 											<td>{{customer.get_class_type_display}}</td>
+
 											<td>
 												{%if customer.status == 'signed' %}
 												<div class="label label-table label-mint">{{customer.get_status_display}}</div>
@@ -469,13 +470,14 @@
 
 
 											<td><div>{{customer.consultant.name}}</div></td>
-											<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.date|naturalday:'SHORT_DATE_FORMAT'}}</div></a></td>
+											<td><div>{{customer.date|naturalday:'SHORT_DATE_FORMAT'}}</div></td>
 												<td>
 											{{customer.customer_note|truncatechars:9}}
 											</td>
-											<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.date|naturalday:'SHORT_DATE_FORMAT'|default:'----'}}</div></a></td>
 
-										<td>{{customer.consultrecord_set.last.note|truncatechars:9}}</td>
+											<td ><div>{{customer.consultrecord_set.last.date|naturalday:'SHORT_DATE_FORMAT'|default:'----'}}</div></td>
+
+										<td  class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.note|truncatechars:9|default:'---'}}</div></a></td>
 
 										</tr>
 									{% endfor %}
@@ -485,15 +487,7 @@
 								<span>共&emsp13;{{count}}&emsp14;条记录</span>
 							</div>
 						</div>
-						<!--===================================================-->
-						<!--End Data Table-->
 
-						<!--fenye-->
-						<!--<div class="text-center">-->
-							<!--<ul class="pagination">-->
-								<!--{{fenye}}-->
-							<!--</ul>-->
-						<!--</div>-->
 
 
 

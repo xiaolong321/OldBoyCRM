@@ -10,9 +10,9 @@
 					<!--Searchbox-->
 					<div class="searchbox">
 						<div class="input-group custom-search-form">
-							<!--<input type="text" class="form-control" placeholder="Search..">-->
+
 							<span class="input-group-btn">
-								<!--<button class="text-muted" type="button"><i class="fa fa-search"></i></button>-->
+
 			</span>
 		</div>
 	</div>
@@ -22,7 +22,7 @@
 <div class="row" >
 	<div class="col-lg-6">
         <div class="panel">
-            <!--Panel heading-->
+
             <div class="panel-heading">
                 <div class="panel-control">
                     <ul class="nav nav-tabs">
@@ -105,10 +105,8 @@
                 <h3 class="panel-title text-center">请填写如下表格</h3>
             </div>
 
-            <!--Horizontal Form-->
-            <!--===================================================-->
             <form class="form-horizontal" action=" " method="POST">
-            {% csrf_token %}
+			    {% csrf_token %}
                 <div class="panel-body ">
                     {%for field in form%}
                     <div class="form-group text-left">
@@ -138,8 +136,7 @@
                 <input class="btn btn-info" type="submit" value="提交">
                 </div>
             </form>
-            <!--===================================================-->
-            <!--End Horizontal Form-->
+
 
         </div>
 </div>

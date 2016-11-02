@@ -70,7 +70,7 @@ def get_single_stu_total_scores(course,stu_obj):
     return total_score
 
 
-#�ͻ���Դ
+
 @register.simple_tag
 def action(current_url,item,number):
 

@@ -62,7 +62,6 @@
                         <p><b>QQ: </b>{{ stu_obj.qq }}</p>
 
                         {% for course in stu_obj.class_list.select_related %}
-
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <h4 class="text-center" >
@@ -85,7 +84,9 @@
                                     {% for course_day in course.courserecord_set.select_related %}
                                         <tr>
                                             {% for stu in course_day.studyrecord_set.select_related %}
+                                            <!--得到一个StudyRecord对象-->
                                                 {% if stu.student.qq == stu_obj.qq %}
+                                                <!--StudyRecord的student字段链接到了Custommer表-->
                                                     <td>{{ stu.score }}</td>
                                                     <td>{{ course_day.day_num }}</td>
                                                     <td class="stu_{{ stu.record }}">{{ stu.get_record_display }}</td>
@@ -111,10 +112,8 @@
                     </div>
                 </div>
             </div> <!--end col-lg-9-->
-		</div>
+        </div>
         {% endif %}
-
-    
 	</div>
 	<!--===================================================-->
 	<!-- END OF CONTAINER -->
@@ -145,12 +144,14 @@
                 var myChart = echarts.init(document.getElementById('grade-chart-'+class_id));
                 // 指定图表的配置项和数据
                 var option = {
+
                     title: {
-						x:'center',
+                        x:'center',
                         text: '班级整体成绩'
                     },
                     tooltip: {},
                     legend: {
+                
                         data:['成绩']
                     },
                     xAxis: {
@@ -182,7 +183,6 @@
                 };
 
                 myChart.setOption(option);
-
                 //end chart sample
 
 

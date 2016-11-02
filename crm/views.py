@@ -15,8 +15,7 @@ from django.http import FileResponse
 from django.utils.encoding import smart_str
 from django.contrib.auth import login,logout,authenticate
 from crm.html_helper import PageInfo,Page
-from crm.myauth import UserProfile  
-
+from crm.myauth import UserProfile
 
 def index(request):
     return  render(request,'crm/index.html')
@@ -29,10 +28,8 @@ def survery(request,survery_id):
         except ObjectDoesNotExist:
             return HttpResponse(u"问卷不存在")
     elif request.method == "POST":
-        #print(dir(request))
+
         client_id =  request.COOKIES.get("csrftoken")
-        #print request.environ 8Jilt6JfSO0XCVe2oMViKbbV1faEI2KM
-        #print request.environ 8Jilt6JfSO0XCVe2oMViKbbV1faEI2KM
 
         form_data = json.loads(request.POST.get("data"))
         survery_handler = survery_handle.Survery(client_id,survery_id,form_data)
@@ -41,15 +38,13 @@ def survery(request,survery_id):
 
         else:
             pass
-            #print(survery_handler.errors)
-        #print(form_data)
 
         return HttpResponse(json.dumps(survery_handler.errors))
 @login_required
 def survery_report(request,survery_id):
     try:
         survery_obj = models.Survery.objects.get(id=survery_id)
-        #class_obj..se
+
 
     except ObjectDoesNotExist as e:
         return HttpResponse("Survery doesn't exist!")
@@ -150,6 +145,7 @@ def compliant(request):
         return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
     elif request.method == "POST":
         compliant_form = forms.CompliantForm(request.POST)
+
         if compliant_form.is_valid():
             compliant_form.save()
             return HttpResponse(u"<h3 style='color:red'>感谢您的建议,我们将尽快认真处理,如果您留下了联系方式,我们会在2个工作日内与你联系并告诉您所提交的投诉或建议的处理进度或结果...have a nice day!</h3><a href='/'>返回首页</a>")
@@ -162,7 +158,7 @@ def stu_faq(request):
 #@login_required
 def get_grade_chart(request,stu_id):
     stu_obj = models.Customer.objects.get(id=stu_id)
-    #print('---stuid', stu_obj)
+
     class_grade_dic = {}
     for class_obj in stu_obj.class_list.select_related(): #loop all the courses this student enrolled in
         class_grade_dic[class_obj.id] = {'record_count':[]}
@@ -186,11 +182,10 @@ def get_grade_chart(request,stu_id):
         class_grade_dic[class_obj.id]['record_count'].append([
             -1,u'及格线',qualifiy_benchmark
         ])
-        #print("---qualify benchmark ", qualifiy_benchmark)
 
         #加上排名
         class_grade_dic[class_obj.id]['record_count'] = sorted(class_grade_dic[class_obj.id]['record_count'],key=lambda x:x[2])
-    #print(class_grade_dic)
+
     return HttpResponse(json.dumps(class_grade_dic))
 
 
@@ -297,7 +292,6 @@ def file_download(request):
         filename = '%s.zip'  %customer_file_path.split('/')[-1] #compress filename
 
         file_list = os.listdir(customer_file_path)
-        #print('filelist',file_list)
         zipfile_obj = zipfile.ZipFile("%s/%s" %(settings.ENROLL_DATA_DIR,filename) ,'w',zipfile.ZIP_DEFLATED)
         for f_name in file_list:
             zipfile_obj.write("%s/%s" % (customer_file_path,f_name),f_name)
@@ -351,7 +345,7 @@ def dashboard(request):
     result.update(succe_track)
 
     # 以下为 销量排名图表 所需数据
-    sales=[(i.email,i.name) for i in models.UserProfile.objects.all() if not i.is_staff]
+    sales=[(i.email,i.name) for i in models.UserProfile.objects.all() if not i.is_admin]
     # 销售用户列表 [('x.qq.com',张三），（'y@qq.com'，李四），（'z@qq.com',王五) ]
 
     sale_num={}  # 销售销量字典{姓名：[正跟进客户数，已签约客户数]}  ｛张三：[3,2],李四：[6,2]｝
@@ -378,7 +372,6 @@ def dashboard(request):
         a = [sale_track,sale_signed]
         a.extend(b)
         sale_num[sale[1]] =a
-    print('sale_num-->> ',sale_num)
 
     b = True
     curr_url = request.path
@@ -402,11 +395,11 @@ def sale_table(request):
         month = str(today)[5:7]
         month_before = '%s-%s-01' % (year, month)
         for sale in sales:
-            sale_track = models.Customer.objects.filter(status='unregistered', consultant__email=sale.email,
-                                                        date__gt=month_before, date__lt=today).count()  # 本月至今 正跟进客户数
+            sale_track = models.Customer.objects.filter(status='unregistered',  consultant__email=sale.email,
+				date__gt=month_before, date__lt=today).count()  # 本月至今 正跟进客户数
             sale_signed = models.Customer.objects.exclude(status='unregistered').filter(consultant__email=sale.email,
-                                                                                        date__gt=month_before,
-                                                                                        date__lt=today).count()  # 本月至今 已签约客户数
+			date__gt=month_before,
+			date__lt=today).count()  # 本月至今 已签约客户数
             sale_num[sale.name] = [sale_track, sale_signed,sale_track+sale_signed]
 
         sale_dict=json.dumps(sale_num)
@@ -440,7 +433,6 @@ def tracking(request,page,*args,**kwargs):
     classes = list(classes)
 
     cus_status = (('unregistered',u"未报名"),)  # 客户状态
-    print('cus_status ',cus_status)
     cus_status = map(lambda x: {'type': x[0], 'name': x[1]}, cus_status)
     cus_status = list(cus_status)
 
@@ -519,10 +511,7 @@ def tracking(request,page,*args,**kwargs):
         except:
             page = 1
 
-        print('cookie-->> ', request.COOKIES)
-
         for key in request.COOKIES.keys():
-            # print('val-- ',val)
             if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
                 if key != 'undefined':
                     if request.COOKIES[key] == 'desc':
@@ -531,7 +520,7 @@ def tracking(request,page,*args,**kwargs):
                         ord.append(key)
 
         count = models.Customer.objects.filter(**direct_org).count()
-        pageObj = PageInfo(page, count, 3)
+        pageObj = PageInfo(page, count, 30)
         customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
@@ -633,7 +622,6 @@ def signed(request,page,*args,**kwargs):
             qq_num_err = {'qq_num_error': '只能输入QQ号'}
 
         direct_org.update({'qq': qq})
-        print('dire__',direct_org)
         customers = models.Customer.objects.exclude(**exc).filter(**direct_org)
         count = models.Customer.objects.exclude(**exc).filter(**direct_org).count()
         fil = {'customers': customers, 'count': count,}
@@ -657,7 +645,7 @@ def signed(request,page,*args,**kwargs):
                         ord.append('-' + key)
 
         count = models.Customer.objects.filter(**direct_org).exclude(**exc).count()
-        pageObj = PageInfo(page, count, 3)
+        pageObj = PageInfo(page, count, 30)
 
 
         customers = models.Customer.objects.filter(**direct_org).exclude(**exc).select_related().order_by(*ord)[pageObj.start:pageObj.end]
@@ -674,7 +662,6 @@ def signed(request,page,*args,**kwargs):
 @login_required
 def customers_library(request,page,*args,**kwargs):
     ord = []
-    print(page, args,kwargs)
     username = request.session['username']
     current_url = request.path
     GET = request.GET
@@ -750,7 +737,6 @@ def customers_library(request,page,*args,**kwargs):
             qq = int(qq)
         except ValueError as e:
             qq_num_err = {'qq_num_error': '只能输入QQ号'}
-        print('qq-- ',qq,type(qq))
         customers = models.Customer.objects.filter(qq=qq)
         count = models.Customer.objects.filter(qq=qq).count()
         fil = {'customers': customers, 'count': count,}
@@ -764,16 +750,13 @@ def customers_library(request,page,*args,**kwargs):
 
 
         count = models.Customer.objects.filter(**direct_org).count()
-        print(page,type(page),count)
-
 
         try:
             page = int(page)
         except:
             page = 1
-        pageObj = PageInfo(page, count, 50)
+        pageObj = PageInfo(page, count, 30)
 
-        print('cookie-->> ',request.COOKIES)
         for key in request.COOKIES.keys():
 
             if request.COOKIES[key]=='asc' or request.COOKIES[key] =='desc':
@@ -785,10 +768,8 @@ def customers_library(request,page,*args,**kwargs):
 
                         ord.append('-'+key)
 
-        print('ord===>> ',ord)
         customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
-        # print('path -->> ',current_url)
 
 
         fil = {'customers':customers,'count':count,'fenye':fenye}
@@ -802,7 +783,7 @@ def addcustomer(request):
     curr_user = models.UserProfile.objects.get(name=username)
     if request.method == 'POST':
         form = forms.AddCustomerForm(request.POST)
-        print('form-->> ',form)
+
         if form.is_valid():
 
             form.save()
@@ -826,7 +807,7 @@ def cus_enroll(request,id):
     except Exception as e:
         enroll_ment = None
     if request.method == 'POST':
-        print('post  ',request.POST)
+
         if enroll_ment:
             try:
                 customer.status=request.POST['status']
@@ -836,7 +817,6 @@ def cus_enroll(request,id):
                 customer.save()
                 post['contract_agreed']=True
                 form = forms.EnroForm(data=post,instance=enroll_ment)
-                print('from-->> ',form)
                 if form.is_valid():
                     form.save()
                     return HttpResponseRedirect(resolve_url('enroll_done',customer.qq))
@@ -847,9 +827,7 @@ def cus_enroll(request,id):
             #销售第一次登记学员报名信息，等待学员同意
             post = request.POST.copy()
             post['status']='unregistered'
-            print('post--',post)
             form = forms.EnroForm(data=post)
-            print('form---   ',form)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect('/crm/enroll_done/%s/'% customer.qq)
@@ -868,7 +846,6 @@ def cus_enroll(request,id):
 
             # 如果已有报名表，等待审核
             form = forms.EnroForm(instance=enroll_ment)
-            print('form-->> ',form)
             result = {'form': form, 'customer': customer, 'enroll_ment': enroll_ment, 'username': username,'classes':classes}
             return render(request, 'crm/customer_enrollment.html', result)
 
@@ -883,7 +860,6 @@ def enroll_done(request,qq):
 
 
     if request.method == 'POST':
-        print('POST---',request.POST)
         form = forms.PaymentrecordForm(request.POST)
         if form.is_valid():
 
@@ -916,11 +892,10 @@ def consult_record(request,id):
 
         if form.is_valid():
             cd = form.cleaned_data
-            # if cd['consultant'].email == request.session['email']:
+
             form.save()
             return HttpResponseRedirect('/crm/consult_record/%d' % (customer.id))
-            # else:
-            #     return render(request,'crm/error.html',{'error':"只能修改自己的客户！"})
+          
         else:
 
             form = forms.AddConsultRecordForm(request.POST,instance=customer)
@@ -990,7 +965,6 @@ def customer_detail(request,id):
 def class_list(request,*args,**kwargs):
     class_lists = models.ClassList.objects.all()
     count = models.ClassList.objects.all().count()
-    # students = models.Customer.objects.filter(class_list=).count()
     return render(request,'crm/class_list.html',{'class_lists':class_lists,'count':count})
 
 @login_required
@@ -998,7 +972,6 @@ def class_detail(request,*args,**kwargs):
     id = kwargs['id']
     ord=[]
     current_url = request.path
-    print('kwargs',kwargs)
     cus_status = (('signed', '已报名'), ('paid_in_full', '学费已交齐'))  # 客户状态
     cus_status = map(lambda x: {'type': x[0], 'name': x[1]}, cus_status)
     cus_status = list(cus_status)
@@ -1036,7 +1009,6 @@ def class_detail(request,*args,**kwargs):
 
     if '-date'in ord:
         ord.remove('-date')
-    print('dict', ord)
 
     count = models.Customer.objects.filter(**direct_org ).count()
     pageObj = PageInfo(page, count,50)

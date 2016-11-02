@@ -127,11 +127,6 @@
 								<div class="row">
 									<div class="col-sm-6 table-toolbar-left">
 										<a href="{% url 'addcustomer' %}" id="demo-btn-addrow" class="btn btn-purple btn-labeled fa fa-plus">添加新客户</a>
-										<!--<button class="btn btn-default"><i class="fa fa-print"></i> 打印</button>-->
-										<!--<div class="btn-group">-->
-											<!--<button class="btn btn-default"><i class="fa fa-exclamation-circle"></i> 告警</button>-->
-											<!--<button class="btn btn-default"><i class="fa fa-trash"></i> 删除</button>-->
-										<!--</div>-->
 									</div>
 									<div class="col-sm-6 table-toolbar-right">
 										<div class="form-group">
@@ -386,8 +381,8 @@
 											<td>
 												<div>{{customer.consultrecord_set.last.get_status_display | default:'---'}}</div>
 											</td>
-											<td class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.date |naturalday:'SHORT_DATE_FORMAT'| default:'---'}}</div></a></td>
-											<td class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.date |naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div></a></td>
+											<td ><div>{{customer.date |naturalday:'SHORT_DATE_FORMAT'| default:'---'}}</div></td>
+											<td ><div>{{customer.consultrecord_set.last.date |naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div></td>
 											<td class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.note|truncatechars:10 |default:'----'}}</div></a></td>
 											<td class=" btn-hover-info"><a href="{%url 'cus_enroll' id=customer.id%}"><div>报名</div></a></td>
 
