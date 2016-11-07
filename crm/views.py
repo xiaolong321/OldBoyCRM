@@ -314,8 +314,11 @@ def file_download(request):
         
 @login_required
 def dashboard(request):
-    email = request.session['email']
-    dict_org={'consultant__email':email,'status':'unregistered'}
+    try:
+        email = request.session['email']
+        dict_org={'consultant__email':email,'status':'unregistered'}
+    except KeyError as e:
+        return HttpResponseRedirect(resolve('my_login'))
     cus=models.Customer.objects.filter(**dict_org)
     today= datetime.date.today()
     customers=[]
