@@ -407,7 +407,7 @@ class ContractTemplate(models.Model):
 
 class Assistant(models.Model):
     name = models.CharField(u"姓名",max_length=64,unique=True)
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     class Meta:
         verbose_name = u"助教"
