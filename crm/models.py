@@ -1,12 +1,10 @@
 #_*_coding:utf8_*_
 
 from django.db import models
-
-# Create your models here.
 from django.utils.html import format_html
 from OldboyCRM import settings
 import os
-from myauth import UserProfile
+from crm.myauth import UserProfile
 
 
 course_choices = (
@@ -29,15 +27,15 @@ class_type_choices= (('online',u'网络班'),
                      )
 
 class Customer(models.Model):
-    qq = models.CharField(max_length=64,unique=True,help_text=u'QQ号必须唯一')
+    qq = models.CharField('QQ',max_length=64,unique=True,help_text=u'QQ号必须唯一')
     qq_name = models.CharField(u'QQ名称',max_length=64,blank=True,null=True)
-    name = models.CharField(u'姓名',max_length=32,default=None)
+    name = models.CharField(u'姓名',max_length=32,default=None,blank=True,null=True)
     sex_type = (('male',u'男'),('female',u'女'))
-    sex = models.CharField(u"性别",choices=sex_type,default='male',max_length=32)
-    birthday = models.DateField(u'出生日期',max_length=64,default=None,help_text="格式yyyy-mm-dd")
+    sex = models.CharField(u"性别",choices=sex_type,default='male',max_length=32,blank=True,null=True)
+    birthday = models.DateField(u'出生日期',max_length=64,default=None,help_text="格式yyyy-mm-dd",blank=True,null=True)
     phone = models.BigIntegerField(u'手机号',blank=True,null=True)
-    email = models.EmailField(u'常用邮箱',default='youremail@some_web.com')
-    id_num = models.CharField(u'身份证号',max_length=64,default=0)
+    email = models.EmailField(u'常用邮箱',blank=True,null=True)
+    id_num = models.CharField(u'身份证号',max_length=64,default=0,blank=True,null=True)
 
     stu_id = models.CharField(u"学号",blank=True,null=True,max_length=64)
     source_type = (('qq',u"qq群"),
@@ -49,7 +47,7 @@ class Customer(models.Model):
                    ('51cto',u"51cto"),
                    ('others',u"其它"),
                    )
-    source = models.CharField(u'客户来源',max_length=64, choices=source_type,default='qq')
+    source = models.CharField(u'客户来源',max_length=64, choices=source_type,default='qq',blank=True,null=True)
     referral_from = models.ForeignKey('self',verbose_name=u"转介绍自学员",help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名",blank=True,null=True,related_name="internal_referral")
 
     course = models.CharField(u"咨询课程",max_length=64,choices=course_choices)
@@ -57,7 +55,7 @@ class Customer(models.Model):
 
     customer_note = models.TextField(u"客户咨询内容详情",help_text=u"客户咨询的大概情况,客户个人信息备注等...")
     work_status_choices = (('employed','在职'),('unemployed','无业'))
-    work_status = models.CharField(u"职业状态",choices=work_status_choices,max_length=32,default='employed')
+    work_status = models.CharField(u"职业状态",choices=work_status_choices,max_length=32,default='employed',blank=True,null=True)
     company = models.CharField(u"目前就职公司",max_length=64,blank=True,null=True)
     salary = models.CharField(u"当前薪资",max_length=64,blank=True,null=True)
     status_choices = (('signed',u"已报名"),
@@ -84,7 +82,7 @@ class Customer(models.Model):
     get_enrolled_course.short_description = u'已报班级'
     colored_status.admin_order_field  = u'客户状态'
     colored_status.short_description  = u'客户状态'
-    def __unicode__(self):
+    def __str__(self):
         return u"QQ:%s -- Stu:%s -- Name:%s" %(self.qq,self.stu_id,self.name)
     class Meta:
         verbose_name = u'客户信息表'
@@ -94,16 +92,19 @@ class Enrollment(models.Model):
     '''
     store all the enrolled student info
     '''
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer,verbose_name='客户名称')
     course_grade =  models.ForeignKey("ClassList",verbose_name=u"所报班级")
-    why_us = models.TextField(u"为什么报名老男孩",max_length=1024,default=None)
-    your_expectation = models.TextField(u"学完想达到的具体期望",max_length=1024)
+    why_us = models.TextField(u"为什么报名老男孩",max_length=1024,default=None,blank=True,null=True)
+    your_expectation = models.TextField(u"学完想达到的具体期望",max_length=1024,blank=True,null=True)
     contract_agreed = models.BooleanField(u"我已认真阅读完培训协议并同意全部协议内容")
     contract_approved = models.BooleanField(u"审批通过",help_text=u"在审阅完学员的资料无误后勾选此项,合同即生效")
     check_passwd = models.CharField(u"合同查询密码",max_length=64,blank=True,null=True,help_text=u"学员用这个密码来查询自己的合同信息,密码会自动生成,勿动")
     enrolled_date = models.DateTimeField(auto_now_add=True,auto_created=True,verbose_name="报名日期")
     memo = models.TextField(u'备注',blank=True,null=True)
-    def __unicode__(self):
+    school_choice = ((0,'北京'),(1,'上海'))
+    school = models.IntegerField('校区',choices=school_choice,default=0)
+    
+    def __str__(self):
         return self.customer.qq
     class Meta:
         verbose_name = u'学员报名表'
@@ -150,7 +151,7 @@ class ConsultRecord(models.Model):
     consultant = models.ForeignKey(UserProfile,verbose_name=u"跟踪人")
     date = models.DateField(u"跟进日期",auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s, %s" %(self.customer,self.status)
 
     class Meta:
@@ -171,7 +172,7 @@ class PaymentRecord(models.Model):
     note = models.TextField(u"备注",blank=True,null=True)
     date = models.DateTimeField(u"交款日期",auto_now_add=True)
     consultant = models.ForeignKey(UserProfile,verbose_name=u"负责老师",help_text=u"谁签的单就选谁")
-    def __unicode__(self):
+    def __str__(self):
         return u"%s, 类型:%s,数额:%s" %(self.customer,self.pay_type,self.paid_fee)
 
     class Meta:
@@ -188,7 +189,7 @@ class ClassList(models.Model):
     teachers = models.ManyToManyField(UserProfile,verbose_name=u"讲师")
 
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s(%s)" %(self.get_course_display(),self.semester)
     class Meta:
         verbose_name = u'班级列表'
@@ -204,7 +205,7 @@ class CourseRecord(models.Model):
     date = models.DateField(auto_now_add=True,verbose_name=u"上课日期")
     teacher = models.ForeignKey(UserProfile,verbose_name=u"讲师")
     has_homework = models.BooleanField(default=True,verbose_name=u"本节有作业")
-    def __unicode__(self):
+    def __str__(self):
         return u"%s 第%s天" %(self.course,self.day_num)
     class Meta:
         verbose_name = u'上课纪录'
@@ -276,7 +277,7 @@ class StudyRecord(models.Model):
     }
 
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s,学员:%s,纪录:%s, 成绩:%s" %(self.course_record,self.student.name,self.record,self.get_score_display())
 
     class Meta:
@@ -318,7 +319,7 @@ class SurveryItem(models.Model):
                            )
     anwser_type = models.CharField(u"问题类型",choices=anwser_type_choices,default='score',max_length=32)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -330,7 +331,7 @@ class Survery(models.Model):
     by_class = models.ForeignKey(ClassList,verbose_name=u"问卷调查班级")
     date = models.DateTimeField(auto_now_add=True,verbose_name=u"问卷创建日期")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     class Meta:
         verbose_name = u'调查问卷'
@@ -347,7 +348,7 @@ class SurveryRecord(models.Model):
     date = models.DateTimeField(auto_now_add=True,verbose_name=u"打分日期")
     client_id = models.CharField(max_length=128,verbose_name=u"客户机id,会自动生成,莫改",default="..")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s -- %s -- %s -- %s"%(self.survery,self.student_name,self.survery_item,self.score)
     class Meta:
         verbose_name = u'问卷记录'
@@ -370,7 +371,7 @@ class Compliant(models.Model):
     dealing_time = models.DateTimeField(u"处理时间",blank=True,null=True)
     dealer = models.ForeignKey(UserProfile,verbose_name=u"处理人",blank=True,null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s --- %s" %(self.title,self.status)
 
     class Meta:
@@ -385,7 +386,7 @@ class StudentFAQ(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" %(self.title)
 
     class Meta:
@@ -397,7 +398,7 @@ class ContractTemplate(models.Model):
     name = models.CharField(u"合同名称",max_length=128,unique=True)
     content = models.TextField(u"合同内容")
     date = models.DateField(auto_now_add=True)
-    def __unicode__(self):
+    def __str__(self):
         return self.name
     class Meta:
         verbose_name = u"合同模版"

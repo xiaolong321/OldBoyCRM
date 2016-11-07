@@ -1,0 +1,19 @@
+/*供dashbord及其子页调用*/
+
+
+/*dashboard子页table的标题栏排序黑三角上层div*/
+.div-ico-sort{
+    margin:-12px 0px;
+}
+/*dashboard子页table的标题栏排序黑三角上层div的上层div */
+.div2-ico-sort{
+    float: left;padding-left:6px;margin-top:12px;
+}
+/*dashboard子页table的标题栏排序黑三角隐藏class*/
+.hid{
+    visibility: hidden;
+}
+.fa-caret-up,.fa-caret-down{color: purple}
+
+
+.smgui{float:left;line-height:50px;margin:0px 10px 0px  20px}

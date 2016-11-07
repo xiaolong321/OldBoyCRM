@@ -1,0 +1,204 @@
+{%extends 'crm/dashboard.html'%}
+{%load humanize %}
+
+
+
+
+{% block dash-content%}
+
+				<div id="page-content">
+					<div class="panel">
+						<div class="panel-heading">
+							<h3 class="panel-title">班级列表</h3>
+						</div>
+						<div class="panel-body">			
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by='id'>课程名称</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<a  class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>学期</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="course">开班日期</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down " aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="class_type">结业日期</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="#">讲师</span>
+													</div>
+													<div class="div2-ico-sort  hid">
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-up " aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>学员数量</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+												</div>
+												</a>
+											</th>
+
+										</tr>
+									</thead>
+									<tbody>
+									{%for classes in class_lists%}
+									<tr>
+											<td><a class="btn-link" href="{%url 'class_detail' classes.id  'all' 'all' 1%}">{{classes.get_course_display}}</a></td>
+											<td>{{classes.semester}}</td>
+											<td>{{classes.start_date}}</td>
+											<td>{{classes.graduate_date}}</td>
+											<td>{%for teacher in classes.teachers.all%}
+													{{teacher.name}}&emsp;
+												{%endfor%}</td>
+											<td>{{classes.customer_set.all.count}}</td>
+
+
+									{%endfor%}
+									</tbody>
+								</table>
+								<span>共&emsp13;{{count}}&emsp14;条记录</span>
+							</div>
+						</div>
+						<!--===================================================-->
+						<!--End Data Table-->
+
+
+						<!--fenye-->
+						<div class="text-center">
+							<ul class="pagination">
+								{{fenye}}
+							</ul>
+						</div>
+					</div>
+
+
+				</div>
+				<!--===================================================-->
+				<!--End page content-->
+{%endblock%}
+

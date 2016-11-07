@@ -1,0 +1,399 @@
+{%extends 'crm/dashboard.html'%}
+{%load humanize%}
+{% load custom_tag %}
+
+
+
+
+
+{% block dash-filter%}
+<div style="height: 50px;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
+		{% action_all  current_url  1 '以客户来源'%}
+	</div>
+	<div >
+		<ul style="list-style-type: none;">
+
+			{% for item in cus_sources %}
+             {% action current_url item 1%}
+
+        	{% endfor %}
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+<div style="height: auto;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height:60px;margin:0px 10px 0px  20px" >{% action_all  current_url  2 '以咨询课程'%}</div>
+	<div >
+		<ul style="list-style-type: none;">
+			{% for item in course %}
+             {% action current_url item 2%}
+
+        	{% endfor %}
+
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+<div style="height: 50px;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  3 '以班级类型'%}</div>
+	<div >
+		<ul style="list-style-type: none;">
+			{% for item in classes %}
+             {% action current_url item 3%}
+
+        	{% endfor %}
+
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+<div style="height: 50px;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  4 '以客户状态'%}</div>
+	<div >
+		<ul style="list-style-type: none;">
+			{% for item in cus_status %}
+             {% action current_url item 4 %}
+
+        	{% endfor %}
+
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+<div style="height: 50px;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  5 '以咨询日期'%}</div>
+	<div >
+		<ul style="list-style-type: none;">
+			{% for item in filter_date %}
+             {% action current_url item 5%}
+        	{% endfor %}
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+<div style="height: 50px;width: auto;border: 1px solid lightgray">
+	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px;">{% action_all  current_url  6  '以课程顾问'%}</div>
+	<div >
+		<ul style="list-style-type: none;disabled:disabled;" >
+			{% for item in staffs %}
+             {% action current_url item 6%}
+        	{% endfor %}
+		</ul>
+	</div>
+	<div style="clear: both"></div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+{% block dash-content%}
+
+
+				<!--Page Title-->
+				<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+				<div id="page-title">
+					<h1 class="page-header text-overflow"></h1>
+
+					<!--Searchbox-->
+					<div class="searchbox">
+						<div class="input-group custom-search-form">
+
+							<span class="input-group-btn">
+
+							</span>
+						</div>
+					</div>
+				</div>
+				<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+				<!--End page title-->
+
+				<!--Page content-->
+				<!--===================================================-->
+				<div id="page-content">
+					<div class="panel">
+						<div class="panel-heading">
+							<h3 class="panel-title">已签约</h3>
+						</div>
+
+						<!--Data Table-->
+						<!--===================================================-->
+						<div class="panel-body">
+							<div class="pad-btm form-inline">
+								<div class="row">
+									<div class="col-sm-6 table-toolbar-left">
+										<button id="demo-btn-addrow" class="btn btn-purple btn-labeled fa fa-heart">继续努力</button>
+
+									</div>
+									<div class="col-sm-6 table-toolbar-right">
+										<div class="form-group">
+											<form action="" method="GET">
+											<input id="input-search2" name="qq" type="text" placeholder="请输入QQ号" class="form-control" autocomplete="off">
+											<input class="form-control" type="submit" value="查询"/>
+											</form>
+											<span style="color: red;position: relative;left: -160px">{{qq_num_error}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by='id'>ID</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="">
+														<i class="fa fa-ban" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>姓名</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="class_list">已报班级</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort  hid">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="course">班级类型</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="">
+														<i class="fa fa-ban" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>QQ</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+											</th>
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>审批</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span sort_by="status">状态</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="">
+														<i class="fa fa-ban" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+
+											<th>
+												<a href="#" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>报名时间</span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+                                    {%for customer in customers%}
+										<tr>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
+											<td>
+
+											{%for item in customer.class_list.all%}
+                              						<ul style="list-style-type:none;margin-left: -40px">
+														<li>{{item}}</li>
+													</ul>
+                           						 {%endfor%}
+
+											</td>
+											<td>{{customer.get_class_type_display}}</td>
+											<td>{{customer.qq}}</td>
+											{%if customer.status == 'signed'%}
+											<td class=" btn-hover-success"><a href="{%url 'cus_enroll' id=customer.id%}"><div>审批</div></a></td>
+												{%else%}
+											<td><span></span></td>
+											{%endif%}
+
+
+											<td>
+												{%if customer.status == 'signed' %}
+												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-mint">{{customer.get_status_display}}</div></a>
+												{%elif customer.status == 'unregistered'%}
+												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-danger">{{customer.get_status_display}}</div></a>
+												{%else%}
+												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-pink">{{customer.get_status_display}}</div></a>
+												{%endif%}
+											</td>
+											<td class=" btn-hover-info">
+												<a href="{%url 'enroll_done'  customer.qq %}">
+													<div>{{customer.enrollment_set.last.enrolled_date|naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div>
+												</a></td>
+										</tr>
+                                    {%endfor%}
+									</tbody>
+								</table>
+								<span>共&emsp13;{{count}}&emsp14;条记录
+
+							</div>
+						</div>
+						<!--===================================================-->
+						<!--End Data Table-->
+
+
+						<!--fenye-->
+						<div class="text-center">
+							<ul class="pagination">
+								{{fenye}}
+							</ul>
+						</div>
+					</div>
+
+
+				</div>
+				<!--===================================================-->
+				<!--End page content-->
+
+
+
+
+{% endblock%}
