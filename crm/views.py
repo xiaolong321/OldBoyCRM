@@ -445,7 +445,7 @@ def tracking(request,page,*args,**kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '本月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
 
     result = {
         'cus_sources': cus_sources,
@@ -580,7 +580,7 @@ def signed(request,page,*args,**kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '本月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
 
     result = {
         'cus_sources': cus_sources,
@@ -703,7 +703,7 @@ def customers_library(request,page,*args,**kwargs):
     staffs = map(lambda x:{'type':x['email'],'name':x['name']},staffs )
     staffs = list(staffs)
 
-    filter_date = [{'type':'today','name':'今天'},{'type':'sevendays','name':'七天以内'},{'type':'month','name':'本月'},{'type':'year','name':'今年'}]
+    filter_date = [{'type':'today','name':'今天'},{'type':'sevendays','name':'七天以内'},{'type':'month','name':'近一个月'},{'type':'year','name':'今年'}]
 
     result ={
         'cus_sources':cus_sources,
