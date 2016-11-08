@@ -318,7 +318,7 @@ def dashboard(request):
         email = request.session['email']
         dict_org={'consultant__email':email,'status':'unregistered'}
     except KeyError as e:
-        return HttpResponseRedirect(resolve('my_login'))
+        return HttpResponseRedirect(resolve_url('my_login'))
     cus=models.Customer.objects.filter(**dict_org)
     today= datetime.date.today()
     customers=[]
@@ -419,12 +419,9 @@ def sale_table(request):
 def tracking(request,page,*args,**kwargs):
     ord = []
     username = request.session['username']
-    user = request.user
-
+    user = request.session['email']
     current_url = request.path
-
     GET = request.GET
-
     cus_sources = models.Customer.source_type  # 以客户来源
     cus_sources = map(lambda x: {'type': x[0], 'name': x[1]}, cus_sources)
     cus_sources = list(cus_sources)
@@ -446,7 +443,7 @@ def tracking(request,page,*args,**kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '本月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
 
     result = {
         'cus_sources': cus_sources,
@@ -516,6 +513,14 @@ def tracking(request,page,*args,**kwargs):
         except:
             page = 1
 
+        values = request.COOKIES.values()
+        if ('desc' not in values) and ('asc' not in values):
+            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+        else:
+            ord = []
+
+
+
         for key in request.COOKIES.keys():
             if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
                 if key != 'undefined':
@@ -537,7 +542,7 @@ def tracking(request,page,*args,**kwargs):
 
 @login_required
 def signed(request,page,*args,**kwargs):
-    ord = []
+
     if request.method == 'POST':
         id=request.POST['id']
         cur_customer = models.Customer.objects.get(id=id)
@@ -548,7 +553,7 @@ def signed(request,page,*args,**kwargs):
 
 
     username = request.session['username']
-    user = request.user
+    user = request.session['email']
     current_url = request.path
     GET = request.GET
 
@@ -573,7 +578,7 @@ def signed(request,page,*args,**kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '本月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
 
     result = {
         'cus_sources': cus_sources,
@@ -639,6 +644,11 @@ def signed(request,page,*args,**kwargs):
         except:
             page = 1
 
+        values = request.COOKIES.values()
+        if ('desc' not in values) and ('asc' not in values):
+            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+        else:
+            ord = []
 
         for key in request.COOKIES.keys():
 
@@ -651,7 +661,6 @@ def signed(request,page,*args,**kwargs):
 
         count = models.Customer.objects.filter(**direct_org).exclude(**exc).count()
         pageObj = PageInfo(page, count, 50)
-
 
         customers = models.Customer.objects.filter(**direct_org).exclude(**exc).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
@@ -666,7 +675,7 @@ def signed(request,page,*args,**kwargs):
 
 @login_required
 def customers_library(request,page,*args,**kwargs):
-    ord = []
+
     username = request.session['username']
     current_url = request.path
     GET = request.GET
@@ -692,7 +701,7 @@ def customers_library(request,page,*args,**kwargs):
     staffs = map(lambda x:{'type':x['email'],'name':x['name']},staffs )
     staffs = list(staffs)
 
-    filter_date = [{'type':'today','name':'今天'},{'type':'sevendays','name':'七天以内'},{'type':'month','name':'本月'},{'type':'year','name':'今年'}]
+    filter_date = [{'type':'today','name':'今天'},{'type':'sevendays','name':'七天以内'},{'type':'month','name':'近一个月'},{'type':'year','name':'今年'}]
 
     result ={
         'cus_sources':cus_sources,
@@ -762,6 +771,14 @@ def customers_library(request,page,*args,**kwargs):
             page = 1
         pageObj = PageInfo(page, count, 50)
 
+        values=request.COOKIES.values()
+        if ('desc' not in values) and ('asc'not in values):
+            ord = ['-id']   #  如果没有选择排序，那么默认设置为按 id 排序
+        else:
+            ord = []
+
+
+
         for key in request.COOKIES.keys():
 
             if request.COOKIES[key]=='asc' or request.COOKIES[key] =='desc':
@@ -772,6 +789,7 @@ def customers_library(request,page,*args,**kwargs):
                     elif request.COOKIES[key]=='desc':
 
                         ord.append('-'+key)
+
 
         customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])

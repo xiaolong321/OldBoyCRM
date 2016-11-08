@@ -151,33 +151,28 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by='id'>ID</span>
+														<span>QQ</span>
 													</div>
 													<div class="div2-ico-sort">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
 														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
 														</div>
 													</div>
 
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 												<a  class="a-ico-sort">
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span>姓名</span>
+														<span>QQ昵称</span>
 													</div>
 													<div class="div2-ico-sort">
 														<div class="div-ico-sort">
@@ -211,12 +206,7 @@
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 												<div style="float: left;margin-right: 3px">
@@ -238,31 +228,9 @@
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<a href="#" class="a-ico-sort">
-												<div>
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span>QQ</span>
-													</div>
-													<div class="div2-ico-sort">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-														</div>
-													</div>
-												</div>
-												</a>
 											</th>
+
 											<th>
 												<div style="float: left;margin-right: 3px">
 												<a href="#" class="a-ico-sort">
@@ -304,12 +272,7 @@
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 												<a href="#" class="a-ico-sort">
@@ -373,11 +336,11 @@
 									<tbody>
 									{%for customer in customers%}
 									<tr>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq_name}}</a></td>
 											<td><span class="text-muted">{{customer.get_course_display}} </span></td>
 											<td>{{customer.get_class_type_display}}</td>
-											<td>{{customer.qq}}</td>
+
 											<td>
 												<div>{{customer.consultrecord_set.last.get_status_display | default:'---'}}</div>
 											</td>
