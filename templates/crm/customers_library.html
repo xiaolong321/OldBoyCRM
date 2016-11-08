@@ -130,39 +130,40 @@
 											<th>
 
 												<div style="float: left;margin-right: 3px">
-													<a href="" class="a-ico-sort">
-														<div>
+													<a href="#" class="a-ico-sort">
+												<div>
 
-															<div style="float:left;text-align: center;line-height: 35px">
-																<span sort_by='id'>ID</span>
-															</div>
-															<div  class="div2-ico-sort">
-																<div class="div-ico-sort ">
-																<i class="fa fa-caret-up" aria-hidden="false"></i>
-																</div>
-																<div class="div-ico-sort">
-																<i class="fa fa-caret-down" aria-hidden="true"></i>
-																</div>
-															</div>
-
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>QQ</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
 														</div>
-													</a>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
 												</div>
 												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
+													<a href="#">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
 													</a>
 												</div>
 												<div style="clear: both"></div>
 											</th>
-											<th>
+                                            <th>
 
 												<div style="float: left;margin-right: 3px">
 													<a href="#" class="a-ico-sort">
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span>QQ</span>
+														<span>QQ昵称</span>
 													</div>
 													<div  class="div2-ico-sort">
 														<div class="div-ico-sort ">
@@ -205,12 +206,8 @@
 														</div>
 													</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href=""  title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
+
 											</th>
 
 											<th>
@@ -234,13 +231,6 @@
 												</div>
 												</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href=""  title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
 											</th>
 											<th>
 
@@ -263,13 +253,7 @@
 												</div>
 												</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 
@@ -292,13 +276,7 @@
 												</div>
 												</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 
@@ -321,13 +299,7 @@
 												</div>
 												</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban" aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 
 											<th>
@@ -351,13 +323,7 @@
 												</div>
 												</a>
 												</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban " aria-hidden="true">
-														</i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 											<th>
 
@@ -452,9 +418,9 @@
 
 									{%for customer in customers  %}
 										<tr>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
-											<td><span class="text-muted"> {{customer.get_course_display}}</span></td>
+											<td><div><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></div></td>
+											<td style="padding: 0px;margin: 2px"><div><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq_name|default:'---'}}</a></div></td>
+											<td><span class="text-muted"> <div style="width: 80px;height: auto">{{customer.get_course_display}}</div></span></td>
 											<td>{{customer.get_class_type_display}}</td>
 
 											<td>
@@ -467,12 +433,10 @@
 												{%endif%}
 											</td>
 											<td>{{customer.get_source_display}}</td>
-
-
 											<td><div>{{customer.consultant.name}}</div></td>
 											<td><div>{{customer.date|naturalday:'SHORT_DATE_FORMAT'}}</div></td>
-												<td>
-											{{customer.customer_note|truncatechars:9}}
+												<td><div style="padding:0px;margin:2px; width: 200px;height: auto">
+											{{customer.customer_note}}</div>
 											</td>
 
 											<td ><div>{{customer.consultrecord_set.last.date|naturalday:'SHORT_DATE_FORMAT'|default:'----'}}</div></td>

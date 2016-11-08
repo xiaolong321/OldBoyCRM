@@ -151,13 +151,13 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by='id'>ID</span>
+														<span>QQ</span>
 													</div>
 													<div class="div2-ico-sort">
-														<div class="div-ico-sort">
+														<div class="div-ico-sort hid">
 														<i class="fa fa-caret-up" aria-hidden="false"></i>
 														</div>
-														<div class="div-ico-sort">
+														<div class="div-ico-sort hid">
 														<i class="fa fa-caret-down" aria-hidden="true"></i>
 														</div>
 													</div>
@@ -167,7 +167,7 @@
 													</div>
 												<div style="float: left;text-align: center;line-height: 34px">
 													<a href="">
-														<i class="fa fa-ban" aria-hidden="true"></i>
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
 													</a>
 												</div>
 												<div style="clear: both"></div>
@@ -238,32 +238,9 @@
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<a href="#" class="a-ico-sort">
-												<div>
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span>QQ</span>
-													</div>
-													<div class="div2-ico-sort">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-														</div>
-													</div>
-
-												</div>
-												</a>
 											</th>
+
 											<th>
 												<a href="#" class="a-ico-sort">
 												<div>
@@ -303,12 +280,7 @@
 												</div>
 												</a>
 													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="">
-														<i class="fa fa-ban" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
+
 											</th>
 
 											<th>
@@ -335,7 +307,7 @@
 									<tbody>
                                     {%for customer in customers%}
 										<tr>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.id}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
 											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
 											<td>
 
@@ -347,7 +319,7 @@
 
 											</td>
 											<td>{{customer.get_class_type_display}}</td>
-											<td>{{customer.qq}}</td>
+
 											{%if customer.status == 'signed'%}
 											<td class=" btn-hover-success"><a href="{%url 'cus_enroll' id=customer.id%}"><div>审批</div></a></td>
 												{%else%}
