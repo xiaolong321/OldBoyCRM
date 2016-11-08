@@ -421,9 +421,7 @@ def tracking(request,page,*args,**kwargs):
     username = request.session['username']
     user = request.session['email']
     current_url = request.path
-
     GET = request.GET
-
     cus_sources = models.Customer.source_type  # 以客户来源
     cus_sources = map(lambda x: {'type': x[0], 'name': x[1]}, cus_sources)
     cus_sources = list(cus_sources)
