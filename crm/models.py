@@ -29,7 +29,7 @@ class_type_choices= (('online',u'网络班'),
 class Customer(models.Model):
     qq = models.CharField('QQ',max_length=64,unique=True,help_text=u'QQ号必须唯一')
     qq_name = models.CharField(u'QQ名称',max_length=64,blank=True,null=True)
-    name = models.CharField(u'姓名',max_length=32,default=None,blank=True,null=True)
+    name = models.CharField(u'姓名',max_length=32,help_text='学员报名后，请改为真实姓名')
     sex_type = (('male',u'男'),('female',u'女'))
     sex = models.CharField(u"性别",choices=sex_type,default='male',max_length=32,blank=True,null=True)
     birthday = models.DateField(u'出生日期',max_length=64,default=None,help_text="格式yyyy-mm-dd",blank=True,null=True)
@@ -47,7 +47,7 @@ class Customer(models.Model):
                    ('51cto',u"51cto"),
                    ('others',u"其它"),
                    )
-    source = models.CharField(u'客户来源',max_length=64, choices=source_type,default='qq',blank=True,null=True)
+    source = models.CharField(u'客户来源',max_length=64, choices=source_type,default='qq')
     referral_from = models.ForeignKey('self',verbose_name=u"转介绍自学员",help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名",blank=True,null=True,related_name="internal_referral")
 
     course = models.CharField(u"咨询课程",max_length=64,choices=course_choices)
