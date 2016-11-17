@@ -24,9 +24,13 @@
 <option value="{{curr_user.id}}" selected="selected">{{curr_user.name}}</option>
 </select>
                         </div>
+                        {%elif field.name == 'name'%}
+                           <div class="col-sm-6">
+                            {{ field }}
+                            <span style="color: blue">{{ field.help_text }}</span>
+                            </div>
                          {%else%}
                         <div class="col-sm-6">
-
                             {{field}}
                         </div>
                         {%endif%}
