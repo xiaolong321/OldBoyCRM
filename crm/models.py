@@ -15,6 +15,7 @@ course_choices = (
                       ('PythonDevOps',u'Python自动化开发'),
                       ('PythonFullStack',u'Python高级全栈开发'),
                       ('PythonDevOps51',u'Python自动化开发(51网络)'),
+                      ('LinuxL1Online',u'Linux运维(网络-随到随学)'),
                       ('PythonFullStack51',u'Python全栈开发(51网络)'),
                       ('BigDataDev',u"大数据开发课程"),
                       ('Cloud',u"云计算课程"),
