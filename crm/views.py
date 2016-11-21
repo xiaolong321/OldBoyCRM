@@ -350,7 +350,7 @@ def dashboard(request):
     result.update(succe_track)
 
     # 以下为 销量排名图表 所需数据
-    sales=[(i.email,i.name) for i in models.UserProfile.objects.all() if not i.is_admin]
+    sales=[(i.email,i.name) for i in models.UserProfile.objects.filter(groups__name='sales').all()]
     # 销售用户列表 [('x.qq.com',张三），（'y@qq.com'，李四），（'z@qq.com',王五) ]
 
     sale_num={}  # 销售销量字典{姓名：[正跟进客户数，已签约客户数]}  ｛张三：[3,2],李四：[6,2]｝
