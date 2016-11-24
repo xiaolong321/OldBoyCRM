@@ -1,0 +1,67 @@
+{% extends 'teacher/dashboard.html'%}
+    {%block dash-filter%}
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Basic Data Tables with responsive plugin</h3>
+            </div>
+            <div class="panel-body">
+                <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>学号</th>
+                            <th>姓名</th>
+                            {% for course in courses %}
+                                <th>第{{ course.day_num }}天</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ student.id }}</td>
+                                <td>{{ student.name }}</td>
+                                {% for course in courses %}
+                                    <td>
+                                        <select student_id="{{ student.id }}" course_id="{{ course.id }}">
+                                            <option></option>
+                                            <option value ="checked">正常签到</option>
+                                            <option value ="late">迟到</option>
+                                            <option value ="noshow">缺勤</option>
+                                            <option value ="leave_early">早退</option>
+                                        </select>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endblock %}
+
+
+    {%block dash-footer-js%}
+        <script>
+            $(function () {
+                {% for story in stories %}
+                    $("select[student_id='{{ story.student_id }}'][course_id='{{ story.course_record_id }}'").children("[value='{{ story.record }}']").attr("selected", "selected")
+                {% endfor %}
+
+                $('select').change(function () {
+                    var student_id = $(this).attr('student_id');
+                    var course_id = $(this).attr('course_id');
+                    var status = $(this).val();
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            student_id:student_id,
+                            course_id:course_id,
+                            status:status,
+                        },
+                    })
+                })
+            })
+
+        </script>
+	{%endblock%}

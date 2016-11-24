@@ -1,0 +1,32 @@
+{% extends 'teacher/dashboard.html'%}
+    {%block dash-filter%}
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ request.user }}老师您好，这是您目前教授的班级</h3>
+            </div>
+            <div class="panel-body">
+                <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>课程名称</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for class in classlists %}
+                            <tr>
+                                <td>
+                                    <a href="/teacher/courselist/{{ class.id }}">
+                                        {{ class}}
+                                    </a>
+                                </td>
+                                <td>{{ class.start_date }}</td>
+                                <td>{{ class.graduate_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endblock %}

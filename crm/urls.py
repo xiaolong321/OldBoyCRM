@@ -1,3 +1,4 @@
+#_*_encoding:utf-8_*_
 
 from django.conf.urls import include, url
 from crm import views
