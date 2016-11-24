@@ -2,7 +2,17 @@
     {%block dash-filter%}
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ request.user }}老师您好，这是课程当天的详细情况</h3>
+                <h3 class="panel-title">
+                    {{ request.user }}老师您好，这是课程当天的详细情况
+                    <div style="float: right">
+                        <select class="set_all">
+                            <option value ="checked">全部设置为正常签到</option>
+                            <option value ="noshow">全部设置为缺勤</option>
+                            <option value ="late">全部设置为迟到</option>
+                            <option value ="leave_early">全部设置为早退</option>
+                        </select>
+                    </div>
+                </h3>
             </div>
             <div class="panel-body">
                 <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -66,7 +76,12 @@
                     $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".score").children("[value='{{ courserecord.score }}']").attr('selected', 'selected')
                 {% endfor %}
 
-                $('select,input').change(function () {
+                $('select.set_all').change(function () {
+                    var all_information = $(this).val()
+                    $('select.record').val(all_information).trigger('change')
+                })
+
+                $('select.record,select.score,input.note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
                     console.log('student_id',student_id)
                     var course_id = $(this).parent().parent().attr('course_id');
