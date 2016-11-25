@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str
 from django.contrib.auth import login,logout,authenticate
 from crm.html_helper import PageInfo,Page
 from crm.myauth import UserProfile
+from django.contrib.auth.models import Group
 
 def index(request):
     return  render(request,'crm/index.html')
@@ -40,6 +41,8 @@ def survery(request,survery_id):
             pass
 
         return HttpResponse(json.dumps(survery_handler.errors))
+
+
 @login_required
 def survery_report(request,survery_id):
     try:
@@ -62,6 +65,7 @@ def survery_chart_report(request,survery_id):
         return HttpResponse(json.dumps(chart_data))
     except ObjectDoesNotExist as e:
         return HttpResponse("Survery doesn't exist!")
+
 
 @login_required
 def view_class_grade(request,class_id):
@@ -111,7 +115,6 @@ def grade_check(request):
                                                        'study_record_model':models.StudyRecord})
 
 
-
 @login_required
 def stu_lack_check_records(request):
     '''use this function to make up missing course check in records for some late enrolled students'''
@@ -133,6 +136,7 @@ def stu_lack_check_records(request):
                 pass
     return HttpResponseRedirect("/crm/grade/%s" % class_id)
 
+
 def scholarship(request):
 
     return render(request,'crm/scholarship.html')
@@ -150,6 +154,8 @@ def compliant(request):
             compliant_form.save()
             return HttpResponse(u"<h3 style='color:red'>感谢您的建议,我们将尽快认真处理,如果您留下了联系方式,我们会在2个工作日内与你联系并告诉您所提交的投诉或建议的处理进度或结果...have a nice day!</h3><a href='/'>返回首页</a>")
         return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
+
+
 def stu_faq(request):
 
     return render(request,"crm/stu_faq.html")
@@ -310,8 +316,7 @@ def file_download(request):
     else:
         raise  KeyError
 
-        
-        
+
 @login_required
 def dashboard(request):
     try:
@@ -352,7 +357,6 @@ def dashboard(request):
     # 以下为 销量排名图表 所需数据
     sales=[(i.email,i.name) for i in models.UserProfile.objects.filter(groups__name='sales').all()]
     # 销售用户列表 [('x.qq.com',张三），（'y@qq.com'，李四），（'z@qq.com',王五) ]
-
     sale_num={}  # 销售销量字典{姓名：[正跟进客户数，已签约客户数]}  ｛张三：[3,2],李四：[6,2]｝
 
 
@@ -409,10 +413,6 @@ def sale_table(request):
 
         sale_dict=json.dumps(sale_num)
         return HttpResponse(sale_dict)
-
-
-
-
 
 
 @login_required
@@ -671,8 +671,6 @@ def signed(request,page,*args,**kwargs):
     return render(request, 'crm/signed.html', result)
 
 
-
-
 @login_required
 def customers_library(request,page,*args,**kwargs):
 
@@ -800,6 +798,7 @@ def customers_library(request,page,*args,**kwargs):
     result.update(fil)
     return render(request, 'crm/customers_library.html', result)
 
+
 @login_required
 def addcustomer(request):
     username = request.session['username']
@@ -816,6 +815,7 @@ def addcustomer(request):
             return render(request, 'crm/addcustomer.html', {'form': form, 'username': username,'curr_user':curr_user})
     form = forms.AddCustomerForm()
     return render(request,'crm/addcustomer.html',{'form':form,'username':username,'curr_user':curr_user})
+
 
 @login_required
 def cus_enroll(request,id):
@@ -873,8 +873,6 @@ def cus_enroll(request,id):
             return render(request, 'crm/customer_enrollment.html', result)
 
 
-
-
 @login_required
 def enroll_done(request,qq):
     username = request.session['username']
@@ -918,7 +916,7 @@ def consult_record(request,id):
 
             form.save()
             return HttpResponseRedirect('/crm/consult_record/%d' % (customer.id))
-          
+
         else:
 
             form = forms.AddConsultRecordForm(request.POST,instance=customer)
@@ -926,7 +924,6 @@ def consult_record(request,id):
     form = forms.AddConsultRecordForm(instance=customer)
 
     return render(request,'crm/consult_record.html',{'customer':customer,'customer_record':customer_record,'form':form,'username':username})
-
 
 
 def my_login(request):
@@ -962,12 +959,15 @@ def my_login(request):
     form = forms.LoginForm()
     return render(request,'crm/login.html',{'form':form,'error':error})
 
+
 def my_logout(request):
     request.session.clear()
     return  HttpResponseRedirect(resolve_url('/crm/login'))
 
+
 def error(request):
     return render(request,'crm/error.html')
+
 
 @login_required
 def customer_detail(request,id):
@@ -984,11 +984,13 @@ def customer_detail(request,id):
         form = forms.AddCustomerForm(instance=cus)
     return render(request,'crm/customer_detail.html',{'customer':cus,'form':form,'curr_user':curr_user})
 
+
 @login_required
 def class_list(request,*args,**kwargs):
     class_lists = models.ClassList.objects.all()
     count = models.ClassList.objects.all().count()
     return render(request,'crm/class_list.html',{'class_lists':class_lists,'count':count})
+
 
 @login_required
 def class_detail(request,*args,**kwargs):

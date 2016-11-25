@@ -19,13 +19,14 @@ course_choices = (
                       ('PythonFullStack51',u'Python全栈开发(51网络)'),
                       ('BigDataDev',u"大数据开发课程"),
                       ('Cloud',u"云计算课程"),
-
                       )
+
 
 class_type_choices= (('online',u'网络班'),
                      ('offline_weekend',u'面授班(周末)',),
                      ('offline_fulltime',u'面授班(脱产)',),
                      )
+
 
 class Customer(models.Model):
     qq = models.CharField('QQ',max_length=64,unique=True,help_text=u'QQ号必须唯一')
@@ -89,6 +90,7 @@ class Customer(models.Model):
         verbose_name = u'客户信息表'
         verbose_name_plural = u"客户信息表"
 
+
 class Enrollment(models.Model):
     '''
     store all the enrolled student info
@@ -104,7 +106,7 @@ class Enrollment(models.Model):
     memo = models.TextField(u'备注',blank=True,null=True)
     school_choice = ((0,'北京'),(1,'上海'))
     school = models.IntegerField('校区',choices=school_choice,default=0)
-    
+
     def __str__(self):
         return self.customer.qq
     class Meta:
@@ -132,7 +134,6 @@ class Enrollment(models.Model):
         return html
     enrollment_link.allow_tags = True
     enrollment_link.short_description = u'报名地址'
-
 
 
 class ConsultRecord(models.Model):
@@ -180,6 +181,7 @@ class PaymentRecord(models.Model):
         verbose_name = u'交款纪录'
         verbose_name_plural = u"交款纪录"
 
+
 class ClassList(models.Model):
     course = models.CharField(u"课程名称",max_length=64,choices=course_choices)
     semester = models.IntegerField(u"学期")
@@ -200,31 +202,38 @@ class ClassList(models.Model):
     def get_student_num(self):
         return "%s" % self.customer_set.select_related().count()
     get_student_num.short_description = u'学员数量'
+
+
 class CourseRecord(models.Model):
     course = models.ForeignKey(ClassList,verbose_name=u"班级(课程)")
     day_num = models.IntegerField(u"节次",help_text=u"此处填写第几节课或第几天课程...,必须为数字")
     date = models.DateField(auto_now_add=True,verbose_name=u"上课日期")
     teacher = models.ForeignKey(UserProfile,verbose_name=u"讲师")
     has_homework = models.BooleanField(default=True,verbose_name=u"本节有作业")
+
     def __str__(self):
         return u"%s 第%s天" %(self.course,self.day_num)
+
     class Meta:
         verbose_name = u'上课纪录'
         verbose_name_plural = u"上课纪录"
         unique_together = ('course','day_num')
+
     def get_total_show_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="checked").count()
-        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=checked' >%s</a>" % (self.id,total_shows)
+        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=checked' >%s</a>" % (self.id, total_shows)
+
     def get_total_late_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="late").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=late' >%s</a>" % (self.id,total_shows)
+
     def get_total_noshow_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="noshow").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=noshow' >%s</a>" % (self.id,total_shows)
+
     def get_total_leave_early_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="leave_early").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=leave_early' >%s</a>" % (self.id,total_shows)
-
 
     get_total_leave_early_num.allow_tags = True
     get_total_noshow_num.allow_tags = True
@@ -234,7 +243,6 @@ class CourseRecord(models.Model):
     get_total_noshow_num.short_description = u"缺勤人数"
     get_total_late_num.short_description = u"迟到人数"
     get_total_leave_early_num.short_description = u"早退人数"
-
 
 
 class StudyRecord(models.Model):
@@ -326,6 +334,8 @@ class SurveryItem(models.Model):
     class Meta:
         verbose_name = u'调查问卷问题列表'
         verbose_name_plural = u"调查问卷问题列表"
+
+
 class Survery(models.Model):
     name = models.CharField(u"调查问卷名称",max_length=128,unique=True)
     questions = models.ManyToManyField(SurveryItem,verbose_name=u"选择要调查的问题列表")
@@ -337,7 +347,6 @@ class Survery(models.Model):
     class Meta:
         verbose_name = u'调查问卷'
         verbose_name_plural = u"调查问卷"
-
 
 
 class SurveryRecord(models.Model):

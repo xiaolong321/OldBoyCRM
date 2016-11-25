@@ -1,13 +1,15 @@
 #_*_coding:utf-8_*_
 __author__ = 'jieli'
 from django.utils.translation import ugettext_lazy as _
-
+from django.contrib import auth
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser,PermissionsMixin
 )
 
 import django
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -50,6 +52,36 @@ class UserManager(BaseUserManager):
         #user.is_staff = True
         user.save(using=self._db)
         return user
+
+
+def _user_has_perm(user, perm, obj):
+    """
+    A backend can raise `PermissionDenied` to short-circuit permission checking.
+    """
+    for backend in auth.get_backends():
+        if not hasattr(backend, 'has_perm'):
+            continue
+        try:
+            if backend.has_perm(user, perm, obj):
+                return True
+        except PermissionDenied:
+            return False
+    return False
+
+
+def _user_has_module_perms(user, app_label):
+    """
+    A backend can raise `PermissionDenied` to short-circuit permission checking.
+    """
+    for backend in auth.get_backends():
+        if not hasattr(backend, 'has_module_perms'):
+            continue
+        try:
+            if backend.has_module_perms(user, app_label):
+                return True
+        except PermissionDenied:
+            return False
+    return False
 
 
 class UserProfile(AbstractBaseUser,PermissionsMixin):
@@ -97,17 +129,29 @@ class UserProfile(AbstractBaseUser,PermissionsMixin):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
+    #     "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
-        return True
-    def has_perms(self, perm, obj=None):
-        "Does the user have a specific permission?"
+
+        if self.is_active and self.is_superuser:
+            return True
+        return _user_has_perm(self, perm, obj)
+
+
+    def has_perms(self, perm_list, obj=None):
+    #     "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
+        for perm in perm_list:
+            if not self.has_perm(perm, obj):
+                return False
         return True
+
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
+    #     "Does the user have permissions to view the app `app_label`?"
+    #     Simplest possible answer: Yes, always
+        if self.is_active and self.is_superuser:
+            return True
+
+        return _user_has_module_perms(self, app_label)
 
 
     '''@property
