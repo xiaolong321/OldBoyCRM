@@ -1,0 +1,86 @@
+{%extends 'stu/stu_dash.html'%}
+{%load humanize %}
+{%load stu_cus_tag%}
+
+
+
+{% block dash-content%}
+<div id="page-content" >
+                    <div class="panel">
+
+								<!-- Striped Table -->
+								<!--===================================================-->
+								<div class="panel-body">
+
+									<form method="post" action="" enctype="multipart/form-data" >
+                                        {%csrf_token%}
+                                        {{form}}
+
+                                        <input type="submit"value="提交代码"class="btn btn-primary"/>
+                                        <span style="color: red;margin-left: 20%">{{error}}</span>
+                                    </form>
+                                    <hr />
+                    <div class="col-sm-6">
+
+								{%if files_size%}
+								<div class="panel-heading">
+									<h3 class="panel-title">已提交文件</h3>
+								</div>
+								{%endif%}
+
+								<!--Bordered Table-->
+								<!--===================================================-->
+								<div class="panel-body">
+
+									<div class="table-responsive">
+										<table class="table table-bordered">
+											{%if files_size%}
+											<thead>
+												<tr>
+													<th>文件名</th>
+													<th>大小</th>
+													<th>删除</th>
+												</tr>
+											</thead>
+											{%endif%}
+											<tbody>
+											{%for filename,filesize in files_size.items%}
+											{%ifequal filename '合计'%}
+											<tr>
+													<td><span>{{filename}}</span></td>
+													<td><span class="heji">{{filesize|filesizeformat}}</span></td>
+													<td><label class="label label-success">合计</label></td>
+												</tr>
+											{%else%}
+												<tr>
+													<td><span>{{filename}}</span></td>
+													<td><span>{{filesize|filesizeformat}}</span></td>
+													<td><button class="btn btn-purple delate_file">删除</button></td>
+												</tr>
+											{%endifequal%}
+											{%empty%}
+												<span>尚未上传文件</span>
+											{%endfor%}
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<!--===================================================-->
+								<!--End Bordered Table-->
+
+							</div>
+						</div>
+
+
+
+                    </div>
+								<!--===================================================-->
+
+
+		</div>
+
+    </div>
+</div>
+
+
+{%endblock%}

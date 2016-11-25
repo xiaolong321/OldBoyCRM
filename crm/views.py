@@ -17,6 +17,21 @@ from django.contrib.auth import login,logout,authenticate
 from crm.html_helper import PageInfo,Page
 from crm.myauth import UserProfile
 from django.contrib.auth.models import Group
+from student.models import StuAccount
+from crm.permissions import check_permission
+
+
+
+
+
+def hashstr(inputstr):
+    import hashlib
+    inputstr=inputstr.encode()
+    m = hashlib.md5()
+    m.update(inputstr)
+    resu = m.hexdigest()
+    return resu
+
 
 def index(request):
     return  render(request,'crm/index.html')
@@ -197,16 +212,22 @@ def get_grade_chart(request,stu_id):
 
 def stu_enrollment(request):
     qq = request.GET.get('stu_qq')
+    class_semester = request.GET.get('course_grade')
+    the_class, the_semester = class_semester.split('_')
+    try:
+        class_obj = models.ClassList.objects.get(course=the_class, semester=the_semester)#限定班级
+    except ObjectDoesNotExist as e:
+        return HttpResponse('报名表不存在')
     if request.method == "GET":
         if qq:
             try:
-                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
+                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,course_grade=class_obj,contract_agreed=False)
                 customer_form = forms.CustomerForm(instance=enroll_obj.customer)
                 enroll_form = forms.EnrollmentForm(instance=enroll_obj)
                 return render(request,'crm/enroll_page.html',{'enroll_form':enroll_form,'customer_form':customer_form})
             except ObjectDoesNotExist as e:
                 try:
-                    enroll_obj = models.Enrollment.objects.get(customer__qq=qq)
+                    enroll_obj = models.Enrollment.objects.get(customer__qq=qq,course_grade=class_obj)
                     if enroll_obj.contract_approved:
                         return HttpResponse("培训协议已生成,请到首页查询")
                 except ObjectDoesNotExist as e:
@@ -218,7 +239,7 @@ def stu_enrollment(request):
     else:
         if qq:
             try:
-                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,contract_agreed=False)
+                enroll_obj = models.Enrollment.objects.get(customer__qq=qq,course_grade=class_obj,contract_agreed=False)
                 upload_path = '%s/%s'%(settings.ENROLL_DATA_DIR,enroll_obj.customer.id)
             except ObjectDoesNotExist as e:
                 return HttpResponse(u"未查到相应的报名表,也有可能是报名表正在审批中,请到首页查询")
@@ -416,6 +437,7 @@ def sale_table(request):
 
 
 @login_required
+@check_permission
 def tracking(request,page,*args,**kwargs):
     ord = []
     username = request.session['username']
@@ -541,6 +563,7 @@ def tracking(request,page,*args,**kwargs):
 
 
 @login_required
+@check_permission
 def signed(request,page,*args,**kwargs):
 
     if request.method == 'POST':
@@ -672,6 +695,7 @@ def signed(request,page,*args,**kwargs):
 
 
 @login_required
+@check_permission
 def customers_library(request,page,*args,**kwargs):
 
     username = request.session['username']
@@ -800,6 +824,7 @@ def customers_library(request,page,*args,**kwargs):
 
 
 @login_required
+@check_permission
 def addcustomer(request):
     username = request.session['username']
     curr_user = models.UserProfile.objects.get(name=username)
@@ -818,90 +843,164 @@ def addcustomer(request):
 
 
 @login_required
-def cus_enroll(request,id):
-    username = request.session['username']
-    customer = models.Customer.objects.get(id=id)
-    classes = models.ClassList.objects.all()
+@check_permission
+def cus_enroll(request,*args,**kwargs):
+    username = request.session['username']   #获取当前销售姓名
+    id = kwargs['id']
+    customer = models.Customer.objects.get(id=id)  # 获取当前用户
+    classes = models.ClassList.objects.all()  #  获取所有的班级
+    classes_list = customer.class_list.all() #[]  获取该学生已报的班级
 
-
-    try:
-        customer.enrollment_set.select_related()
-        enroll_ment = models.Enrollment.objects.get(customer=customer)
-    except Exception as e:
-        enroll_ment = None
     if request.method == 'POST':
+        had_class = models.ClassList.objects.get(id=request.POST.get('course_grade')[0])
+        where_school = request.POST.get('school','0')
+        where_school = int(where_school)
 
-        if enroll_ment:
-            try:
-                customer.status=request.POST['status']
-                customer.save()
-                post = request.POST.copy()
-                customer.class_list=request.POST['course_grade']
-                customer.save()
-                post['contract_agreed']=True
-                form = forms.EnroForm(data=post,instance=enroll_ment)
-                if form.is_valid():
-                    form.save()
-                    return HttpResponseRedirect(resolve_url('enroll_done',customer.qq))
-            except Exception as e:
-                return HttpResponseRedirect(resolve_url('error'),{'error':'error'})
-
-        else:
-            #销售第一次登记学员报名信息，等待学员同意
-            post = request.POST.copy()
-            post['status']='unregistered'
-            form = forms.EnroForm(data=post)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/crm/enroll_done/%s/'% customer.qq)
-
+        try:
+            enroll_ment = models.Enrollment.objects.get(customer=customer,course_grade=had_class,school=where_school)
+            #查看本次提交发生了改变
+            #数据库中已经存在的记录情况
+            old_approved = enroll_ment.contract_approved #False
+            old_agree = enroll_ment.contract_agreed  #False
+            old_memo = enroll_ment.memo   #None
+            print(old_agree,old_approved,old_memo)
+            new_approved = request.POST.get('contract_approved',False)
+            if new_approved == 'on':
+                new_approved = True
+            new_memo = request.POST.get('memo',None)
+            print(new_approved,new_memo)
+            if old_memo != new_memo:
+                enroll_ment.memo = new_memo
+                enroll_ment.save()
+            else:
+                pass
+            if old_agree == False:
+                return HttpResponse(json.dumps("学员尚未同意，请勿勾选"))
+            else:
+                if old_approved:
+                    return HttpResponse(json.dumps('该报名表已经审批通过'))
+                else:
+                    #如果未审批通过
+                    if new_approved :
+                        enroll_ment.contract_approved = True
+                        enroll_ment.save()
+                        return HttpResponse(json.dumps('审批通过'))
+        except ObjectDoesNotExist as e:
+            #此为新加报名表
+            new_enrolll = models.Enrollment.objects.create(customer=customer,
+                                                           course_grade=had_class,
+                                                           contract_agreed=False,
+                                                           contract_approved=False)
+            return  HttpResponse(json.dumps("已成功添加新的报名记录"))
     else:
-
-        if enroll_ment is None:
-
-            # 如果没有报名表
-            form = forms.EnroForm(instance=customer)
-
-            result = {'classes':classes,'form': form, 'customer': customer,'username':username }
+        enroll_ment_list = models.Enrollment.objects.filter(customer=customer,contract_approved=False)
+        formes={}
+        if len(enroll_ment_list)>0 :
+            for index,enroll_ment in enumerate(enroll_ment_list):
+                form= forms.EnroForm(instance=enroll_ment)
+                formes['form%s'%index] = form
+            result = {'classes': classes, 'customer': customer, 'username': username}
+            result['formes']=formes
             return render(request, 'crm/customer_enrollment.html', result)
 
         else:
-
-            # 如果已有报名表，等待审核
-            form = forms.EnroForm(instance=enroll_ment)
-            result = {'form': form, 'customer': customer, 'enroll_ment': enroll_ment, 'username': username,'classes':classes}
+            #print('没有报名表')
+            #没有报名表，第一次进入该页面
+            form = forms.EnroForm(instance=customer)
+            formes['form'] =form
+            result = {'classes':classes,'customer': customer,'username':username }
+            result['formes']=formes
             return render(request, 'crm/customer_enrollment.html', result)
 
 
 @login_required
-def enroll_done(request,qq):
-    username = request.session['username']
-    customer = models.Customer.objects.get(qq=qq)
-    payment_records = models.PaymentRecord.objects.select_related().filter(customer__qq=customer.qq)
-
+@check_permission
+def enroll_done(request,*args,**kwargs):
+    customer_qq = kwargs['customer_qq']
+    customer = models.Customer.objects.get(qq=customer_qq)
+    all_classes = models.ClassList.objects.all()
+    # 获取用户报名的所有班级，但未勾选同意的班级
+    enroll_list= models.Enrollment.objects.filter(customer=customer,contract_agreed=False)
+    have_class=[]
+    for enroll_ment in enroll_list:
+        z = enroll_ment.course_grade
+        have_class.append(z)
 
     if request.method == 'POST':
-        form = forms.PaymentrecordForm(request.POST)
-        if form.is_valid():
+        customer = models.Customer.objects.get(id=request.POST['customer'])
+        new_classlist = models.ClassList.objects.get(id=request.POST.get('classlist'))
+        consultant = models.UserProfile.objects.get(id=request.POST.get('consultant'))
+        new_note = request.POST.get('note',None)
+        new_paytype = request.POST.get('pay_type',None)
+        new_paidfee = request.POST.get('paid_fee',None)
+        try:
+        # 以用户和所报班级 作为是否为同一张表的限制
+            payment_record = models.PaymentRecord.objects.get(customer=customer,classlist=new_classlist)
+            old_paytype = payment_record.pay_type
+            old_paidpee = payment_record.paid_fee
+            old_note = payment_record.note
+            #更新客户缴费表信息
+            if old_paytype != new_paytype:
+                payment_record.pay_type = new_paytype
+            if old_paidpee != new_paidfee:
+                payment_record.paid_fee = new_paidfee
+            if old_note != new_note:
+                payment_record.note = new_note
+            payment_record.save()
 
-            customer.course = request.POST['course']
-            customer.class_type = request.POST['class_type']
-            if request.POST['pay_type'] =='tution':
-                customer.status='paid_in_full'
-                customer.save()
-            elif request.POST['pay_type'] == 'deposit':
+            # 更改客户报名状态
+            if new_paytype == 'deposit':
                 customer.status = 'signed'
-                customer.save()
-            elif request.POST['pay_type'] == 'refund':
+            elif new_paytype == 'tution':
+                customer.status = 'paid_in_full'
+            elif new_paytype == 'refund':
                 customer.status = 'unregistered'
-                customer.save()
-            form.save()
-            return HttpResponseRedirect(resolve_url('enroll_done',customer.qq))
-
-    form = forms.PaymentrecordForm(instance=customer)
-    return render(request,'crm/customer_enroll_done.html',{'username':username,'form':form,'payment_records':payment_records,'customer':customer})
+            customer.save()
+            return HttpResponse(json.dumps('信息已更新'))
+        except ObjectDoesNotExist as e:
+            payment_records = models.PaymentRecord(
+                                    customer=customer,
+                                    classlist=new_classlist,
+                                    pay_type=new_paytype,
+                                    paid_fee=new_paidfee,
+                                    note=new_note,
+                                    consultant=consultant)
+            # 学员新加班级,并更改客户缴费状态
+            customer.class_list.add(new_classlist)
+            if new_paytype == 'deposit':
+                    customer.status = 'signed'
+            elif new_paytype == 'tution':
+                customer.status = 'paid_in_full'
+            elif new_paytype == 'refund':
+                customer.status = 'unregistered'
+            try:
+                StuAccount.objects.get(stu_name=customer)
+                pass
+            except ObjectDoesNotExist as e:
+                stu_acc_pwd = hashstr(customer.qq)
+                stu_acc= StuAccount.objects.create(stu_name=customer,stu_pwd=stu_acc_pwd)
+            customer.save()
+            payment_records.save()
+            return HttpResponse(json.dumps('已创建新的报名表'))
+    else:
+        payment_recordss=models.PaymentRecord.objects.filter(customer=customer)
+        paymentrecord_list = models.PaymentRecord.objects.filter(customer=customer)
+        formes = {}
+        if len(paymentrecord_list) >0:
+            for index, every_pey in enumerate(paymentrecord_list):
+                form = forms.PaymentrecordForm(instance=every_pey)
+                formes['form%s'%index] = form
+                result = {'payment_recordss':payment_recordss,'all_classes':all_classes,'have_class':have_class,'customer':customer}
+                result['formes'] = formes
+        else:
+            form = forms.PaymentrecordForm(instance=customer)
+            formes['form'] = form
+            result = {'payment_recordss':payment_recordss,'all_classes':all_classes,'have_class':have_class,'customer':customer}
+            result['formes'] = formes
+        return  render(request,'crm/customer_enroll_done.html',result)
 
 @login_required
+@check_permission
 def consult_record(request,id):
     username = request.session['username']
     customer = models.Customer.objects.get(id=id)
@@ -970,6 +1069,7 @@ def error(request):
 
 
 @login_required
+@check_permission
 def customer_detail(request,id):
     username = request.session['username']
     cus =models.Customer.objects.get(id=id)
@@ -986,6 +1086,7 @@ def customer_detail(request,id):
 
 
 @login_required
+@check_permission
 def class_list(request,*args,**kwargs):
     class_lists = models.ClassList.objects.all()
     count = models.ClassList.objects.all().count()
@@ -993,6 +1094,7 @@ def class_list(request,*args,**kwargs):
 
 
 @login_required
+@check_permission
 def class_detail(request,*args,**kwargs):
     id = kwargs['id']
     ord=[]
@@ -1045,6 +1147,9 @@ def class_detail(request,*args,**kwargs):
     return render(request,'crm/class_detail.html',result)
 
 
+
+@login_required
+@check_permission
 def Statistical(request):
     return render(request,'crm/statistical.html')
 

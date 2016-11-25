@@ -18,9 +18,10 @@ from django.contrib import admin
 from  crm import urls as crm_urls
 from crm import views as crm_views
 from teacher import urls as teacher_urls
-
+from student import urls as stu_urls
 
 urlpatterns = [
+    url(r'^stu/',include(stu_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^crm/', include(crm_urls)),
     url(r'^teacher/', include(teacher_urls)),

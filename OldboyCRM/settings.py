@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 	'django.contrib.humanize',
     'crm',
-    'teacher'
+    'teacher',
+    'student',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -122,6 +123,9 @@ LOGIN_URL = '/crm/login/'
 ENROLL_DATA_DIR = "%s/enrolled_data"  % BASE_DIR
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 60*60*2
+UPLOADCODE_DIR="%s/stu_code" % BASE_DIR
+
+
 
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作

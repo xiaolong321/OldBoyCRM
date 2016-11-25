@@ -130,7 +130,10 @@ class Enrollment(models.Model):
         if self.contract_approved:
             html = u"报名协议已签"
         else:
-            html = u"<a href='/crm/enrollment/?stu_qq=%s'>在线报名地址</a>" % self.customer.qq
+            html = u"<a href='/crm/enrollment/?stu_qq=%s&course_grade=%s_%s'>在线报名地址</a>" % (
+                                                            self.customer.qq,
+                                                            self.course_grade.course,
+                                                            self.course_grade.semester)
         return html
     enrollment_link.allow_tags = True
     enrollment_link.short_description = u'报名地址'
@@ -163,8 +166,9 @@ class ConsultRecord(models.Model):
 
 class PaymentRecord(models.Model):
     customer = models.ForeignKey(Customer,verbose_name=u"客户")
-    course = models.CharField(u"课程名",choices=course_choices,max_length=64)
-    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64)
+    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True)
+    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True)
+    classlist = models.ForeignKey('ClassList',verbose_name='所报班级',default='')
     pay_type_choices = (('deposit',u"订金/报名费"),
                         ('tution',u"学费"),
                         ('refund',u"退款"),
@@ -186,6 +190,7 @@ class ClassList(models.Model):
     course = models.CharField(u"课程名称",max_length=64,choices=course_choices)
     semester = models.IntegerField(u"学期")
     price = models.IntegerField(u"学费",default=10000)
+    memo = models.CharField('说明',blank=True, null=True, max_length=100)
     start_date = models.DateField(u"开班日期")
     graduate_date = models.DateField(u"结业日期",blank=True,null=True)
     contract = models.ForeignKey('ContractTemplate',verbose_name=u"选择合同模版",blank=True,null=True)
@@ -210,6 +215,10 @@ class CourseRecord(models.Model):
     date = models.DateField(auto_now_add=True,verbose_name=u"上课日期")
     teacher = models.ForeignKey(UserProfile,verbose_name=u"讲师")
     has_homework = models.BooleanField(default=True,verbose_name=u"本节有作业")
+    course_memo = models.TextField('本节课程内容',max_length=300, blank=True, null=True)
+    homework_memo = models.TextField('作业描述', max_length=300, blank=True, null=True)
+    exam = models.TextField('踩分点',max_length=300, blank=True, null=True)
+    course_module = models.ForeignKey('CourseModule',verbose_name='所属模块',null=True, blank=True,related_name='courserecord')
 
     def __str__(self):
         return u"%s 第%s天" %(self.course,self.day_num)
@@ -245,6 +254,20 @@ class CourseRecord(models.Model):
     get_total_leave_early_num.short_description = u"早退人数"
 
 
+
+class CourseModule(models.Model):
+    name = models.CharField('模块名称',max_length=32)
+    memo = models.TextField('描述', max_length=300)
+    classlist = models.ForeignKey(ClassList,verbose_name='所属班级',related_name='coursemodule')
+
+    class Meta:
+        verbose_name = '课程模块名'
+        verbose_name_plural = '课程模块名'
+        unique_together = ('name', 'classlist')
+    def __str__(self):
+        return '%s-%s '%(self.classlist,self.name)
+
+
 class StudyRecord(models.Model):
     course_record = models.ForeignKey(CourseRecord, verbose_name=u"第几天课程")
     student = models.ForeignKey(Customer,verbose_name=u"学员")
@@ -270,6 +293,10 @@ class StudyRecord(models.Model):
     score = models.IntegerField(u"本节成绩",choices=score_choices,default=-1)
     date = models.DateTimeField(auto_now_add=True)
     note = models.CharField(u"备注",max_length=255,blank=True,null=True)
+    homework=models.FileField(verbose_name='作业文件',blank=True,null=True,default=None)
+    stu_memo=models.TextField('学员备注',blank=True,null=True)
+
+
     color_dic = {
          100:"#5DFC70",
          90 : "greenyellow",
@@ -414,11 +441,31 @@ class ContractTemplate(models.Model):
         verbose_name = u"合同模版"
         verbose_name_plural = u"合同模版"
 
+        permissions = (
+            ('crm_view_dashboard', '访问 销售主页'),
+            ('crm_views_customer_detail', '访问 用户详细信息 页面'),
+            ('crm_edit_own_customer_info', '编辑 客户详细信息 页面'),
+            ('crm_view_customer_enro', '访问 客户报名 页面'),
+            ('crm_edit_customer_enro', '编辑 客户报名'),
+            ('crm_view_enro_done', '访问 客户缴费信息 页面'),
+            ('crm_edit_enro_done', '编辑 用户缴费'),
+            ('crm_view_tracking', '访问 我的跟进 页面'),
+            ('crm_view_library', '访问 客户库 页面'),
+            ('crm_view_signed', '访问 我的客户 页面'),
+            ('crm_view_statistical', '访问 销售报表 页面'),
+            ('crm_view_classlist', '访问 班级列表 页面'),
+            ('crm_view_classdetail', '访问 班级详细信息 页面'),
+            ('crm_view_consult_record', '访问 跟进记录 页面'),
+            ('crm_edit_consult_record', ' 编辑 跟进记录 '),
+            ('crm_view_addcustomer', ' 访问 添加新客户 页面 '),
+            ('crm_edit_addcustomer', ' 编辑 添加新客户 '),
+        )
 
 class Assistant(models.Model):
-    name = models.CharField(u"姓名",max_length=64,unique=True)
+    name = models.OneToOneField(UserProfile,verbose_name='姓名')
+
     def __str__(self):
-        return self.name
+        return self.name.name
     class Meta:
         verbose_name = u"助教"
         verbose_name_plural = u"助教"

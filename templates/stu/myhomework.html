@@ -1,0 +1,195 @@
+{%extends 'stu/stu_dash.html'%}
+{%load humanize%}
+{% load custom_tag %}
+
+{%block dash-header%}
+<!--Open Sans Font [ OPTIONAL ] -->
+     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">
+
+
+{%endblock%}
+
+
+
+{% block dash-content%}
+
+
+
+
+				<!--Page content-->
+				<!--===================================================-->
+				<div id="page-content" >
+					<div class="panel">
+						<div class="panel-heading">
+							<h4 class="panel-title">作业  成绩</h4>
+						</div>
+<!--['Linux1', 2, [1,80, ['flow.jpg', 'u=658211275,2221369257&fm=21&gp=0.jpg']], [3, ['flow.jpg']], [4, []], [5, []]],-->
+						<div class="panel-body">
+							<div class="table-responsive">
+								{%for classname,recored in all_data_list.items%}
+								<h3 class="which_class" class_name_com="{{classname.0}}-{{classname.2}}">{{classname.1}}&emsp;&emsp;第{{classname.2}}期</h3>
+								<table class="table table-striped">
+								{%if recored%}
+										<thead>
+										<tr>
+											<th>
+												<div style="float: left;margin-right: 3px">
+													<a href="#" class="a-ico-sort">
+												<div>
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>第几周</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="#">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+													<a href="#" class="a-ico-sort">
+												<div>
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>分数</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="#">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+													<a href="#" class="a-ico-sort">
+												<div>
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>文件</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="#">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+											<th>
+												<div style="float: left;margin-right: 3px">
+													<a href="#" class="a-ico-sort">
+												<div>
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>下载</span>
+													</div>
+													<div  class="div2-ico-sort">
+														<div class="div-ico-sort ">
+														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+												</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="#">
+														<i class="fa fa-ban hid" aria-hidden="true">
+														</i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
+										</tr>
+									</thead>
+								{%endif%}
+									<tbody>
+									{%if recored%}
+									{%for data in recored%}
+										<tr>
+											<td class="which_day">{{data.0}}</td>
+
+											<td>{{data.1}}</td>
+											<td><div style="width: 500px;height:auto;">
+												{%for i in data.2%}
+													{{i}}
+												{%endfor%}
+												</div>
+											</td>
+											<td><a href="{%url 'downloadfile'%}?which_class={{classname.0}}&which_seme={{classname.2}}&which_day={{data.0}}"><button class="btn btn-mint">下载</button></a></td>
+										</tr>
+									{%endfor%}
+								{%else%}
+									<br/>
+									<span class="panel-heading">暂无记录</span><hr/>
+								{%endif%}
+									</tbody>
+
+								</table>
+								{%endfor%}
+
+							</div>
+						</div>
+					</div>
+						<!--fenye-->
+						<!--<div class="text-center">-->
+							<!--<ul class="pagination">-->
+
+							<!--</ul>-->
+						<!--</div>-->
+					</div>
+				</div>
+				<!--===================================================-->
+				<!--End page content-->
+
+
+{% endblock%}
+
+
+{%block dash-footer-js%}
+
+{%endblock%}
+
+
+
+

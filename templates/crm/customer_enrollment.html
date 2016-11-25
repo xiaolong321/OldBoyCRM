@@ -29,8 +29,12 @@
 
             <!--Horizontal Form-->
             <!--===================================================-->
-            <form class="form-horizontal" action=" " method="POST">
-			 {% csrf_token %}
+
+            {%for form in formes.values%}
+
+
+            <form id='{{forloop.counter}}_form' class="form-horizontal"  >
+                {%csrf_token%}
                 <div class="panel-body ">
                     {%for field in form%}
                     <div class="form-group text-left">
@@ -41,49 +45,19 @@
                         {%endif%}
                         <div class="col-sm-6 ">
                             {% if field.name == 'customer'%}
-                        <select class="form-control" id="id_customer" name="customer">
-                                <option value="{{ customer.id }}" selected="selected">{{ customer.name}}</option>
+
+                        <select class="form-control"  name="customer">
+                                <option customer_qq={{customer.qq}} value="{{ customer.id }}" selected="selected"name="customer">{{ customer.name}}</option>
                         </select>
                         {%elif field.name == 'contract_agreed'%}
-                           <label class="form-checkbox form-normal form-primary ">
-                               {%if enroll_ment.contract_agreed%}
-                            <input  class='customer_check' type="checkbox" name='contract_agreed'  disabled checked="checked">
-                               {%else%}
-                            <input class='customer_check' name='contract_agreed' type="checkbox" disabled>
-                               {%endif%}
+                           <label id="{{forloop.counter}}_contract_agreed" class="form-checkbox form-normal form-primary"disabled="">
+                            <input class='customer_check' name='contract_agreed' type="checkbox"disabled >
                            </label>
                         {%elif field.name == 'contract_approved'%}
 
-                        <label id='saled_check_lab' class="form-checkbox form-normal form-primary">
-                              {%if  enroll_ment.contract_agreed %}
-                            <input type="checkbox" name="contract_approved" class="saled_check ">
-
-                            {%else%}
-                             <input type="checkbox" name="contract_approved" class="saled_check" disabled>
-
-
-                            {%endif%}
-
+                        <label id='saled_check_lab' class="form-checkbox form-normal form-primary ">
+                             <input id='{{forloop.counter}}_contract_approved' type="checkbox" name="contract_approved" class="saled_check"  >
                         </label>
-                        {%elif field.name == 'status'%}
-                            {%if  enroll_ment.contract_agreed %}
-                                    <select class="selectpicker"  name="status">
-                                  {%for item in form.status_choices %}
-                                     <option value="{{item.0}}">{{item.1}}</option>
-
-                                      {%endfor%}
-                                    </select>
-
-                            {%else%}
-                                <select class="selectpicker"  name="status" disabled>
-                                  {%for item in form.status_choices %}
-                                     <option value="{{item.0}}">{{item.1}}</option>
-
-                                      {%endfor%}
-                                    </select>
-                            {%endif%}
-
-
                         {%else%}
                             {{field}}
                         {%endif%}
@@ -96,9 +70,11 @@
                     {% endfor %}
                 </div>
                 <div class="panel-footer text-center">
-                    <input class="btn btn-info" type="submit" value="提交">
+                    <button  id='{{forloop.counter}}_btn' type='button'  class="btn btn-primary" onclick="postdata('{{forloop.counter}}_form',location.host,'{{customer.qq}}')">提交</button>
                 </div>
             </form>
+            {%endfor%}
+
             <!--===================================================-->
             <!--End Horizontal Form-->
 
@@ -107,3 +83,44 @@
 </div>
 </div>
 {% endblock %}
+
+
+
+
+{%block dash-footer-js%}
+
+<script>
+
+      //点击提交事件
+    function postdata(curr_form,path,qq) {
+          var url_path = location.pathname;
+          var customer__qq = $('option[customer_qq]').attr('customer_qq');
+          var opt_list  = $(this).parent().siblings().find('option:checked');
+      $.ajax({
+          url:url_path,
+          type:'POST',
+          data:$('#'+curr_form).serializeArray(),
+          async:false,
+          dataType:'json',
+          error:function (request) {
+              alert('请求错误，请重新勾选、提交');
+          },
+
+          success:function (data) {
+
+              alert(data);
+
+              if(data=='已成功添加新的报名记录'){
+                  //跳转到缴费界面
+                  var re_path=  location.protocol+'//'+path+'/crm/enroll_done/'+qq;
+                  location.href=re_path
+
+              }
+
+          }
+
+      });//ajax 结束
+    }
+
+</script>
+{%endblock%}

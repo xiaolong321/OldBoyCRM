@@ -84,7 +84,8 @@ class CourseRecordAdmin(admin.ModelAdmin):
                     "get_total_noshow_num",
                     "get_total_late_num",
                     "get_total_leave_early_num",
-                    'has_homework'
+                    'has_homework',
+                    'course_module'
                     )
     list_filter = ('course','day_num','teacher')
 
@@ -239,3 +240,4 @@ admin.site.register(models.StudentFAQ,StudentFAQAdmin)
 admin.site.register(models.ContractTemplate,ContractTemplateAdmin)
 admin.site.register(models.Assistant,AssistantAdmin)
 admin.site.register(models.OnlineStuRecords,OnlineStuRecordsAdmin)
+admin.site.register(models.CourseModule)
