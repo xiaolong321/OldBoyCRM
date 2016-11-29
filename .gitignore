@@ -1,6 +1,5 @@
 *.pyc
-.idea/
-OldboyCRM/settings.py
+.idea
 crm/migrations
-logs
-.DS_Store
+student/migrations
+teacher/migrations

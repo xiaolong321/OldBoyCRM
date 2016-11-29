@@ -36,13 +36,12 @@
 
 {%endblock%}
 
-
 {% block body-container %}
 	<div id="container" class="effect mainnav-lg mainnav-fixed">
 		<header id="navbar">
 			<div id="navbar-container" class="boxed">
 				<div class="navbar-header">
-					<a href="/teacher" class="navbar-brand" title="返回销售主页">
+					<a href="{% url 'teacher_dashboard'%}" class="navbar-brand" title="返回教师首页">
 						<img src="/static/img/old-boy.png" alt="Old Boy Logo" class="brand-icon" style="width: 218px;height: 50px">
 
 					</a>
@@ -86,11 +85,6 @@
 
 				</div>
 			{% block dash-content%}
-			<div id="page-content">
-				<div class="row" >
-					</div>
-					<div id="sales_chart" class="row" style="margin:0px;height:600px;"></div>
-				</div>
 			{% endblock %}
 			</div>
 			<nav id="mainnav-container" >
@@ -105,8 +99,7 @@
 									<!--Category name-->
 									<li class="list-header">菜单栏</li>
 									<li id="customers_library">
-										<a href="/teacher/classlist">
-
+										<a href="{%url 'classlist' %}">
 											<i class="fa fa-database"></i>
 											<span class="menu-title">
 												<strong>教授课程</strong>
@@ -115,48 +108,48 @@
 
 									</li>
 
-									<li id="tracking">
-										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
-											<i class="fa fa-dashboard"></i>
-											<span class="menu-title">
-												<strong>我的跟进</strong>
-												<!--<span class="label label-success pull-right">New</span>-->
-											</span>
-										</a>
-									</li>
-
-
-									<li id="signed">
-										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
-											<i class="fa fa-th"></i>
-											<span class="menu-title">
-												<strong>我的客户</strong>
-
-											</span>
-										</a>
-
-									</li>
-
-									<li id="class_list">
-										<a href="{%url 'class_list'%}">
-
-											<i class="fa fa-list-ul"></i>
-											<span class="menu-title">
-												<strong>班级列表</strong>
-											</span>
-										</a>
-
-									</li>
-									<li id="statistical">
-										<a href="{% url 'statistical' %}">
-
-											<i class="fa fa-area-chart"></i>
-											<span class="menu-title">
-												<strong>销售统计</strong>
-											</span>
-										</a>
-
-									</li>
+{#									<li id="tracking">#}
+{#										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">#}
+{#											<i class="fa fa-dashboard"></i>#}
+{#											<span class="menu-title">#}
+{#												<strong>我的跟进</strong>#}
+{#												<!--<span class="label label-success pull-right">New</span>-->#}
+{#											</span>#}
+{#										</a>#}
+{#									</li>#}
+{##}
+{##}
+{#									<li id="signed">#}
+{#										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">#}
+{#											<i class="fa fa-th"></i>#}
+{#											<span class="menu-title">#}
+{#												<strong>我的客户</strong>#}
+{##}
+{#											</span>#}
+{#										</a>#}
+{##}
+{#									</li>#}
+{##}
+{#									<li id="class_list">#}
+{#										<a href="{%url 'class_list'%}">#}
+{##}
+{#											<i class="fa fa-list-ul"></i>#}
+{#											<span class="menu-title">#}
+{#												<strong>班级列表</strong>#}
+{#											</span>#}
+{#										</a>#}
+{##}
+{#									</li>#}
+{#									<li id="statistical">#}
+{#										<a href="{% url 'statistical' %}">#}
+{##}
+{#											<i class="fa fa-area-chart"></i>#}
+{#											<span class="menu-title">#}
+{#												<strong>销售统计</strong>#}
+{#											</span>#}
+{#										</a>#}
+{##}
+{#									</li>#}
 
 
 
@@ -203,4 +196,22 @@
 	{%block dash-footer-js%}
 
 	{%endblock%}
+<script>
+		$(function($){
+
+			// 高亮当前选中菜单栏
+		var cur_url_name=location.pathname.split('/')[2].split('-')[0];
+
+		$('#mainnav-menu li').each(function (i,n) {
+			if($(this).attr('id')== cur_url_name){
+				$(this).css({'background':'#000000','color':'black'})
+			}
+
+		});
+		});
+
+
+
+
+</script>
 {% endblock %}

@@ -1,11 +1,10 @@
-#_*_encoding:utf-8_*_
 
 from django.conf.urls import include, url
 from crm import views
 
 
 urlpatterns = [
-    url(r'^$',views.dashboard,name='dashboard'),  # 销售基页
+    url(r'^$',views.dashboard,name='crm_dashboard'),  # 销售基页
     url(r'^survery/(\d+)/',views.survery,name="survery"),
     url(r'^survery/report/(\d+)/',views.survery_report,name="survery_report"),
     url(r'^survery/report/chart/(\d+)/',views.survery_chart_report,name="survery_chart_report"),

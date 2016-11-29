@@ -29,22 +29,6 @@
                             {{ field }}
                             <span style="color: blue">{{ field.help_text }}</span>
                             </div>
-
-                         {%elif field.name == 'status'%}
-                           <div class="col-sm-6">
-                             <select class="form-control"  name="status">
-<option value="unregistered" selected="selected">未报名</option>
-</select>
-
-                            </div>
-                         {%elif field.name == 'class_list'%}
-                           <div class="col-sm-6" >
-
-                             <select class="form-control" >
-<option value="" selected="selected">{{curr_user.class_list.all}}</option>
-</select>
-
-                            </div>
                          {%else%}
                         <div class="col-sm-6">
                             {{field}}
