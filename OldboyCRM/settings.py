@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'OldboyCRM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ooold',
+        'NAME': 'OldboyCRM',
         'HOST':'',
         'PORT':'',
         'USER':'root',
-        'PASSWORD':'123456',
+        'PASSWORD':'',
     }
 }
 
@@ -121,12 +121,19 @@ AUTH_USER_MODEL = 'crm.UserProfile'
 LOGIN_URL = '/crm/login/'
 
 ENROLL_DATA_DIR = "%s/enrolled_data"  % BASE_DIR
+
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 60*60*2
-UPLOADCODE_DIR="%s/stu_code" % BASE_DIR
 
-
-
+perm_dic_teacher = {
+    'teacher_view_teacher_dashboard': ['teacher_dashboard', 'GET', []],
+    'teacher_view_classlist': ['classlist', 'GET', []],
+    'teacher_view_courselist': ['courselist', 'GET', []],
+    'teacher_view_courserecord': ['courserecord', 'GET', []],
+    'teacher_edit_courserecord': ['courserecord', 'POST', []],
+    'teacher_view_createcourse': ['createcourse', 'GET', []],
+    'teacher_edit_createcourse': ['createcourse', 'POST', []],
+}
 ############################################
 # 初始化系统默认logs 只当系统是linux的时候.才进行相关的日志初始化工作
 #LOGGING_stamdard_format = '[%(asctime)s][task_id:%(name)s][%(filename)s:%(lineno)d] [%(levelname)s]- %(message)s'

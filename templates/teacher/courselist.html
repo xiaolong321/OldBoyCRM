@@ -5,7 +5,7 @@
                 <h3 class="panel-title">
                     {{ request.user }}老师您好，这是您选择的课程的详细信息
                     <div style="float: right">
-                        <a href="/teacher/createcourse/{{ courselist.first.course_id }}">
+                        <a href="{% url 'createcourse' courselist.first.course_id %}">
                             创建一节新的课程
                         </a>
                     </div>
@@ -24,7 +24,7 @@
                         {% for course in courselist %}
                             <tr>
                                 <td>
-                                    <a href="/teacher/courserecord/{{ course.id }}">
+                                    <a href="{% url 'courserecord' course.id %}">
                                         {{ course.day_num}}
                                     </a>
                                 </td>

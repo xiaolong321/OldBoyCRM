@@ -53,7 +53,7 @@
                             has_homework:has_homework,
                         },
                         success:function () {
-                            window.location.href = '/teacher/courselist/{{ class_id }}'
+                            window.location.href = "{% url 'courselist' class_id %}"
                         }
                     })
                 })
