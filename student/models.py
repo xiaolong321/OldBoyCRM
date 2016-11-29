@@ -2,8 +2,8 @@ from django.db import models
 from crm.models import *
 
 class Stutest(models.Model):
-    name=models.CharField('姓名',max_length=20)
-    age = models.CharField('年龄',max_length=20)
+    name=models.CharField('姓名',max_length=64)
+    age = models.SmallIntegerField('年龄')
 
 class StuAccount(models.Model):
     stu_name = models.OneToOneField(Customer,verbose_name='关联对象')

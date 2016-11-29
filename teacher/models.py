@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
 
@@ -15,8 +14,8 @@ class teacher(models.Model):
     classes = models.ForeignKey(ClassList)
 
     class Meta:
-        verbose_name = u"老师列表"
-        verbose_name_plural = u"老师列表"
+        verbose_name = "老师列表"
+        verbose_name_plural = "老师列表"
 
         permissions = (
             ('teacher_view_teacher_dashboard','访问 老师 主页'),
