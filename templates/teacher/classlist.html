@@ -17,7 +17,7 @@
                         {% for class in classlists %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'courselist' class.id %}">
+                                    <a href="/teacher/courselist/{{ class.id }}">
                                         {{ class}}
                                     </a>
                                 </td>

@@ -32,15 +32,22 @@
                                 <h3 class="panel-title">请将如下网址发给客户，以供其网上报名</h3>
                             </div>
                             <div class="panel-body">
-                                <p>http://crm.oldboyedu.com/crm/enrollment/?stu_qq={{customer.qq}} </p>
+                                {%for every_class in have_class%}
+                                <h4>{{every_class.get_course_display}}&emsp;第{{every_class.semester}}期</h4>
+                                <hr />
+                                <p>http://crm.oldboyedu.com/crm/enrollment/?stu_qq={{customer.qq}}&course_grade={{every_class.course}}_{{every_class.semester}} </p>
+                                <div style="height: 60px"></div>
+                                {%endfor%}
                             </div>
                         </div>
                             <h4 style="color: purple">缴费记录</h4>
-                            {%if payment_records%}
-                            {%for item in payment_records %}
+                            {%if payment_recordss%}
+                            {%for item in payment_recordss %}
                             <div class="panel">
                                 <div class="panel-heading">
                                     <div class="panel-control"style="text-align: center">
+                                         <span>{{item.classlist}}</span>
+                                        &emsp;
                                         <span> <i class="fa fa-jpy" aria-hidden="true"></i>&ensp;{{item.paid_fee}}</span>
                                          <span>课程顾问：{{item.consultant.name}}</span>
                                         &emsp13;
@@ -74,7 +81,8 @@
             {%endif%}
             <!--Horizontal Form-->
             <!--===================================================-->
-            <form class="form-horizontal" action=" " method="POST">
+          {%for form in formes.values%}
+            <form id='{{forloop.counter}}_form' class="form-horizontal">
             {% csrf_token %}
                 <div class="panel-body ">
                     {%for field in form%}
@@ -88,7 +96,7 @@
                         <div class="col-sm-6 ">
                             {%if field.name == 'customer'%}
                             <select class="form-control" id="id_customer" name="customer">
-                                <option value="{{form.instance.id}}" selected="selected">{{form.instance.name}}</option>
+                                <option customer_qq={{customer.qq}} value="{{customer.id}}" selected="selected">{{customer.name}}</option>
                             </select>
 
                             {%elif field.name == 'consultant'%}
@@ -108,9 +116,10 @@
                     {% endfor %}
                 </div>
                 <div class="panel-footer text-center">
-                    <input class="btn btn-info" type="submit" value="提交" >
+                    <button id='{{forloop.counter}}_btn' type="button" class="btn btn-info" onclick="en_postdata('{{forloop.counter}}_form','{{customer.qq}}')">提交</button>
                 </div>
             </form>
+            {%endfor%}
             <!--===================================================-->
             <!--End Horizontal Form-->
 
@@ -126,7 +135,27 @@
 
 
 {%block dash-footer-js%}
+<script>
+        function en_postdata(curr_form,qq) {
+          var url_path = location.pathname;
+          var customer__qq = $('option[customer_qq]').attr('customer_qq');
+        $.ajax({
+            url:location.href,
+            type:'post',
+            async:false,
+            dataType:'json',
+            data:$('#'+curr_form).serializeArray(),
+            success:function (data) {
+                alert(data);
+                location.reload()
+            },
+            error:function (request) {
+                alert('请求错误，请重新勾选、提交');
+            }
+        });//ajax 结束
+        };//结束postdata 结束
 
 
+</script>
 
 {%endblock%}

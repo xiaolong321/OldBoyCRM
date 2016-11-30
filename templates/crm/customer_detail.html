@@ -47,6 +47,10 @@
                         </div>
                     </div>
                     {% endfor %}
+                    <span style="margin-left: 19%;margin-right: 2%">已报班级</span>
+                    {%for every_class in customer.class_list.all%}
+                        {{every_class}}
+                    {%endfor%}
                 </div>
                 <div class="panel-footer text-center">
                     <input class="btn btn-info" type="submit" value="确认修改">

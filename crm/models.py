@@ -218,8 +218,7 @@ class CourseRecord(models.Model):
     course_memo = models.TextField('本节课程内容',max_length=300, blank=True, null=True)
     homework_memo = models.TextField('作业描述', max_length=300, blank=True, null=True)
     exam = models.TextField('踩分点',max_length=300, blank=True, null=True)
-    #course_module = models.ForeignKey('CourseModule',verbose_name='所属模块',null=True, blank=True,related_name='courserecord')
-    course_module = models.ForeignKey('CourseModule',verbose_name='所属模块',null=True, blank=True)
+    course_module = models.ForeignKey('CourseModule',verbose_name='所属模块',null=True, blank=True,related_name='courserecord')
 
     def __str__(self):
         return u"%s 第%s天" %(self.course,self.day_num)
@@ -257,9 +256,9 @@ class CourseRecord(models.Model):
 
 
 class CourseModule(models.Model):
-    name = models.CharField('模块名称',max_length=32,blank=True,null=True)
-    memo = models.TextField('描述', max_length=300,blank=True,null=True)
-    classlist = models.ForeignKey(ClassList,verbose_name='所属班级',blank=True,null=True,related_name='coursemodule')
+    name = models.CharField('模块名称',max_length=32)
+    memo = models.TextField('描述', max_length=300)
+    classlist = models.ForeignKey(ClassList,verbose_name='所属班级',related_name='coursemodule')
 
     class Meta:
         verbose_name = '课程模块名'
@@ -463,10 +462,10 @@ class ContractTemplate(models.Model):
         )
 
 class Assistant(models.Model):
-    #user = models.OneToOneField(UserProfile,verbose_name='姓名',blank=True,null=True)
-    name = models.CharField(max_length=64,unique=True)
+    name = models.OneToOneField(UserProfile,verbose_name='姓名')
+
     def __str__(self):
-        return self.name
+        return self.name.name
     class Meta:
         verbose_name = u"助教"
         verbose_name_plural = u"助教"

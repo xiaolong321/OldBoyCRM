@@ -337,7 +337,7 @@
 												{%endif%}
 											</td>
 											<td class=" btn-hover-info">
-												<a href="{%url 'enroll_done'  customer.qq %}">
+												<a href="{%url 'cus_enroll' customer.id %}">
 													<div>{{customer.enrollment_set.last.enrolled_date|naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div>
 												</a></td>
 										</tr>

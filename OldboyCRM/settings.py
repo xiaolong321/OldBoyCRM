@@ -121,9 +121,9 @@ AUTH_USER_MODEL = 'crm.UserProfile'
 LOGIN_URL = '/crm/login/'
 
 ENROLL_DATA_DIR = "%s/enrolled_data"  % BASE_DIR
-
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 60*60*2
+UPLOADCODE_DIR="%s/stu_code" % BASE_DIR
 
 perm_dic_teacher = {
     'teacher_view_teacher_dashboard': ['teacher_dashboard', 'GET', []],
