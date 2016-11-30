@@ -10,9 +10,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('crm', '0017_auto_20161129_0841'),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(

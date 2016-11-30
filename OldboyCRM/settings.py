@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'OldboyCRM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'OldboyCRM2',
+        'NAME': 'OldboyCRM',
         'HOST':'',
         'PORT':'',
         'USER':'root',
-        'PASSWORD':'alex3714',
+        'PASSWORD':'',
     }
 }
 
