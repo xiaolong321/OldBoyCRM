@@ -17,7 +17,7 @@ class CustomerAdmin(admin.ModelAdmin):
     raw_id_fields = ('referral_from',)
     filter_horizontal = ('class_list',)
     list_filter = ('source','course','class_type','status','date','consultant')
-    #inlines = [ConsultRecordInline,PaymentRecordInline]
+    inlines = [ConsultRecordInline, PaymentRecordInline]
     list_display = ('id','qq_name','name','course','class_type','colored_status','get_enrolled_course','qq','customer_note','consultant','date')
     #list_editable = ('status',)
     #def has_delete_permission(self, request, obj=None):
@@ -85,7 +85,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
                     "get_total_late_num",
                     "get_total_leave_early_num",
                     'has_homework',
-                    #'course_module'
+                    'course_module'
                     )
     list_filter = ('course','day_num','teacher')
 

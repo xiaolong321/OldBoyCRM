@@ -4,8 +4,7 @@ __author__ = 'Alex Li'
 
 from django.forms import ModelForm,Textarea,BooleanField
 from django import forms
-from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,ClassList
-#from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList
+from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList
 
 
 class CompliantForm(ModelForm):
@@ -144,7 +143,7 @@ class LoginForm(forms.Form):
 
 class CoursemoduleForm(ModelForm):
     class Meta:
-        #model=CourseModule
+        model=CourseModule
         exclude=('classlist',)
 
     def __init__(self, *args, **kwargs):

@@ -1,5 +1,6 @@
 *.pyc
-.idea
+.idea/
+OldboyCRM/settings.py
 crm/migrations
 student/migrations
 teacher/migrations

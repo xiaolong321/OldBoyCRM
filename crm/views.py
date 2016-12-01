@@ -17,7 +17,7 @@ from django.contrib.auth import login,logout,authenticate
 from crm.html_helper import PageInfo,Page
 from crm.myauth import UserProfile
 from django.contrib.auth.models import Group
-#from student.models import StuAccount
+from student.models import StuAccount
 from crm.permissions import check_permission
 
 
