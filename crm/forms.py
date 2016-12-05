@@ -90,10 +90,9 @@ class EnroForm(ModelForm,forms.Form):
 class AddCustomerForm(ModelForm):
     class Meta:
         model = Customer
-        exclude=('class_list',)
+        exclude=('class_list','referral_from')
 
     def __new__(cls, *args, **kwargs):
-
         for field_name in cls.base_fields:
             field = cls.base_fields[field_name]
             attr_dic = {'class': 'form-control',

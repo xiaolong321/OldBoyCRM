@@ -254,7 +254,6 @@ class CourseRecord(models.Model):
     get_total_leave_early_num.short_description = u"早退人数"
 
 
-
 class CourseModule(models.Model):
     name = models.CharField('模块名称',max_length=32)
     memo = models.TextField('描述', max_length=300)
@@ -460,6 +459,7 @@ class ContractTemplate(models.Model):
             ('crm_view_addcustomer', ' 访问 添加新客户 页面 '),
             ('crm_edit_addcustomer', ' 编辑 添加新客户 '),
         )
+
 
 class Assistant(models.Model):
     name = models.OneToOneField(UserProfile,verbose_name='姓名')

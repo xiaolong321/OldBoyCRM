@@ -66,7 +66,7 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <div class="panel-control">
-                                    <span>跟进人：{{username}}</span>
+                                    <span>跟进人：{{item.consultant}}</span>
                                      &emsp;&emsp;&emsp;
                                     <em class="text-muted"><small>{{item.date}}</small></em>
                                 </div>
@@ -117,7 +117,7 @@
                             </select>
                             {%elif field.name == 'consultant'%}
                               <select class="form-control form-icon" id="id_consultant" name="consultant">
-                                <option value="{{form.instance.consultant.id}}" selected="selected">{{form.instance.consultant.name}}</option>
+                                <option value="{{request.user.id}}" selected="selected">{{request.user}}</option>
                             </select>
                             {%else%}
                             {{field}}

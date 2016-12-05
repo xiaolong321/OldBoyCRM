@@ -2,11 +2,9 @@
 
 from django.core.urlresolvers import resolve
 from django.shortcuts import render
-
 from OldboyCRM.settings import perm_dic_teacher as perm_dic
 
 
-print(perm_dic)
 def perm_check(*args,**kwargs):
     request = args[0]
     resolve_url_obj = resolve(request.path)
@@ -20,9 +18,7 @@ def perm_check(*args,**kwargs):
                 if not  per_arg:
                     match_flag = True
                     match_key = per_key
-                else:
-
-                    #逐个匹配参数，看每个参数时候都能对应的上。
+                else:       #逐个匹配参数，看每个参数时候都能对应的上。
                     for item in per_arg:
                         request_method_fun = getattr(request,request.per_meth)
                         if request_method_fun.get(item,None):# request字典中由此参数

@@ -3,9 +3,9 @@
         <div class="panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    {{ request.user }}老师您好，这是您选择的课程的详细信息
+                    {{ request.user }} 老师您好，这是 {{ courselist.first }} 的详细信息
                     <div style="float: right">
-                        <a href="{% url 'createcourse' courselist.first.course_id %}">
+                        <a href="{% url 'createcourse' class_id %}">
                             创建一节新的课程
                         </a>
                     </div>
@@ -16,6 +16,7 @@
                     <thead>
                         <tr>
                             <th>节次</th>
+                            <th>讲师</th>
                             <th>上课时间</th>
                             <th>是否有作业</th>
                         </tr>
@@ -28,6 +29,7 @@
                                         {{ course.day_num}}
                                     </a>
                                 </td>
+                                <td>{{ course.teacher }}</td>
                                 <td>{{ course.date }}</td>
                                 <td>{{ course.has_homework }}</td>
                             </tr>

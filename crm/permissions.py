@@ -9,9 +9,7 @@ from crm.permission_dict import perm_dic
 def perm_check(*args,**kwargs):
     request = args[0]
     resolve_url_obj = resolve(request.path)
-
     curr_url_name = resolve_url_obj.url_name  # 当前url的url_name
-    print('curr_url_name',curr_url_name)
     match_flag = False
     match_key = None
     for per_key,per_val in  perm_dic.items():

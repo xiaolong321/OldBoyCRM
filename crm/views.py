@@ -21,9 +21,6 @@ from student.models import StuAccount
 from crm.permissions import check_permission
 
 
-
-
-
 def hashstr(inputstr):
     import hashlib
     inputstr=inputstr.encode()
@@ -35,6 +32,7 @@ def hashstr(inputstr):
 
 def index(request):
     return  render(request,'crm/index.html')
+
 
 def survery(request,survery_id):
     if request.method == "GET":
@@ -569,9 +567,8 @@ def signed(request,page,*args,**kwargs):
     if request.method == 'POST':
         id=request.POST['id']
         cur_customer = models.Customer.objects.get(id=id)
-
-        if request.POST['cus_sta']=='paid_in_full':
-            cur_customer.status='paid_in_full'
+        if request.POST['cus_sta'] == 'paid_in_full':
+            cur_customer.status = 'paid_in_full'
             cur_customer.save()
 
 
@@ -830,16 +827,28 @@ def addcustomer(request):
     curr_user = models.UserProfile.objects.get(name=username)
     if request.method == 'POST':
         form = forms.AddCustomerForm(request.POST)
-
         if form.is_valid():
-
             form.save()
+            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
+            customer = models.Customer.objects.filter(qq=request.POST.get('qq')).first()
+            customer.referral_from=from_student
+            customer.save()
             return HttpResponseRedirect(resolve_url('tracking','all', 'all', 'all', 'all', 'all','all','1'))
         else:
+            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
             form = forms.AddCustomerForm(data=request.POST)
-            return render(request, 'crm/addcustomer.html', {'form': form, 'username': username,'curr_user':curr_user})
+            return render(request, 'crm/addcustomer.html', {'form': form, 'username': username,'curr_user':curr_user,'from_student':from_student})
     form = forms.AddCustomerForm()
     return render(request,'crm/addcustomer.html',{'form':form,'username':username,'curr_user':curr_user})
+
+
+
+def searchcustomer(request):
+    if request.method == 'POST':
+        from_student_qq = request.POST.get('student_qq')
+        from_student = models.Customer.objects.filter(qq=from_student_qq)
+        return HttpResponse(from_student)
+
 
 
 @login_required
@@ -999,6 +1008,7 @@ def enroll_done(request,*args,**kwargs):
             result['formes'] = formes
         return  render(request,'crm/customer_enroll_done.html',result)
 
+
 @login_required
 @check_permission
 def consult_record(request,id):
@@ -1145,7 +1155,6 @@ def class_detail(request,*args,**kwargs):
     result={'current_url':current_url,'customers':customers,'count':count,'fenye':fenye}
     result.update(res)
     return render(request,'crm/class_detail.html',result)
-
 
 
 @login_required
