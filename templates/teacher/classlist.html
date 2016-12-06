@@ -9,6 +9,7 @@
                     <thead>
                         <tr>
                             <th>课程名称</th>
+                            <th>授课教师</th>
                             <th>开始时间</th>
                             <th>结束时间</th>
                         </tr>
@@ -20,6 +21,11 @@
                                     <a href="{% url 'courselist' class.id %}">
                                         {{ class}}
                                     </a>
+                                </td>
+                                <td>
+                                    {% for teacher in class.teachers.all %}
+                                        {{ teacher }},
+                                    {% endfor %}
                                 </td>
                                 <td>{{ class.start_date }}</td>
                                 <td>{{ class.graduate_date }}</td>

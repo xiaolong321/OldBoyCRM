@@ -34,5 +34,6 @@ urlpatterns = [
     url(r'^class_list/$',views.class_list,name='class_list'),
     url(r'^class_detail-(?P<id>\d+)-(?P<status>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.class_detail,name='class_detail'),
     url(r'^statistical/$',views.Statistical,name='statistical'),
+    url(r'^searchcustomer',views.searchcustomer,name='searchcustomer'),
 
 ]

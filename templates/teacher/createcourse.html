@@ -3,7 +3,7 @@
         <div class="panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    {{ request.user }}老师您好，请设置该堂课的具体情况
+                    {{ request.user }}老师您好，请设置该节课程的具体情况
                     <div style="float: right">
                         <button class="clearcreate" style="border-radius: 5px; background-color: #79aec8; cursor: pointer; line-height: 30px">确认创建</button>
                     </div>
@@ -21,7 +21,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ classinformation.course }}</td>
+                            <td>{{ classinformation }}</td>
                             <td>{{ classinformation.day_num }}</td>
                             <td>{{ request.user }}</td>
                             <td>
@@ -47,7 +47,7 @@
                         url: window.location.href,
                         type: 'POST',
                         data: {
-                            class_id:{{ classinformation.course_id }},
+                            class_id:{{ class_id }},
                             teacher_id:{{ request.user.id }},
                             day_num:{{ classinformation.day_num }},
                             has_homework:has_homework,
