@@ -1,19 +1,17 @@
 #coding:utf-8
 
 
-import json,os,zipfile,hashlib
-from django.shortcuts import render,HttpResponse,HttpResponseRedirect,resolve_url
-from django.http import HttpResponse,FileResponse
+import json, os, zipfile, hashlib
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, resolve_url
+from django.http import HttpResponse, FileResponse
 from student import forms
-from django.contrib.auth import  login,logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from student import models
 from OldboyCRM import settings
-from django.core.exceptions import ObjectDoesNotExist,ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from crm import models as crmmodels
 from django.utils.encoding import smart_str
-
-
 
 
 #装饰器 验证用户登录
@@ -27,10 +25,11 @@ def cus_login_required(func,loginurl='/stu/',redirect_key='next'):
             return func(request,*args,**kwargs)
     return inner
 
+
 #装饰器 验证用户密码是否已经修改
-def change_pwd(func,chpwd_url='/stu/changepwd/',redirect_key='next'):
-    def inner(request,*args,**kwargs):
-        user_tr = request.session.get('username',None)
+def change_pwd(func, chpwd_url='/stu/changepwd/', redirect_key='next'):
+    def inner(request, *args, **kwargs):
+        user_tr = request.session.get('username', None)
         if user_tr != None:
             user_pwd =  models.StuAccount.objects.get(stu_name__qq=user_tr).stu_pwd
             if user_pwd == hashstr(user_tr):
@@ -38,6 +37,7 @@ def change_pwd(func,chpwd_url='/stu/changepwd/',redirect_key='next'):
             else:
                 return func(request,*args,**kwargs)
     return inner
+
 
 #创建学生学习记录
 def create_all_studyrecord(request,*args,**kwargs):
@@ -57,12 +57,6 @@ def create_all_studyrecord(request,*args,**kwargs):
     return True
 
 
-
-
-
-
-
-
 def hashstr(inputstr):
     import hashlib
     inputstr=inputstr.encode()
@@ -70,7 +64,6 @@ def hashstr(inputstr):
     m.update(inputstr)
     resu = m.hexdigest()
     return resu
-
 
 
 def stu_login(request):
@@ -107,6 +100,7 @@ def stu_login(request):
 
         return render(request,'stu/login.html',{'form':form,'error':error})
 
+
 @cus_login_required
 @change_pwd
 def Mycourse(request,*args,**kwargs):
@@ -127,6 +121,7 @@ def Mycourse(request,*args,**kwargs):
 def stu_logout(request):
     request.session.clear()
     return  HttpResponseRedirect(resolve_url('/'))
+
 
 @cus_login_required
 def changepwd(request):
@@ -171,6 +166,7 @@ def changepwd(request):
 
     form = forms.ChangepwdForm()
     return render(request,'stu/changepwd.html',{'form':form,'error_msg':error_msg})
+
 
 @cus_login_required
 @change_pwd
@@ -226,6 +222,7 @@ def module_detail(request,*args, **kwargs):
         datas.append(the_class)
 
     return  render(request,'stu/module_detail.html',{'datas':datas,'the_module':the_module})
+
 
 @cus_login_required
 @change_pwd
@@ -331,6 +328,7 @@ def uploadfile(request,clas,sem,day):
 
     return render(request,'stu/upload.html',{'form':form,'files_size':files_size,'error':error})
 
+
 @cus_login_required
 @change_pwd
 def Myhomework(request):
@@ -384,6 +382,7 @@ def Myhomework(request):
 
     return render(request,'stu/myhomework.html',{'all_data_list':all_data_list})
 
+
 @cus_login_required
 @change_pwd
 def DeleteFile(request,*args,**kwargs):
@@ -422,6 +421,7 @@ def DeleteFile(request,*args,**kwargs):
             resu = 0
         result = json.dumps(resu)
         return HttpResponse(result)
+
 
 @cus_login_required
 @change_pwd
@@ -470,3 +470,15 @@ def DownloadFile(request,*args,**kwargs):
 
     else:
         return HttpResponseRedirect(resolve_url('myhomework'))
+
+
+def Mycontractlist(request):
+    classlist = models.ClassList.objects.filter(enrollment__customer__qq=request.session['username'])
+    username = request.session['username']
+    return render(request, 'stu/mycontractlist.html', locals())
+
+
+def Contractdetail(request, class_id):
+    customer = models.Customer.objects.filter(qq=request.session['username']).first()
+    contract = models.ContractTemplate.objects.filter(classlist=class_id).first()
+    return render(request, 'stu/contractdetail.html', locals())
