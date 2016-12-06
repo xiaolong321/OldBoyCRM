@@ -463,9 +463,11 @@ class ContractTemplate(models.Model):
 
 class Assistant(models.Model):
     name = models.OneToOneField(UserProfile,verbose_name='姓名')
+    memo = models.CharField(verbose_name='备注',max_length=64,blank=True,null=True)
 
     def __str__(self):
-        return self.name.name
+        return '%s'% self.memo
+
     class Meta:
         verbose_name = u"助教"
         verbose_name_plural = u"助教"
