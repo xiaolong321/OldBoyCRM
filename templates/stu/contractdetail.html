@@ -1,0 +1,12 @@
+{%extends 'stu/stu_dash.html'%}
+
+    {% block dash-content%}
+        <div>
+            <pre>
+甲方：{{ customer.name }}
+乙方：老男孩IT教育
+
+                                                            {{ contract.content }}
+            </pre>
+        </div>
+    {% endblock %}
