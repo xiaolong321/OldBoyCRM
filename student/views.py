@@ -482,3 +482,44 @@ def Contractdetail(request, class_id):
     customer = models.Customer.objects.filter(qq=request.session['username']).first()
     contract = models.ContractTemplate.objects.filter(classlist=class_id).first()
     return render(request, 'stu/contractdetail.html', locals())
+
+
+def Myrecommendation(request):
+    if request.method == 'GET':
+        form = forms.ReferralForm()
+    if request.method == 'POST':
+        form = forms.ReferralForm(request.POST)
+        if form.is_valid():
+            referral_qq = request.POST.get('qq')
+            customer = models.Customer.objects.filter(qq=referral_qq)
+            if not customer:
+                referral_from = models.StuAccount.objects.filter(id=request.POST.get('referral_from')).first()
+                qq = request.POST.get('qq')
+                phone = request.POST.get('phone')
+                name = request.POST.get('name')
+                comment = request.POST.get('comment')
+                consultant = models.UserProfile.objects.filter(id=request.POST.get('consultant')).first()
+                creat_dict = {
+                    'referralfrom':referral_from,
+                    'qq':qq,
+                    'phone':phone,
+                    'name':name,
+                    'comment':comment,
+                    'consultant':consultant,
+                }
+                models.Referral.objects.create(**creat_dict)
+                form = forms.ReferralForm()
+            else:
+                form.add_error('qq', '该学生已经存在')
+    recommendations = models.Referral.objects.filter(referralfrom__stu_name__qq=request.session['username'])
+    for recommendation in recommendations:
+        customer = models.Customer.objects.filter(qq=recommendation.qq).first()
+        if customer:
+            if customer.status == 'paid_in_full':
+                recommendation.status = '推荐成功'
+            else:
+                recommendation.status = '正在沟通'
+        else:
+            recommendation.status = '等待沟通'
+    user = models.StuAccount.objects.filter(stu_name__qq=request.session['username']).first()
+    return render(request, 'stu/myrecommendation.html', locals())

@@ -47,3 +47,24 @@ class  ChangepwdForm(forms.Form):
         hash_oldpwd = hashstr(oldpwd)
         cleaned_date['oldpwd']=hash_oldpwd
         return cleaned_date
+
+
+class ReferralForm(ModelForm):
+    class Meta:
+        model = Referral
+        exclude = ('referralfrom',)
+        error_messages = {
+            'qq':{
+            'unique':'该同学已经存在'
+            }
+        }
+
+    def __new__(cls, *args, **kwargs):
+        for field_name in cls.base_fields:
+            field = cls.base_fields[field_name]
+            attr_dic = {
+                'class': 'form-control',
+                'placeholder': field.help_text,
+            }
+            field.widget.attrs.update(attr_dic)
+        return ModelForm.__new__(cls)
