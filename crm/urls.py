@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^customers_library-(?P<source>\S+)-(?P<course>\S+)-(?P<class_type>\S+)-(?P<status>\S+)-(?P<filter_date>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',views.customers_library,name='customers_library'),#客户库
     url(r'^sale_table/$',views.sale_table,name='sale_table'),# dashboard表销售直方图
     url(r'^addcustomer/$',views.addcustomer,name='addcustomer'),
+    url(r'^addcustomer/(?P<referralfromid>\d+)/$',views.addcustomer,name='addcustomer'),
     url(r'^cus_enroll/(?P<id>\d+)/$',views.cus_enroll,name='cus_enroll'),
     url(r'^enroll_done/(?P<customer_qq>\w+)/$',views.enroll_done,name='enroll_done'),
     url(r'^consult_record/(?P<id>\d+)/$',views.consult_record,name='consult_record'),

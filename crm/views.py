@@ -19,6 +19,7 @@ from crm.myauth import UserProfile
 from django.contrib.auth.models import Group
 from student.models import StuAccount
 from crm.permissions import check_permission
+from student.forms import Referral
 
 
 def hashstr(inputstr):
@@ -174,7 +175,7 @@ def stu_faq(request):
     return render(request,"crm/stu_faq.html")
 
 
-#@login_required
+# @login_required
 def get_grade_chart(request,stu_id):
     stu_obj = models.Customer.objects.get(id=stu_id)
 
@@ -410,7 +411,13 @@ def dashboard(request):
 
     result['sale_list']=sale_list
     result['curr_url']=curr_url
-    return render(request,'crm/dashboard.html',result)
+    referrals = Referral.objects.filter(consultant=request.user)
+    for referral in referrals:
+        if models.Customer.objects.filter(qq=referral.qq):
+            referral.flag = False
+        else:
+            referral.flag = True
+    return render(request,'crm/dashboard.html',locals())
 
 
 @login_required
@@ -557,7 +564,7 @@ def tracking(request,page,*args,**kwargs):
         fil = {'customers': customers, 'count': count, 'fenye': fenye}
 
         result.update(fil)
-    return render(request, 'crm/tracking.html', result)
+    return render(request, 'crm/tracking.html', locals())
 
 
 @login_required
@@ -813,16 +820,15 @@ def customers_library(request,page,*args,**kwargs):
         customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
-
-        fil = {'customers':customers,'count':count,'fenye':fenye}
+        fil = {'customers': customers, 'count': count, 'fenye': fenye}
 
     result.update(fil)
     return render(request, 'crm/customers_library.html', result)
 
 
-@login_required
-@check_permission
-def addcustomer(request):
+# @login_required
+# @check_permission
+def addcustomer(request, referralfromid=None):
     username = request.session['username']
     curr_user = models.UserProfile.objects.get(name=username)
     if request.method == 'POST':
@@ -837,9 +843,27 @@ def addcustomer(request):
         else:
             from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
             form = forms.AddCustomerForm(data=request.POST)
-            return render(request, 'crm/addcustomer.html', {'form': form, 'username': username,'curr_user':curr_user,'from_student':from_student})
-    form = forms.AddCustomerForm()
-    return render(request,'crm/addcustomer.html',{'form':form,'username':username,'curr_user':curr_user})
+            return render(request, 'crm/addcustomer.html', {
+                'form': form,
+                'username': username,
+                'curr_user': curr_user,
+                'from_student': from_student
+            })
+    if referralfromid:
+        referralfrom = Referral.objects.filter(id=referralfromid).first()
+        form = forms.AddCustomerForm(
+            {
+                'qq':referralfrom.qq,
+                'phone' : referralfrom.phone,
+                'name':referralfrom.name,
+                'source':'referral',
+                'customer_note':referralfrom.comment,
+            })
+        from_student = models.Customer.objects.filter(id=referralfrom.referralfrom.stu_name_id).first()
+        return render(request, 'crm/addcustomer.html',{'form': form, 'username': username, 'curr_user': curr_user,'from_student':from_student})
+    else:
+        form = forms.AddCustomerForm()
+        return render(request, 'crm/addcustomer.html',{'form': form, 'username': username, 'curr_user': curr_user})
 
 
 

@@ -167,11 +167,34 @@ class ConsultRecord(models.Model):
         verbose_name_plural = u"客户咨询跟进记录"
 
 
+classlist = models.ForeignKey('ClassList', verbose_name='所报班级', default='N/A')
+pay_type_choices = (('deposit', u"订金/报名费"),
+                    ('tution', u"学费"),
+                    ('refund', u"退款"),
+                    )
+pay_type = models.CharField(u"费用类型", choices=pay_type_choices, max_length=64, default="deposit")
+paid_fee = models.IntegerField(u"费用数额", default=0)
+note = models.TextField(u"备注", blank=True, null=True)
+date = models.DateTimeField(u"交款日期", auto_now_add=True)
+consultant = models.ForeignKey(UserProfile, verbose_name=u"负责老师", help_text=u"谁签的单就选谁")
+
+
+def __str__(self):
+    return u"%s, 类型:%s,数额:%s" % (self.customer, self.pay_type, self.paid_fee)
+
+
+class Meta:
+    verbose_name = u'交款纪录'
+    verbose_name_plural = u"交款纪录"
+
+
+
+
 class PaymentRecord(models.Model):
     customer = models.ForeignKey(Customer,verbose_name=u"客户")
-    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True)
-    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True)
-    classlist = models.ForeignKey('ClassList',verbose_name='所报班级',default='')
+    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True, default='N/A')
+    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True, default='N/A')
+    classlist = models.ForeignKey('ClassList',verbose_name='所报班级', default='N/A')
     pay_type_choices = (('deposit',u"订金/报名费"),
                         ('tution',u"学费"),
                         ('refund',u"退款"),

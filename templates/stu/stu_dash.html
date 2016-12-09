@@ -2,7 +2,7 @@
 {%load humanize %}
 {%load static %}
 {%load stu_cus_tag %}
-	{% block header-resource-files %}
+{% block header-resource-files %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>old boy</title>
@@ -103,14 +103,15 @@
 
 									<!--Category name-->
 									<li class="list-header">菜单栏</li>
-									<li>
+									<li id="mycourse">
 										<a href="{%url 'mycourse'%}">
 											<i class="fa fa-database"></i>
 											<span class="menu-title">
 												<strong>我的课程</strong>
 											</span>
 										</a>
-									</li>									<li>
+									</li>
+                                    <li id="mycontractlist">
 										<a href="{%url 'mycontractlist'%}">
 											<i class="fa fa-database"></i>
 											<span class="menu-title">
@@ -118,9 +119,15 @@
 											</span>
 										</a>
 									</li>									
->
+									<li id="myrecommendation">
+										<a href="{%url 'myrecommendation'%}">
+											<i class="fa fa-database"></i>
+											<span class="menu-title">
+												<strong>我的推荐</strong>
+											</span>
+										</a>
 									</li>
-									<li>
+									<li id="myhomework">
 										<a href="{% url 'myhomework' %}">
 											<i class="fa fa-database"></i>
 											<span class="menu-title">
@@ -128,9 +135,6 @@
 											</span>
 										</a>
 									</li>
-
-
-
 								</ul>
 							</div>
 						</div>
@@ -146,6 +150,7 @@
 
 
 	</div>
+    </div>
 
 {% endblock  %}
 
@@ -176,5 +181,19 @@
 	{%block dash-footer-js%}
 
 	{%endblock%}
+    <script>
+		$(function($) {
+
+            // 高亮当前选中菜单栏
+            var cur_url_name = location.pathname.split('/')[2];
+
+            $('#mainnav-menu li').each(function (i, n) {
+                if ($(this).attr('id') == cur_url_name) {
+                    $(this).css({'background': '#000000', 'color': 'black'})
+                }
+
+            });
+        })
+    </script>
 
 {% endblock %}
