@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 
 
 import json, os, zipfile, hashlib
@@ -292,7 +292,7 @@ def uploadfile(request,clas,sem,day):
                                                 student=the_student_obj,
                                                 course_record=the_course_obj)
 
-                    except ObjectDoesNotExist as e:
+                    except ObjectDoesNotExist:
                         the_studyrecord = models.StudyRecord(
                                             course_record=the_course_obj,
                                             student=the_student_obj)
@@ -435,33 +435,32 @@ def DownloadFile(request,*args,**kwargs):
                             which_class,
                             which_semester,
                             which_day,
-                            the_user_qq)).replace('\\','/')
+                            the_user_qq)).replace('\\','/'),
 
+    # 创建压缩文件名字
 
-    #创建压缩文件名字
-
-    file_path_parent = ("%s/%s/%s/%s"%(
+    file_path_parent = ("%s/%s/%s/%s" % (
                             settings.UPLOADCODE_DIR,
                             which_class,
                             which_semester,
-                            which_day)).replace('\\','/')
+                            which_day)).replace('\\', '/'),
 
     if os.path.exists(file_path):
         files = os.listdir(file_path)
         if files:
-            #创建压缩文件名字
+            # 创建压缩文件名字
             filename = '%s.zip' % the_user_qq
-            #创建压缩文件对象 ,类似write函数，如果该文件不存在就创建，这是个在每一天下面创建每一个学员的压缩文件。
-            zipfile_obj = zipfile.ZipFile('%s/%s'%(file_path_parent,filename),'w',zipfile.ZIP_DEFLATED)
-            #遍历目录内的每一个文件，写入压缩对象。
+            # 创建压缩文件对象 ,类似write函数，如果该文件不存在就创建，这是个在每一天下面创建每一个学员的压缩文件。
+            zipfile_obj = zipfile.ZipFile('%s/%s' % (file_path_parent, filename), 'w', zipfile.ZIP_DEFLATED)
+            # 遍历目录内的每一个文件，写入压缩对象。
             for every_file in files:
-                #写入文件，（文件路径/文件名，文件名）
-                zipfile_obj.write('%s/%s'%(file_path,every_file),every_file)
+                # 写入文件，（文件路径/文件名，文件名）
+                zipfile_obj.write('%s/%s' % (file_path, every_file), every_file)
             zipfile_obj.close()
-            #读取压缩文件到response对象
-            response = FileResponse(open('%s/%s'%(file_path_parent,filename),'rb'))
-            #设置response告诉brower处理方式
-            response['Content-Disposition'] =  'attachment; filename=%s' % filename
+            # 读取压缩文件到response对象
+            response = FileResponse(open('%s/%s' % (file_path_parent, filename), 'rb'))
+            # 设置response告诉brower处理方式
+            response['Content-Disposition'] = 'attachment; filename=%s' % filename
             response['X-Sendfile'] = smart_str(file_path)
             return response
 
@@ -500,12 +499,12 @@ def Myrecommendation(request):
                 comment = request.POST.get('comment')
                 consultant = models.UserProfile.objects.filter(id=request.POST.get('consultant')).first()
                 creat_dict = {
-                    'referralfrom':referral_from,
-                    'qq':qq,
-                    'phone':phone,
-                    'name':name,
-                    'comment':comment,
-                    'consultant':consultant,
+                    'referralfrom': referral_from,
+                    'qq': qq,
+                    'phone': phone,
+                    'name': name,
+                    'comment': comment,
+                    'consultant': consultant,
                 }
                 models.Referral.objects.create(**creat_dict)
                 form = forms.ReferralForm()

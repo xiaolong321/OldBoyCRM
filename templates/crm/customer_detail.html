@@ -22,8 +22,8 @@
                         {%if field.name == 'consultant'%}
                         <div class="col-sm-6">
                             <select class="form-control" id="id_consultant" name="consultant">
-<option value="{{curr_user.id}}" selected="selected">{{curr_user.name}}</option>
-</select>
+                                <option value="{{customer.consultant.id}}" selected="selected">{{customer.consultant}}</option>
+                            </select>
                         </div>
                         {%elif field.name == 'qq' %}
                          <div class="col-sm-6">
