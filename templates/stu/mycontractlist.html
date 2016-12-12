@@ -1,0 +1,39 @@
+{%extends 'stu/stu_dash.html'%}
+
+    {% block dash-content%}
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ username }}同学您好，这是您报名的全部班级,请点击课程名称查看合同详细信息</h3>
+            </div>
+            <div class="panel-body">
+                <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>课程名称</th>
+                            <th>授课教师</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for class in classlist %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'contractdetail' class.id %}">
+                                        {{ class}}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% for teacher in class.teachers.all %}
+                                        {{ teacher }},
+                                    {% endfor %}
+                                </td>
+                                <td>{{ class.start_date }}</td>
+                                <td>{{ class.graduate_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endblock %}

@@ -43,8 +43,11 @@ class Customer(models.Model):
     source_type = (('qq',u"qq群"),
                    ('referral',u"内部转介绍"),
                    ('website',u"官方网站"),
-                   ('baidu_ads',u"百度广告"),
+                   ('baidu_ads',u"百度推广"),
+                   ('360_promotion',u"360推广"),
+                   ('sogou_promotion',u"搜狗推广"),
                    ('qq_class',u"腾讯课堂"),
+                   ('tencent_messaging', u"广点通"),
                    ('school_propaganda',u"高校宣讲"),
                    ('51cto',u"51cto"),
                    ('others',u"其它"),
@@ -166,9 +169,9 @@ class ConsultRecord(models.Model):
 
 class PaymentRecord(models.Model):
     customer = models.ForeignKey(Customer,verbose_name=u"客户")
-    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True)
-    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True)
-    classlist = models.ForeignKey('ClassList',verbose_name='所报班级',default='')
+    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True, default='N/A')
+    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True, default='N/A')
+    classlist = models.ForeignKey('ClassList',verbose_name='所报班级', default='N/A')
     pay_type_choices = (('deposit',u"订金/报名费"),
                         ('tution',u"学费"),
                         ('refund',u"退款"),
@@ -508,3 +511,12 @@ class OnlineStuRecords(models.Model):
         verbose_name_plural = u"随到随学学员助教分配记录"
 
 
+class MessageTemplate(models.Model):
+    subject = models.CharField(u"邮件主题",max_length=128,unique=True)
+    content = models.TextField(u"邮件内容")
+    date = models.DateField(auto_now_add=True)
+    def __str__(self):
+        return self.subject
+    class Meta:
+        verbose_name = u"邮件模版"
+        verbose_name_plural = u"邮件模版"

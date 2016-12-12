@@ -218,6 +218,7 @@ class AssistantAdmin(admin.ModelAdmin):
 class OnlineStuRecordsAdmin(admin.ModelAdmin):
     list_display = ('id','name','qq','stu_type','assistant','enroll_date','stu_id_51','graduated')
     list_filter = ('assistant','enroll_date','stu_type','graduated')
+    search_fields = ('qq','assistant__memo')
     def get_actions(self, request):
         actions = super(OnlineStuRecordsAdmin, self).get_actions(request)
         if 'delete_selected' in actions:
@@ -241,3 +242,4 @@ admin.site.register(models.ContractTemplate,ContractTemplateAdmin)
 admin.site.register(models.Assistant,AssistantAdmin)
 admin.site.register(models.OnlineStuRecords,OnlineStuRecordsAdmin)
 admin.site.register(models.CourseModule)
+admin.site.register(models.MessageTemplate)

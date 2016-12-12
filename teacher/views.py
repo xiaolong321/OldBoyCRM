@@ -17,7 +17,7 @@ def dashboard(request):
 def classlist(request):
     if request.method == 'GET':
         classlists = models.ClassList.objects.filter(teachers=request.user)
-        return render(request, 'teacher/classlist.html')
+        return render(request, 'teacher/classlist.html', locals())
 
 
 @login_required

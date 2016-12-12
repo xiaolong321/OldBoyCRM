@@ -4,3 +4,6 @@ OldboyCRM/settings.py
 crm/migrations
 student/migrations
 teacher/migrations
+enrolled_data/!.gitkeep
+enrolled_data/*
+__pycache__/
