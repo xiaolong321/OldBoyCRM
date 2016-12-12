@@ -1,7 +1,6 @@
 from django.db import models
 from crm.models import *
 
-
 class StuAccount(models.Model):
     stu_name = models.OneToOneField(Customer,verbose_name='关联对象')
     stu_pwd = models.CharField('密码',max_length=40)

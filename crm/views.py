@@ -20,6 +20,9 @@ from django.contrib.auth.models import Group
 from student.models import StuAccount
 from crm.permissions import check_permission
 from student.forms import Referral
+from common.message import message
+import string
+import random
 
 
 def hashstr(inputstr):
@@ -29,6 +32,12 @@ def hashstr(inputstr):
     m.update(inputstr)
     resu = m.hexdigest()
     return resu
+
+
+def makePassword(minlength=5,maxlength=12):
+    length=random.randint(minlength,maxlength)
+    letters=string.ascii_letters+string.digits
+    return ''.join([random.choice(letters) for _ in range(length)])
 
 
 def index(request):
@@ -1010,8 +1019,13 @@ def enroll_done(request,*args,**kwargs):
                 StuAccount.objects.get(stu_name=customer)
                 pass
             except ObjectDoesNotExist as e:
-                stu_acc_pwd = hashstr(customer.qq)
-                stu_acc= StuAccount.objects.create(stu_name=customer,stu_pwd=stu_acc_pwd)
+                stu_acc_pwd = makePassword()
+                stu_acc_pwd_has = hashstr(stu_acc_pwd)
+                stu_acc= StuAccount.objects.create(stu_name=customer,stu_pwd=stu_acc_pwd_has)
+                object = message(subject='createaccount', toaddrs=[customer.qq + '@qq.com',], )
+                object.getcontent(username=customer.name, classname=payment_records.classlist, account=customer.qq, password=stu_acc_pwd)
+                object.sendmessage()
+
             customer.save()
             payment_records.save()
             return HttpResponse(json.dumps('已创建新的报名表'))
