@@ -2,7 +2,7 @@
 
 {% block dash-content%}
 
-<div class="col-sm-12 text-left">
+    <div class="col-sm-12 text-left">
         <div class="panel">
             <div class="panel-heading">
                 <h3 class="panel-title text-center">请填写如下表格(加粗字体为必填项)</h3>
@@ -13,39 +13,70 @@
             {% csrf_token %}
                 <div class="panel-body ">
                     {%for field in form%}
-                    <div class="form-group text-left">
-                        {%if field.field.required%}
-                        <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
-                        {%else%}
-                        <label class="col-lg-3 control-label">{{field.label}}</label>
-                        {%endif%}
-                        {%if field.name == 'consultant'%}
-                        <div class="col-sm-6">
-                            <select class="form-control" id="id_consultant" name="consultant">
-                                <option value="{{customer.consultant.id}}" selected="selected">{{customer.consultant}}</option>
-                            </select>
-                        </div>
-                        {%elif field.name == 'qq' %}
-                         <div class="col-sm-6">
-                        <input class="form-control" id="id_qq" maxlength="64" name="qq" placeholder="QQ号必须唯一" value="{{customer.qq}}" type="text"  readonly/>
-                             </div>
-                        {%elif field.name == 'customer_note' %}
-                        <div class="col-sm-6">
-                        <textarea class="form-control" cols="40" id="id_customer_note" name="customer_note" placeholder="客户咨询的大概情况,客户个人信息备注等..." rows="10" readonly>{{customer.customer_note}}
-                        </textarea>
+                        {% if field.name == 'source' and field.value == 'referral' %}
+                            <div class="form-group text-left">
+                                <label class="col-lg-3 control-label"><b>客户来源</b></label>
+                                <div class="col-sm-6">
+                                    {{field}}
+                                </div>
+                                <div class="col-sm-3" style="color: red;"></div>
                             </div>
-                         {%else%}
-                        <div class="col-sm-6">
-
-                            {{field}}
-                        </div>
-                        {%endif%}
-                        <div class="col-sm-3" style="color:red">
-                          {%for error in field.errors%}
-                            {{error}}
-                            {%endfor%}
-                        </div>
-                    </div>
+                            <div class="form-group text-left from_student">
+                                <label class="col-lg-3 control-label">
+                                    <b>推荐学员</b>
+                                </label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="id_referral_from" name="referral_from">
+                                        <option value="{{ from_student.qq }}" selected="selected">{{ from_student }}</option>
+                                    </select>
+                                </div>
+                                {% if from_student %}
+                                    <div class="col-sm-3" style="color: blue;">  若学生信息不符，请重新输入查询 </div>
+                                {% else %}
+                                    <div class="col-sm-3" style="color: red;">  该学生不存在，请重新输入 </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group text-left from_student">
+                                <label class="col-lg-3 control-label ">请输入推荐学生QQ号</label>
+                                <div class="col-sm-6">
+                                    <input style="width:90%;float:left" class="form-control from_student" id="id_stu_id" maxlength="64" placeholder="" type="text" value="{{ from_student.qq }}">
+                                    <button class="from_student" style="float:right;line-height:25px" type="button">查询</button>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="form-group text-left">
+                                {%if field.field.required%}
+                                    <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                                {%else%}
+                                    <label class="col-lg-3 control-label">{{field.label}}</label>
+                                {%endif%}
+                                {%if field.name == 'consultant'%}
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="id_consultant" name="consultant">
+                                            <option value="{{customer.consultant.id}}" selected="selected">{{customer.consultant}}</option>
+                                        </select>
+                                    </div>
+                                {%elif field.name == 'qq' %}
+                                    <div class="col-sm-6">
+                                        <input class="form-control" id="id_qq" maxlength="64" name="qq" placeholder="QQ号必须唯一" value="{{customer.qq}}" type="text"  readonly/>
+                                    </div>
+                                {%elif field.name == 'customer_note' %}
+                                    <div class="col-sm-6">
+                                        <textarea class="form-control" cols="40" id="id_customer_note" name="customer_note" placeholder="客户咨询的大概情况,客户个人信息备注等..." rows="10" readonly>{{customer.customer_note}}
+                                        </textarea>
+                                    </div>
+                                {%else%}
+                                    <div class="col-sm-6">
+                                        {{field}}
+                                    </div>
+                                {%endif%}
+                                <div class="col-sm-3" style="color:red">
+                                    {%for error in field.errors%}
+                                        {{error}}
+                                    {%endfor%}
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endfor %}
                     <span style="margin-left: 19%;margin-right: 2%">已报班级</span>
                     {%for every_class in customer.class_list.all%}
@@ -58,12 +89,54 @@
             </form>
             <!--===================================================-->
             <!--End Horizontal Form-->
-
         </div>
-</div>
-
-
-
-
-
+    </div>
 {% endblock %}
+
+{%block dash-footer-js%}
+
+    <script>
+    $(function () {
+        $('select#id_source').change(function () {
+            if($(this).val() == 'referral'){
+                if($('button.from_student').length==0){
+                    $(this).parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label ">请输入推荐学生QQ号</label> <div class="col-sm-6"> <input style="width:90%;float:left" class="form-control from_student" id="id_stu_id" maxlength="64" placeholder="" type="text"> <button class="from_student" style="float:right;line-height:25px" type="button">查询</button> </div> </div>');
+                }
+                $('button.from_student').click(function () {
+                    var student_qq = $('input.from_student').val();
+                        $.ajax({
+                            url: "{% url 'searchcustomer' %}",
+                            type: 'POST',
+                            data: {student_qq:student_qq},
+                            success:function (data) {
+                                if(data == ''){
+                                    if($('select#id_referral_from').length>0){
+                                        $('select#id_referral_from').children().first().val('').text('');
+                                        $('select#id_referral_from').parent().next().text('该学生不存在，请重新输入').css({'color':'red'});
+                                    } else {
+                                        $('select#id_source').parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label"><b>推荐学员</b></label> <div class="col-sm-6"> <select class="form-control" id="id_referral_from" name="referral_from"> <option value= selected="selected"></option> </select> </div> <div class="col-sm-3" style="color: red;"> 该学不存在，请重新输入 </div> </div>');
+                                    }
+                                }else {
+                                    var QQ = data.split(' ')[0];
+                                    var qq =  QQ.split(':')[1];
+                                    console.log(data)
+                                    if($('select#id_referral_from').length>0){
+                                        $('select#id_referral_from').children().first().val(qq).text(data);
+                                        $('select#id_referral_from').parent().next().text('若学生信息不符，请重新输入查询').css({'color':'blue'});
+                                    } else {
+                                        $('select#id_source').parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label"><b>推荐学员</b></label> <div class="col-sm-6"> <select class="form-control" id="id_referral_from" name="referral_from"> <option value=' + qq + ' selected="selected">' + data + '</option> </select> </div> <div class="col-sm-3" style="color: blue;">  若学生信息不符，请重新输入查询 </div> </div>');
+                                    }
+                                }
+                            }
+                        })
+                    })
+            }else {
+                $('div.from_student').remove();
+{#                $('select#id_referral_from').parent().parent().remove();#}
+            }
+        })
+        $('select#id_source').trigger('change')
+    })
+    </script>
+
+{%endblock%}

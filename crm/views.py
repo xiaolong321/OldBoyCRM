@@ -1114,14 +1114,28 @@ def error(request):
 def customer_detail(request, id):
     username = request.session['username']
     cus = models.Customer.objects.get(id=id)
+    print(cus)
+    from_student = None
+    try:
+        from_student = models.Customer.objects.filter(id=cus.referral_from.id).first()
+    except Exception:
+        pass
     if request.method == 'POST':
-        form = forms.AddCustomerForm(data=request.POST, instance=cus)
-        if form.is_valid():
-            form.save()
-
+        print(request.POST.get('consultant'))
+        print(cus.consultant.id)
+        if int(request.POST.get('consultant')) == cus.consultant.id:
+            form = forms.AddCustomerForm(data=request.POST, instance=cus)
+            if form.is_valid():
+                form.save()
+                if from_student:
+                    cus.referral_from = from_student
+        else:
+            form = forms.AddCustomerForm(data=request.POST, instance=cus)
+            form.is_valid()
+            form.add_error('consultant', '课程顾问选择出现错误，请刷新后重试')
     else:
         form = forms.AddCustomerForm(instance=cus)
-    return render(request, 'crm/customer_detail.html', {'customer': cus, 'form': form})
+    return render(request, 'crm/customer_detail.html', {'customer': cus, 'form': form, 'from_student': from_student})
 
 
 @login_required
