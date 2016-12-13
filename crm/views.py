@@ -1,20 +1,21 @@
-#_*_coding:utf-8_*_
-from django.shortcuts import render,HttpResponse,HttpResponseRedirect,redirect,resolve_url
+# _*_coding:utf-8_*_
+
+from django.shortcuts import render, HttpResponse, HttpResponseRedirect, redirect, resolve_url
 from django.core.urlresolvers import resolve
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from crm import models
-import json,os,random,zipfile,datetime
+import json, os, random, zipfile, datetime
 from crm import survery_handle
 from crm import class_grade
 from crm import forms
-from django.db.models import Sum,Count
+from django.db.models import Sum, Count
 from OldboyCRM import settings
 from django.http import FileResponse
 from django.utils.encoding import smart_str
-from django.contrib.auth import login,logout,authenticate
-from crm.html_helper import PageInfo,Page
+from django.contrib.auth import login, logout, authenticate
+from crm.html_helper import PageInfo, Page
 from crm.myauth import UserProfile
 from django.contrib.auth.models import Group
 from student.models import StuAccount
@@ -27,62 +28,55 @@ import random
 
 def hashstr(inputstr):
     import hashlib
-    inputstr=inputstr.encode()
+    inputstr = inputstr.encode()
     m = hashlib.md5()
     m.update(inputstr)
     resu = m.hexdigest()
     return resu
 
 
-def makePassword(minlength=5,maxlength=12):
-    length=random.randint(minlength,maxlength)
-    letters=string.ascii_letters+string.digits
+def makePassword(minlength=5, maxlength=12):
+    length = random.randint(minlength, maxlength)
+    letters = string.ascii_letters + string.digits
     return ''.join([random.choice(letters) for _ in range(length)])
 
 
 def index(request):
-    return  render(request,'crm/index.html')
+    return render(request, 'crm/index.html')
 
 
-def survery(request,survery_id):
+def survery(request, survery_id):
     if request.method == "GET":
         try:
             survery_obj = models.Survery.objects.get(id=survery_id)
-            return render(request,"crm/survery.html",{"survery_obj":survery_obj})
+            return render(request, "crm/survery.html", {"survery_obj": survery_obj})
         except ObjectDoesNotExist:
             return HttpResponse(u"问卷不存在")
     elif request.method == "POST":
-
-        client_id =  request.COOKIES.get("csrftoken")
-
+        client_id = request.COOKIES.get("csrftoken")
         form_data = json.loads(request.POST.get("data"))
-        survery_handler = survery_handle.Survery(client_id,survery_id,form_data)
+        survery_handler = survery_handle.Survery(client_id, survery_id, form_data)
         if survery_handler.is_valid():
             survery_handler.save()
-
         else:
             pass
-
         return HttpResponse(json.dumps(survery_handler.errors))
 
 
 @login_required
-def survery_report(request,survery_id):
+def survery_report(request, survery_id):
     try:
         survery_obj = models.Survery.objects.get(id=survery_id)
-
-
     except ObjectDoesNotExist as e:
         return HttpResponse("Survery doesn't exist!")
-
-    return render(request,'crm/survery_report.html',{'survery_obj':survery_obj})
+    return render(request, 'crm/survery_report.html', {'survery_obj': survery_obj})
 
 
 @login_required
-def survery_chart_report(request,survery_id):
+def survery_chart_report(request, survery_id):
     try:
         survery_obj = models.Survery.objects.get(id=survery_id)
-        #survery_obj.surveryrecord_set.select_related()
+        # survery_obj.surveryrecord_set.select_related()
         chart_data = survery_handle.generate_chart_data(survery_obj)
 
         return HttpResponse(json.dumps(chart_data))
@@ -94,8 +88,7 @@ def survery_chart_report(request,survery_id):
 def view_class_grade(request,class_id):
     try:
         class_obj = models.ClassList.objects.get(id=class_id)
-        #class_obj..se
-
+        # class_obj..se
     except ObjectDoesNotExist as e:
         return HttpResponse("Class doesn't exist!")
     grade_gen_obj = class_grade.ClassGrade(class_obj)
@@ -406,8 +399,8 @@ def dashboard(request):
     for sale in sales:
         sale_track = models.Customer.objects.filter(status='unregistered',consultant__email=sale[0],date__gt=month_before,date__lt=today).count()  # 本月至今 正跟进客户数
         sale_signed=models.Customer.objects.exclude(status='unregistered').filter(consultant__email=sale[0],date__gt=month_before,date__lt=today).count()  # 本月至今 已签约客户数
-        b =count_all(sale_track,sale_signed)
-        a = [sale_track,sale_signed]
+        b =count_all(sale_track, sale_signed)
+        a = [sale_track, sale_signed]
         a.extend(b)
         sale_num[sale[1]] =a
 
@@ -1118,19 +1111,31 @@ def error(request):
 
 @login_required
 @check_permission
-def customer_detail(request,id):
+def customer_detail(request, id):
     username = request.session['username']
-    cus =models.Customer.objects.get(id=id)
-    curr_user = models.UserProfile.objects.get(name=username)
+    cus = models.Customer.objects.get(id=id)
+    print(cus)
+    from_student = None
+    try:
+        from_student = models.Customer.objects.filter(id=cus.referral_from.id).first()
+    except Exception:
+        pass
     if request.method == 'POST':
-        form= forms.AddCustomerForm(data=request.POST,instance=cus)
-        if form.is_valid():
-            form.save()
-
+        print(request.POST.get('consultant'))
+        print(cus.consultant.id)
+        if int(request.POST.get('consultant')) == cus.consultant.id:
+            form = forms.AddCustomerForm(data=request.POST, instance=cus)
+            if form.is_valid():
+                form.save()
+                if from_student:
+                    cus.referral_from = from_student
+        else:
+            form = forms.AddCustomerForm(data=request.POST, instance=cus)
+            form.is_valid()
+            form.add_error('consultant', '课程顾问选择出现错误，请刷新后重试')
     else:
-
         form = forms.AddCustomerForm(instance=cus)
-    return render(request,'crm/customer_detail.html',{'customer':cus,'form':form,'curr_user':curr_user})
+    return render(request, 'crm/customer_detail.html', {'customer': cus, 'form': form, 'from_student': from_student})
 
 
 @login_required
@@ -1143,7 +1148,7 @@ def class_list(request,*args,**kwargs):
 
 @login_required
 @check_permission
-def class_detail(request,*args,**kwargs):
+def class_detail(request, *args, **kwargs):
     id = kwargs['id']
     ord=[]
     current_url = request.path
@@ -1155,10 +1160,10 @@ def class_detail(request,*args,**kwargs):
     staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
     staffs = list(staffs)
 
-    res={'cus_status':cus_status,'staffs':staffs}
+    res={'cus_status': cus_status, 'staffs': staffs}
 
-    direct_org={'class_list':id}
-    page= kwargs['page']
+    direct_org = {'class_list': id}
+    page = kwargs['page']
     try:
         page = int(page)
     except:
@@ -1190,13 +1195,12 @@ def class_detail(request,*args,**kwargs):
     customers = models.Customer.objects.filter(**direct_org).order_by(*ord)[pageObj.start:pageObj.end]
     fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
-    result={'current_url':current_url,'customers':customers,'count':count,'fenye':fenye}
+    result = {'current_url': current_url, 'customers': customers, 'count': count, 'fenye': fenye}
     result.update(res)
-    return render(request,'crm/class_detail.html',result)
+    return render(request, 'crm/class_detail.html', result)
 
 
 @login_required
 @check_permission
 def Statistical(request):
-    return render(request,'crm/statistical.html')
-
+    return render(request, 'crm/statistical.html')
