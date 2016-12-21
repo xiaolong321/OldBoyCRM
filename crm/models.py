@@ -29,98 +29,95 @@ class_type_choices= (('online',u'网络班'),
 
 
 class Customer(models.Model):
-    qq = models.CharField('QQ',max_length=64,unique=True,help_text=u'QQ号必须唯一')
-    qq_name = models.CharField(u'QQ名称',max_length=64,blank=True,null=True)
-    name = models.CharField(u'姓名',max_length=32,help_text='学员报名后，请改为真实姓名')
-    sex_type = (('male',u'男'),('female',u'女'))
-    sex = models.CharField(u"性别",choices=sex_type,default='male',max_length=32,blank=True,null=True)
-    birthday = models.DateField(u'出生日期',max_length=64,default=None,help_text="格式yyyy-mm-dd",blank=True,null=True)
-    phone = models.BigIntegerField(u'手机号',blank=True,null=True)
-    email = models.EmailField(u'常用邮箱',blank=True,null=True)
-    id_num = models.CharField(u'身份证号',max_length=64,default=0,blank=True,null=True)
+    qq = models.CharField('QQ', max_length=64, unique=True, help_text=u'QQ号必须唯一')
+    qq_name = models.CharField(u'QQ名称', max_length=64, blank=True, null=True)
+    name = models.CharField(u'姓名', max_length=32, help_text='学员报名后，请改为真实姓名')
+    sex_type = (('male',u'男'), ('female',u'女'))
+    sex = models.CharField(u"性别", choices=sex_type, default='male', max_length=32, blank=True, null=True)
+    birthday = models.DateField(u'出生日期', max_length=64, default=None, help_text="格式yyyy-mm-dd", blank=True, null=True)
+    phone = models.BigIntegerField(u'手机号', blank=True, null=True)
+    email = models.EmailField(u'常用邮箱', blank=True, null=True)
+    id_num = models.CharField(u'身份证号', max_length=64, default=0, blank=True, null=True)
 
-    stu_id = models.CharField(u"学号",blank=True,null=True,max_length=64)
-    source_type = (('qq',u"qq群"),
-                   ('referral',u"内部转介绍"),
-                   ('website',u"官方网站"),
-                   ('baidu_ads',u"百度推广"),
-                   ('360_promotion',u"360推广"),
-                   ('sogou_promotion',u"搜狗推广"),
-                   ('qq_class',u"腾讯课堂"),
+    stu_id = models.CharField(u"学号", blank=True, null=True, max_length=64)
+    source_type = (('qq', u"qq群"),
+                   ('referral', u"内部转介绍"),
+                   ('website', u"官方网站"),
+                   ('baidu_ads', u"百度推广"),
+                   ('360_promotion', u"360推广"),
+                   ('sogou_promotion', u"搜狗推广"),
+                   ('qq_class', u"腾讯课堂"),
                    ('tencent_messaging', u"广点通"),
-                   ('school_propaganda',u"高校宣讲"),
-                   ('51cto',u"51cto"),
-                   ('others',u"其它"),
+                   ('school_propaganda', u"高校宣讲"),
+                   ('51cto', u"51cto"),
+                   ('others', u"其它"),
                    )
-    source = models.CharField(u'客户来源',max_length=64, choices=source_type,default='qq')
-    referral_from = models.ForeignKey('self',verbose_name=u"转介绍自学员",help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名",blank=True,null=True,related_name="internal_referral")
-
-    course = models.CharField(u"咨询课程",max_length=64,choices=course_choices)
-    class_type = models.CharField(u"班级类型",max_length=64,choices=class_type_choices)
-
-    customer_note = models.TextField(u"客户咨询内容详情",help_text=u"客户咨询的大概情况,客户个人信息备注等...")
-    work_status_choices = (('employed','在职'),('unemployed','无业'))
-    work_status = models.CharField(u"职业状态",choices=work_status_choices,max_length=32,default='employed',blank=True,null=True)
-    company = models.CharField(u"目前就职公司",max_length=64,blank=True,null=True)
-    salary = models.CharField(u"当前薪资",max_length=64,blank=True,null=True)
-    status_choices = (('signed',u"已报名"),
-                      ('unregistered',u"未报名"),
-                      ('paid_in_full',u"学费已交齐"))
-
-    status = models.CharField(u"状态",choices=status_choices,max_length=64,default=u"unregistered",help_text=u"选择客户此时的状态")
-    consultant = models.ForeignKey(UserProfile,verbose_name=u"课程顾问")
-    date = models.DateField(u"咨询日期",auto_now_add=True)
-    class_list = models.ManyToManyField('ClassList',verbose_name=u"已报班级",blank=True)
+    source = models.CharField(u'客户来源', max_length=64, choices=source_type, default='qq')
+    referral_from = models.ForeignKey('self', verbose_name=u"转介绍自学员", help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名", blank=True, null=True, related_name="internal_referral")
+    course = models.CharField(u"咨询课程", max_length=64, choices=course_choices)
+    class_type = models.CharField(u"班级类型", max_length=64, choices=class_type_choices)
+    customer_note = models.TextField(u"客户咨询内容详情", help_text=u"客户咨询的大概情况,客户个人信息备注等...")
+    work_status_choices = (('employed', '在职'), ('unemployed', '无业'))
+    work_status = models.CharField(u"职业状态", choices=work_status_choices, max_length=32, default='employed', blank=True, null=True)
+    company = models.CharField(u"目前就职公司", max_length=64, blank=True, null=True)
+    salary = models.CharField(u"当前薪资", max_length=64, blank=True, null=True)
+    status_choices = (('signed', u"已报名"),
+                      ('unregistered', u"未报名"),
+                      ('paid_in_full', u"学费已交齐"))
+    status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered", help_text=u"选择客户此时的状态")
+    consultant = models.ForeignKey(UserProfile, verbose_name=u"课程顾问")
+    date = models.DateField(u"咨询日期", auto_now_add=True)
+    class_list = models.ManyToManyField('ClassList', verbose_name=u"已报班级", blank=True)
 
     def colored_status(self):
         if self.status == "signed":
-            format_td =format_html('<span style="padding:2px;background-color:yellowgreen;color:white">已报名</span>')
+            format_td = format_html('<span style="padding:2px;background-color:yellowgreen;color:white">已报名</span>')
         elif self.status == "unregistered":
-            format_td =format_html('<span style="padding:2px;background-color:gray;color:white">未报名</span>')
+            format_td = format_html('<span style="padding:2px;background-color:gray;color:white">未报名</span>')
         elif self.status == "paid_in_full":
-            format_td =format_html('<span style="padding:2px;background-color:orange;color:white">学费已交齐</span>')
-
-        return  format_td
+            format_td = format_html('<span style="padding:2px;background-color:orange;color:white">学费已交齐</span>')
+        return format_td
 
     def get_enrolled_course(self):
-        return " | ".join(["%s(%s)" %(i.get_course_display(),i.semester) for i in self.class_list.select_related()])
+        return " | ".join(["%s(%s)" % (i.get_course_display(), i.semester) for i in self.class_list.select_related()])
     get_enrolled_course.short_description = u'已报班级'
-    colored_status.admin_order_field  = u'客户状态'
-    colored_status.short_description  = u'客户状态'
+    colored_status.admin_order_field = u'客户状态'
+    colored_status.short_description = u'客户状态'
+
     def __str__(self):
-        return u"QQ:%s -- Stu:%s -- Name:%s" %(self.qq,self.stu_id,self.name)
+        return u"QQ:%s -- Stu:%s -- Name:%s" % (self.qq, self.stu_id, self.name)
+
     class Meta:
         verbose_name = u'客户信息表'
         verbose_name_plural = u"客户信息表"
 
 
-class Enrollment(models.Model):
-    '''
-    store all the enrolled student info
-    '''
-    customer = models.ForeignKey(Customer,verbose_name='客户名称')
-    course_grade =  models.ForeignKey("ClassList",verbose_name=u"所报班级")
-    why_us = models.TextField(u"为什么报名老男孩",max_length=1024,default=None,blank=True,null=True)
-    your_expectation = models.TextField(u"学完想达到的具体期望",max_length=1024,blank=True,null=True)
+class Enrollment(models.Model):         # store all the enrolled student info
+    customer = models.ForeignKey(Customer, verbose_name='客户名称')
+    course_grade = models.ForeignKey("ClassList", verbose_name=u"所报班级")
+    why_us = models.TextField(u"为什么报名老男孩", max_length=1024, default=None, blank=True, null=True)
+    your_expectation = models.TextField(u"学完想达到的具体期望", max_length=1024, blank=True, null=True)
     contract_agreed = models.BooleanField(u"我已认真阅读完培训协议并同意全部协议内容")
-    contract_approved = models.BooleanField(u"审批通过",help_text=u"在审阅完学员的资料无误后勾选此项,合同即生效")
-    check_passwd = models.CharField(u"合同查询密码",max_length=64,blank=True,null=True,help_text=u"学员用这个密码来查询自己的合同信息,密码会自动生成,勿动")
-    enrolled_date = models.DateTimeField(auto_now_add=True,auto_created=True,verbose_name="报名日期")
-    memo = models.TextField(u'备注',blank=True,null=True)
-    school_choice = ((0,'北京'),(1,'上海'))
-    school = models.IntegerField('校区',choices=school_choice,default=0)
+    contract_approved = models.BooleanField(u"审批通过", help_text=u"在审阅完学员的资料无误后勾选此项,合同即生效")
+    check_passwd = models.CharField(u"合同查询密码", max_length=64, blank=True, null=True,
+                                    help_text=u"学员用这个密码来查询自己的合同信息,密码会自动生成,勿动")
+    enrolled_date = models.DateTimeField(auto_now_add=True, auto_created=True, verbose_name="报名日期")
+    memo = models.TextField(u'备注', blank=True, null=True)
+    school_choice = ((0, u'北京'), (1, u'上海'))
+    school = models.IntegerField('校区', choices=school_choice, default=0)
 
     def __str__(self):
         return self.customer.qq
+
     class Meta:
         verbose_name = u'学员报名表'
         verbose_name_plural = u"学员报名表"
 
     def customer_info_download(self):
-        customer_info_dir = "%s/%s" %(settings.ENROLL_DATA_DIR,self.customer.id)
+        customer_info_dir = "%s/%s" % (settings.ENROLL_DATA_DIR, self.customer.id)
         if os.path.exists(customer_info_dir):
             if len(os.listdir(customer_info_dir)) > 0:
-                html = u"<a href='/crm/file_download/?file_path=%s'>学员证件信息下载</a>" %(customer_info_dir)
+                html = u"<a href='/crm/file_download/?file_path=%s'>学员证件信息下载</a>" % (customer_info_dir,)
             else:
                 html = u"学员未上传任何资料"
         else:
@@ -168,21 +165,21 @@ class ConsultRecord(models.Model):
 
 
 class PaymentRecord(models.Model):
-    customer = models.ForeignKey(Customer,verbose_name=u"客户")
-    course = models.CharField(u"课程名",choices=course_choices,max_length=64,blank=True,null=True, default='N/A')
-    class_type = models.CharField(u"班级类型",choices=class_type_choices,max_length=64,blank=True,null=True, default='N/A')
-    classlist = models.ForeignKey('ClassList',verbose_name='所报班级', default='N/A')
-    pay_type_choices = (('deposit',u"订金/报名费"),
-                        ('tution',u"学费"),
-                        ('refund',u"退款"),
+    customer = models.ForeignKey(Customer, verbose_name=u"客户")
+    course = models.CharField(u"课程名", choices=course_choices, max_length=64, blank=True, null=True, default='N/A')
+    class_type = models.CharField(u"班级类型", choices=class_type_choices, max_length=64, blank=True, null=True, default='N/A')
+    classlist = models.ForeignKey('ClassList', verbose_name='所报班级', default='N/A')
+    pay_type_choices = (('deposit', u"订金/报名费"),
+                        ('tution', u"学费"),
+                        ('refund', u"退款"),
                         )
-    pay_type = models.CharField(u"费用类型",choices=pay_type_choices,max_length=64,default="deposit")
-    paid_fee = models.IntegerField(u"费用数额",default=0)
-    note = models.TextField(u"备注",blank=True,null=True)
-    date = models.DateTimeField(u"交款日期",auto_now_add=True)
-    consultant = models.ForeignKey(UserProfile,verbose_name=u"负责老师",help_text=u"谁签的单就选谁")
+    pay_type = models.CharField(u"费用类型", choices=pay_type_choices, max_length=64, default="deposit")
+    paid_fee = models.IntegerField(u"费用数额", default=0)
+    note = models.TextField(u"备注",blank=True, null=True)
+    date = models.DateTimeField(u"交款日期", auto_now_add=True)
+    consultant = models.ForeignKey(UserProfile, verbose_name=u"负责老师", help_text=u"谁签的单就选谁")
     def __str__(self):
-        return u"%s, 类型:%s,数额:%s" %(self.customer,self.pay_type,self.paid_fee)
+        return u"%s, 类型:%s,数额:%s" %(self.customer, self.pay_type, self.paid_fee)
 
     class Meta:
         verbose_name = u'交款纪录'
