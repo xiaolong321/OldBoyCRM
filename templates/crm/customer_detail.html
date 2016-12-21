@@ -43,6 +43,31 @@
                                     <button class="from_student" style="float:right;line-height:25px" type="button">查询</button>
                                 </div>
                             </div>
+                        {%elif field.name == 'consultant'%}
+                            <div class="form-group text-left">
+                                <label class="col-lg-3 control-label">报名状态</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control"  name="status">
+                                        <option value="{{ customer.status }}" selected="selected">
+                                            {% if customer.status == 'unregistered' %}
+                                                未报名
+                                            {% elif customer.status == 'signed' %}
+                                                已报名
+                                            {% elif customer.status == 'paid_in_full' %}
+                                                学费已交齐
+                                            {% endif %}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group text-left">
+                                <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="id_consultant" name="consultant">
+                                        <option value="{{customer.consultant.id}}" selected="selected">{{customer.consultant}}</option>
+                                    </select>
+                                </div>
+                            </div>
                         {% else %}
                             <div class="form-group text-left">
                                 {%if field.field.required%}
@@ -50,13 +75,7 @@
                                 {%else%}
                                     <label class="col-lg-3 control-label">{{field.label}}</label>
                                 {%endif%}
-                                {%if field.name == 'consultant'%}
-                                    <div class="col-sm-6">
-                                        <select class="form-control" id="id_consultant" name="consultant">
-                                            <option value="{{customer.consultant.id}}" selected="selected">{{customer.consultant}}</option>
-                                        </select>
-                                    </div>
-                                {%elif field.name == 'qq' %}
+                                {%if field.name == 'qq' %}
                                     <div class="col-sm-6">
                                         <input class="form-control" id="id_qq" maxlength="64" name="qq" placeholder="QQ号必须唯一" value="{{customer.qq}}" type="text"  readonly/>
                                     </div>
@@ -97,7 +116,7 @@
 
     <script>
     $(function () {
-        $('select#id_source').change(function () {
+        $('#id_source').change(function () {
             if($(this).val() == 'referral'){
                 if($('button.from_student').length==0){
                     $(this).parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label ">请输入推荐学生QQ号</label> <div class="col-sm-6"> <input style="width:90%;float:left" class="form-control from_student" id="id_stu_id" maxlength="64" placeholder="" type="text"> <button class="from_student" style="float:right;line-height:25px" type="button">查询</button> </div> </div>');
@@ -110,11 +129,11 @@
                             data: {student_qq:student_qq},
                             success:function (data) {
                                 if(data == ''){
-                                    if($('select#id_referral_from').length>0){
-                                        $('select#id_referral_from').children().first().val('').text('');
-                                        $('select#id_referral_from').parent().next().text('该学生不存在，请重新输入').css({'color':'red'});
+                                    if($('#id_referral_from').length>0){
+                                        $('#id_referral_from').children().first().val('').text('');
+                                        $('#id_referral_from').parent().next().text('该学生不存在，请重新输入').css({'color':'red'});
                                     } else {
-                                        $('select#id_source').parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label"><b>推荐学员</b></label> <div class="col-sm-6"> <select class="form-control" id="id_referral_from" name="referral_from"> <option value= selected="selected"></option> </select> </div> <div class="col-sm-3" style="color: red;"> 该学不存在，请重新输入 </div> </div>');
+                                        $('#id_source').parent().parent().after('<div class="form-group text-left from_student"> <label class="col-lg-3 control-label"><b>推荐学员</b></label> <div class="col-sm-6"> <select class="form-control" id="id_referral_from" name="referral_from"> <option value= selected="selected"></option> </select> </div> <div class="col-sm-3" style="color: red;"> 该学不存在，请重新输入 </div> </div>');
                                     }
                                 }else {
                                     var QQ = data.split(' ')[0];

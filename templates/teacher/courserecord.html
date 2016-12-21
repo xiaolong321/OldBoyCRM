@@ -78,18 +78,18 @@
         <script>
             $(function () {
                 {% for courserecord in courserecords %}
-                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".record").children("[value='{{ courserecord.record }}']").attr('selected', 'selected')
-                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".score").children("[value='{{ courserecord.score }}']").attr('selected', 'selected')
+                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".record").children("[value='{{ courserecord.record }}']").attr('selected', 'selected');
+                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".score").children("[value='{{ courserecord.score }}']").attr('selected', 'selected');
                 {% endfor %}
 
                 $('select.set_all').change(function () {
-                    var all_information = $(this).val()
+                    var all_information = $(this).val();
                     $("input[type='checkbox']:checked").parent().parent().find('select.record').val(all_information).trigger('change')
-                })
+                });
 
                     $('button.select_all').click(function () {
                         $("input[type='checkbox']").prop('checked',true)
-                    })
+                    });
 
                     $('button.select_reserve').click(function () {
                         $("input[type='checkbox']").each(function(){
@@ -99,16 +99,12 @@
                                 $(this).prop('checked',true);
                             }
                         })
-                    })
+                    });
                 $('select.record,select.score,input.note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
-                    console.log('student_id',student_id)
                     var course_id = $(this).parent().parent().attr('course_id');
-                    console.log('course_id',course_id)
                     var status = $(this).attr('class');
-                    console.log('status',status)
-                    var information = $(this).val()
-                    console.log('information', information)
+                    var information = $(this).val();
                     $.ajax({
                         url: window.location.href,
                         type: 'POST',
@@ -116,8 +112,8 @@
                             student_id:student_id,
                             course_id:course_id,
                             status:status,
-                            information:information,
-                        },
+                            information:information
+                        }
                     })
                 })
             })

@@ -25,47 +25,48 @@ class CompliantForm(ModelForm):
         self.fields['name'].widget.attrs.update({'class' : 'form-control input-sm','placeholder':u"请留下您的姓名,若想匿名则可不填..."})
 
 
-
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ('qq','name','phone','email','sex',
-                  'birthday','id_num','work_status',
-                  'company','salary','consultant')
+        fields = ('qq', 'name', 'phone', 'email', 'sex',
+                  'birthday', 'id_num', 'work_status',
+                  'company', 'salary', 'consultant')
 
-    def __new__(cls,*args,**kwargs):
-        #super(CustomerForm, self).__new__(*args, **kwargs)
-        #self.fields['customer_note'].widget.attrs['class'] = 'form-control'
-        disabled_fields = ['qq','consultant']
+    def __new__(cls, *args, **kwargs):
+        # super(CustomerForm, self).__new__(*args, **kwargs)
+        # self.fields['customer_note'].widget.attrs['class'] = 'form-control'
+        disabled_fields = ['qq', 'consultant']
         for field_name in cls.base_fields:
             field = cls.base_fields[field_name]
             attr_dic = {'class': 'form-control',
-                        'placeholder':field.help_text,
+                        'placeholder': field.help_text,
                         }
             if field_name in disabled_fields:
                 attr_dic['disabled'] = True
             field.widget.attrs.update(attr_dic)
         return ModelForm.__new__(cls)
 
+
 class EnrollmentForm(ModelForm):
-    contract_agreed = BooleanField(required=True,label=u"我已认真阅读完培训协议并同意全部协议内容")
+    contract_agreed = BooleanField(required=True, label=u"我已认真阅读完培训协议并同意全部协议内容")
+
     class Meta:
         model = Enrollment
-        fields = ('why_us','your_expectation','course_grade','contract_agreed')
+        fields = ('why_us','your_expectation', 'course_grade', 'contract_agreed')
 
-    def __new__(cls,*args,**kwargs):
-        #super(EnrollmentForm, self).__init__(*args, **kwargs)
-        #self.fields['customer_note'].widget.attrs['class'] = 'form-control'
+    def __new__(cls, *args, **kwargs):
+        # super(EnrollmentForm, self).__init__(*args, **kwargs)
+        # self.fields['customer_note'].widget.attrs['class'] = 'form-control'
 
-        disabled_fields = ['course_graded',]
-        class_exempt = ['contract_agreed',]
+        disabled_fields = ['course_graded', ]
+        class_exempt = ['contract_agreed', ]
         for field_name in cls.base_fields:
             field = cls.base_fields[field_name]
             attr_dic = {'class': 'form-control',
-                        'placeholder':field.help_text,
+                        'placeholder': field.help_text,
                         }
             if field_name in class_exempt:
-                attr_dic['class']= ''
+                attr_dic['class'] = ''
             if field_name in disabled_fields:
                 attr_dic['disabled'] = True
             field.widget.attrs.update(attr_dic)
@@ -73,35 +74,33 @@ class EnrollmentForm(ModelForm):
         
 
 # 办理报名表
-class EnroForm(ModelForm,forms.Form):
+class EnroForm(ModelForm, forms.Form):
  
     class Meta:
         model = Enrollment
-        exclude=('why_us','your_expectation','check_passwd','status')
-    def __init__(self,*args,**kwargs):
-        super(EnroForm,self).__init__(*args,**kwargs)
-        self.fields['customer'].widget.attrs.update({'class':'form-control'})
-        self.fields['course_grade'].widget.attrs.update({'class':'selectpicker'})
-        self.fields['memo'].widget.attrs.update({'class':'form-control'})
-        self.fields['school'].widget.attrs.update({'class':'selectpicker'})
+        fields = ('course_grade', 'memo', 'school')
+
+    def __init__(self, *args, **kwargs):
+        super(EnroForm, self).__init__(*args, **kwargs)
+        self.fields['course_grade'].widget.attrs.update({'class': 'selectpicker'})
+        self.fields['memo'].widget.attrs.update({'class': 'form-control'})
+        self.fields['school'].widget.attrs.update({'class': 'selectpicker'})
 
 
-#添加新用户表
+# 添加新用户表
 class AddCustomerForm(ModelForm):
     class Meta:
         model = Customer
-        exclude=('class_list','referral_from',)
+        exclude = ('class_list', 'referral_from', 'status')
 
     def __new__(cls, *args, **kwargs):
         for field_name in cls.base_fields:
             field = cls.base_fields[field_name]
             attr_dic = {'class': 'form-control',
-                        'placeholder':field.help_text,
+                        'placeholder': field.help_text,
                         }
             field.widget.attrs.update(attr_dic)
         return ModelForm.__new__(cls)
-
-
 
 
 #增加新的跟进记录表
@@ -118,21 +117,19 @@ class AddConsultRecordForm(ModelForm):
         self.fields['status'].widget.attrs.update({'class':'form-icon form-control '})
         self.fields['consultant'].widget.attrs.update({'class':'form-control form-icon'})
 
+
 class PaymentrecordForm(ModelForm):
     class Meta:
-        model=PaymentRecord
-        exclude=('course','class_type')
+        model = PaymentRecord
+        exclude = ('customer', 'course', 'class_type')
 
-    def __init__(self,*args,**kwargs):
-        super(PaymentrecordForm,self).__init__(*args,**kwargs)
-        self.fields['customer'].widget.attrs.update({'class':'form-icon form-control'})
-        self.fields['classlist'].widget.attrs.update({'class':'form-control'})
-        self.fields['pay_type'].widget.attrs.update({'class':'form-control'})
-        self.fields['paid_fee'].widget.attrs.update({'class':'form-control'})
-        self.fields['note'].widget.attrs.update({'class':'form-control '})
-        self.fields['consultant'].widget.attrs.update({'class':'form-control'})
-
-
+    def __init__(self, *args, **kwargs):
+        super(PaymentrecordForm, self).__init__(*args, **kwargs)
+        self.fields['classlist'].widget.attrs.update({'class': 'form-control'})
+        self.fields['pay_type'].widget.attrs.update({'class': 'form-control'})
+        self.fields['paid_fee'].widget.attrs.update({'class': 'form-control'})
+        self.fields['note'].widget.attrs.update({'class': 'form-control '})
+        self.fields['consultant'].widget.attrs.update({'class': 'form-control'})
 
 
 class LoginForm(forms.Form):
@@ -150,6 +147,7 @@ class CoursemoduleForm(ModelForm):
         self.fields['name'].widget.attrs.update({'class': 'form-icon form-control'})
         self.fields['memo'].widget.attrs.update({'class': 'form-control'})
         # self.fields['classlist'].widget.attrs.update({'class': 'form-control'})
+
 
 class ClasslistForm(ModelForm):
     class Meta:

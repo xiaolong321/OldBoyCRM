@@ -1,0 +1,96 @@
+{% extends 'crm/enrollment/enrollment_dash.html' %}
+{% block dash-enrollment %}
+    <div id="page-title">
+        <h1 class="page-header text-overflow"></h1>
+
+        <!--Searchbox-->
+        <div class="searchbox">
+            <div class="input-group custom-search-form">
+                <!--<input type="text" class="form-control" placeholder="Search..">-->
+                <span class="input-group-btn">
+                    <!--<button class="text-muted" type="button"><i class="fa fa-search"></i></button>-->
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="page-content">
+    <div class="row" >
+    <div class="col-sm-12 text-left">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">请填写如下表格</h3>
+                </div>
+
+                <!--Horizontal Form-->
+                <!--===================================================-->
+
+                <form id="enrollment_add" class="form-horizontal">
+                    {%csrf_token%}
+                    <div class="panel-body ">
+                        <div class="form-group text-left">
+                            <label class="col-lg-3 control-label "><b>客户QQ</b></label>
+                            <div class="col-sm-6 ">
+                                <select class="form-control" name="customer">
+                                    <option value="{{ customer.id }}" selected="selected">{{ customer.qq}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                {{field.errors}}
+                            </div>
+                        </div>
+                        {%for field in form%}
+                            <div class="form-group text-left">
+                                {% if field.field.required %}
+                                    <label class="col-lg-3 control-label "><b>{{field.label}}</b></label>
+                                {%else%}
+                                    <label class="col-lg-3 control-label ">{{field.label}}</label>
+                                {%endif%}
+                                <div class="col-sm-6 ">
+                                    {{field}}
+                                </div>
+                                <div class="col-sm-3">
+                                    {{field.errors}}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-footer text-center">
+                        <button type="button" id="enrollment_add_button" class="btn btn-info">提交</button>
+                    </div>
+                </form>
+
+                <!--===================================================-->
+                <!--End Horizontal Form-->
+
+            </div>
+    </div>
+    </div>
+    </div>
+{% endblock %}
+{% block enrollment_js %}
+    <script>
+        $(function () {
+            $('#enrollment_add_button').click(function () {
+                $.ajax({
+                    url:location.href,
+                    type:'POST',
+                    data:$('#enrollment_add').serializeArray(),
+                    async:false,
+                    dataType:'json',
+                    success:function (data) {
+                        alert(data)
+                        if(data == "成功添加报名表"){
+                            window.location.reload()
+                        }
+                    },
+                    error:function (request) {
+                        alert('请求错误，请重新勾选、提交');
+                    },
+                });
+            })
+        })
+    </script>
+{%endblock%}
+

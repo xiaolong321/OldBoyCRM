@@ -246,7 +246,7 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span>审批</span>
+														<span>报名时间</span>
 													</div>
 													<div class="div2-ico-sort">
 														<div class="div-ico-sort">
@@ -288,7 +288,7 @@
 												<div>
 
 													<div style="float:left;text-align: center;line-height: 35px">
-														<span>报名时间</span>
+														<span>报名新的课程</span>
 													</div>
 													<div class="div2-ico-sort">
 														<div class="div-ico-sort">
@@ -305,41 +305,49 @@
 										</tr>
 									</thead>
 									<tbody>
-                                    {%for customer in customers%}
+                                    {%for items in customers%}
 										<tr>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' items.customer.id%}">{{items.customer.qq}}</a></td>
+											<td><a class="btn-link" href="{%url 'customer_detail' items.customer.id%}">{{items.customer.name}}</a></td>
 											<td>
-
-											{%for item in customer.class_list.all%}
-                              						<ul style="list-style-type:none;margin-left: -40px">
-														<li>{{item}}</li>
-													</ul>
-                           						 {%endfor%}
-
+                                                <ul style="list-style-type:none;margin-left: -40px">
+                                                    {%for payment in items.payments%}
+                                                        <li>{{payment.classlist}}</li>
+                                                    {%endfor%}
+                                                </ul>
 											</td>
-											<td>{{customer.get_class_type_display}}</td>
-
-											{%if customer.status == 'signed'%}
-											<td class=" btn-hover-success"><a href="{%url 'cus_enroll' id=customer.id%}"><div>审批</div></a></td>
-												{%else%}
-											<td><span></span></td>
-											{%endif%}
-
+											<td>
+                                                <ul style="list-style-type:none;margin-left: -40px">
+                                                    {%for payment in items.payments%}
+                                                        <li>{{payment.class_type}}</li>{%endfor%}
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <ul style="list-style-type:none;margin-left: -40px">
+                                                    {%for payment in items.payments%}
+                                                        <li>{{payment.date|naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
 
 											<td>
-												{%if customer.status == 'signed' %}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-mint">{{customer.get_status_display}}</div></a>
-												{%elif customer.status == 'unregistered'%}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-danger">{{customer.get_status_display}}</div></a>
-												{%else%}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-pink">{{customer.get_status_display}}</div></a>
-												{%endif%}
+                                                <ul style="list-style-type:none;margin-left: -40px">
+                                                    {%for payment in items.payments%}
+                                                        <li>
+                                                            {% if payment.pay_type == 'deposit' %}
+                                                                <div style="line-height: 5px" class="label label-table label-mint"><a href="{%url 'payment' payment.id%}">报名费已交</a></div>
+                                                            {% elif payment.pay_type == 'tution' %}
+                                                                <div style="line-height: 5px" class="label label-table label-pink"><a href="{%url 'payment' payment.id%}">学费已交齐</a></div>
+                                                            {% endif %}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
 											</td>
 											<td class=" btn-hover-info">
-												<a href="{%url 'cus_enroll' customer.id %}">
-													<div>{{customer.enrollment_set.last.enrolled_date|naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div>
-												</a></td>
+												<a href="{%url 'enrollment' items.customer.id %}">
+													<div>报名</div>
+												</a>
+                                            </td>
 										</tr>
                                     {%endfor%}
 									</tbody>
