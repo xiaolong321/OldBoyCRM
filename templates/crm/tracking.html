@@ -347,7 +347,7 @@
 											<td ><div>{{customer.date |naturalday:'SHORT_DATE_FORMAT'| default:'---'}}</div></td>
 											<td ><div>{{customer.consultrecord_set.last.date |naturalday:'SHORT_DATE_FORMAT'|default:'---'}}</div></td>
 											<td class=" btn-hover-success"><a href="{%url 'consult_record' customer.id %}"><div>{{customer.consultrecord_set.last.note|truncatechars:10 |default:'----'}}</div></a></td>
-											<td class=" btn-hover-info"><a href="{%url 'cus_enroll' id=customer.id%}"><div>报名</div></a></td>
+											<td class=" btn-hover-info"><a href="{%url 'enrollment' customer_id=customer.id%}"><div>报名</div></a></td>
 
 
 									</tr>

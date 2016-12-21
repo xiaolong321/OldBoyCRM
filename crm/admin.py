@@ -60,9 +60,11 @@ class CustomerInline(admin.TabularInline):
     model = models.Customer.class_list.through
     #fields = ('class_type',)
     #fields = ('class_type',)
+
+
 class ClassListAdmin(admin.ModelAdmin):
     list_display = ("course",'semester',"start_date","graduate_date","get_student_num")
-    inlines = (CustomerInline,)
+    # inlines = (CustomerInline,)
     actions= ['view_grade',]
     def view_grade(modeladmin, request, queryset):
         selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
@@ -78,6 +80,8 @@ class ClassListAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
     view_grade.short_description = u"查看成绩"
+
+
 class CourseRecordAdmin(admin.ModelAdmin):
     list_display = ('course','day_num','date','teacher',
                     "get_total_show_num",

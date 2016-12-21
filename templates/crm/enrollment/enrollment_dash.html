@@ -1,0 +1,87 @@
+{% extends 'crm/dashboard.html' %}
+
+{% block dash-content%}
+    <div style="width: 100%" class="col-lg-6">
+        <div class="panel">
+
+            <!-- Circular Form Wizard -->
+            <!--===================================================-->
+            <div id="demo-step-wz">
+                <div class="wz-heading wz-w-label bg-info">
+
+                    <!--Progress bar-->
+                    <div class="progress progress-xs">
+                        <div style="width: 15%;" class="progress-bar progress-bar-pink"></div>
+                    </div>
+
+                    <!--Nav-->
+                    <ul class="wz-steps wz-icon-bw wz-nav-off text-lg">
+                        <li class="col-xs-3 " id="add">
+                            <a data-toggle="tab" href="#demo-step-tab1">
+                                <span class="icon-wrap icon-wrap-xs icon-circle bg-pink">
+                                    <span class="wz-icon icon-txt text-bold">1</span>
+                                    <i class="wz-icon-done fa fa-check"></i>
+                                </span>
+                                <small class="box-block">填写报名信息</small>
+                            </a>
+                        </li>
+                        <li class="col-xs-3 " id="agree">
+                            <a data-toggle="tab" href="#demo-step-tab2">
+                                <span class="icon-wrap icon-wrap-xs icon-circle bg-pink">
+                                    <span class="wz-icon icon-txt text-bold">2</span>
+                                    <i class="wz-icon-done fa fa-check"></i>
+                                </span>
+                                <small class="box-block">等待学员填写身份信息</small>
+                            </a>
+                        </li>
+                        <li class="col-xs-3 " id="approve">
+                            <a data-toggle="tab" href="#demo-step-tab3">
+                                <span class="icon-wrap icon-wrap-xs icon-circle bg-pink">
+                                    <span class="wz-icon icon-txt text-bold">3</span>
+                                    <i class="wz-icon-done fa fa-check"></i>
+                                </span>
+                                <small class="box-block">审核学员身份信息</small>
+                            </a>
+                        </li>
+                        <li class="col-xs-3 " id="payment">
+                            <a data-toggle="tab" href="#demo-step-tab3">
+                                <span class="icon-wrap icon-wrap-xs icon-circle bg-pink">
+                                    <span class="wz-icon icon-txt text-bold">4</span>
+                                    <i class="wz-icon-done fa fa-check"></i>
+                                </span>
+                                <small class="box-block">填写缴费记录</small>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--Form-->
+                {% block dash-enrollment %}
+                    
+                {% endblock %}
+            </div>
+            <!--===================================================-->
+            <!-- End Circular Form Wizard -->
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{%block dash-footer-js%}
+    {% block enrollment_js %}
+
+    {% endblock %}
+    <script>
+        $(function () {
+            $('#{{ status }}').addClass('active').siblings().removeClass('active').children().first().attr('aria-expanded','true')
+            if('{{ status }}' == 'agree'){
+                $('.progress-bar').css('width','25%')
+            }else if('{{ status }}' == 'approve'){
+                $('.progress-bar').css('width','50%')
+            }else if('{{ status }}' == 'payment'){
+                $('.progress-bar').css('width', '75%')
+            }
+        })
+    </script>
+{%endblock%}

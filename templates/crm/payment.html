@@ -1,0 +1,99 @@
+{% extends 'crm/dashboard.html'%}
+
+{% block dash-content%}
+    <div id="page-content" >
+        <div class="row" >
+            <div class="col-lg-6">
+                <div class="panel">
+                    <!--Panel heading-->
+                    <div class="panel-heading">
+                        <div class="panel-control">
+                            <ul class="nav nav-tabs">
+                            </ul>
+                        </div>
+                        <h3 class="panel-title">客户缴费记录</h3>
+                    </div>
+                    <!--Panel body-->
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="demo-tabs-box-1">
+                                <div class="table-responsive">
+                                    <h4 style="color: purple">当前缴费情况</h4>
+                                            <div class="panel">
+                                                <div class="panel-body">
+                                                    <div>客户名称：{{ paymentinformation.customer }}</div>
+                                                    <div>报名班级：{{ paymentinformation.classlist }}</div>
+                                                    <div>费用类型：
+                                                        {% if paymentinformation.pay_type == 'deposit' %}
+                                                            报名费
+                                                        {% elif paymentinformation.pay_type == 'tution' %}
+                                                            学费
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>已交数额：{{ paymentinformation.paid_fee }}</div>
+                                                    <div>缴费日期：{{ paymentinformation.date }}</div>
+                                                    <div>课程顾问：{{ paymentinformation.consultant }}</div>
+                                                    <div>备注：{{ paymentinformation.memo }}</div>
+                                                    <p>{{item.note}}</p>
+                                                </div>
+                                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 text-left">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">请填写如下表格</h3>
+                    </div>
+                    {%if error %}
+                        <h1>{{error}}</h1>
+                    {%endif%}
+                    <!--Horizontal Form-->
+                    <!--===================================================-->
+                        <form class="form-horizontal" method="post">
+                            {% csrf_token %}
+                            <div class="panel-body ">
+                                <div class="form-group text-left">
+                                    <label class="col-lg-3 control-label"><b>客户名称</b></label>
+                                    <div class="col-sm-6 ">
+                                        <select class="form-control" id="id_customer" name="customer">
+                                            <option customer_qq={{customer.qq}} value="{{customer.id}}" selected="selected">{{ customer }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                {%for field in form%}
+                                    <div class="form-group text-left">
+                                        {%if field.field.required %}
+                                            <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                                        {%else%}
+                                            <label class="col-lg-3 control-label">{{field.label}}</label>
+                                        {%endif%}
+                                        <div class="col-sm-6 ">
+                                            {%if field.name == 'consultant'%}
+                                                <select class="form-control form-icon" id="id_consultant" name="consultant">
+                                                    <option value="{{form.instance.consultant.id}}" selected="selected">{{form.instance.consultant.name}}</option>
+                                                </select>
+                                            {%else%}
+                                                {{field}}
+                                            {%endif%}
+                                        </div>
+                                        <div class="col-sm-3">
+                                            {{field.errors}}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="panel-footer text-center">
+                                <input type="submit" class="btn btn-info" value="提交">
+                            </div>
+                        </form>
+                    <!--===================================================-->
+                    <!--End Horizontal Form-->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
