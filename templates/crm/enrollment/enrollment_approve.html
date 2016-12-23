@@ -1,118 +1,109 @@
 {% extends 'crm/enrollment/enrollment_dash.html' %}
 {% block dash-enrollment%}
     <h3>个人基本信息</h3>
-        <div class="panel-body">
-            <div class="row">
-            {%  for field in customer_form %}
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="control-label">{{field.label  }}</label>
-                            {{ field.name }}
-                            {% if field.name == 'qq' %}
-                                <select class="form-control" id="id_qq" name="qq">
-                                    <option value="{{ field.value }}">{{ field.value }}</option>
-                                </select>
-                            {% elif field.name == 'consultant' %}
-                                <select class="form-control" id="id_consultant" name="consultant">
-                                    <option value="{{ field.value }}">{{ customer_form.instance.consultant.name }}</option>
-                                </select>
-                            {% else %}
-                                {{ field }}
-                            {% endif %}
-                            {% if field.errors %}
-                                <span style="color:red">{{ field.errors }}</span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-
-            {% endfor %}
-            </div>
-
-            <div class="row">
+    <div class="panel-body">
+        <div class="row">
+        {%  for field in customer_form %}
                 <div class="col-sm-6">
                     <div class="form-group">
-                        {%  if enroll_form.why_us.required %}
-                            <label class="control-label"><b>*{{ enroll_form.why_us.label }}</b></label>
+                        <label class="control-label">{{field.label  }}</label>
+                        {{ field.name }}
+                        {% if field.name == 'qq' %}
+                            <select class="form-control" id="id_qq" name="qq">
+                                <option value="{{ field.value }}">{{ field.value }}</option>
+                            </select>
+                        {% elif field.name == 'consultant' %}
+                            <select class="form-control" id="id_consultant" name="consultant">
+                                <option value="{{ field.value }}">{{ customer_form.instance.consultant.name }}</option>
+                            </select>
                         {% else %}
-                            <label class="control-label">{{ enroll_form.why_us.label }}</label>
+                            {{ field }}
                         {% endif %}
-                        {{ enroll_form.why_us }}
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        {%  if enroll_form.your_expectation.required %}
-                            <label class="control-label"><b>*{{ enroll_form.your_expectation.label }}</b></label>
-                        {% else %}
-                            <label class="control-label">{{ enroll_form.your_expectation.label }}</label>
-                        {% endif %}
-                        {{ enroll_form.your_expectation }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="row ">
-                 <div class="col-sm-6">
-                    <div class="form-group">
-                            <label class="control-label"><b>*{{ enroll_form.course_grade.label }}</b></label>
-
-                        <select class="form-control" id="id_course_grade" name="course_grade" placeholder="" >
-                            <option value="{{ enroll_form.instance.course_grade_id}}" selected="selected">{{ enroll_form.instance.course_grade}}</option>
-                        </select>
-                    </div>
-                </div>
-                 <div class="col-sm-6 ">
-                    <div class="form-group">
-                        <label class="control-label"><b>*课程费用</b></label>
-
-                        <input type="text" class="form-control" value="RMB{{ enroll_form.instance.course_grade.price }}" disabled>
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="row ">
-                 <div class="col-sm-12" style="height: 400px;overflow: auto" >
-
-                    <pre>{{ enroll_form.instance.course_grade.contract.content }}</pre>
-
-                </div>
-            </div>
-
-            <div class="row ">
-                 <div class="col-sm-6">
-                    <div class="form-group">
-                        {{ enroll_form.contract_agreed }}
-                            <label class="control-label"><b>*{{ enroll_form.contract_agreed.label }}</b></label>
-                        {% if enroll_form.contract_agreed.errors %}
-                            <span style="color:red">必须勾选同意才能继续!</span>
+                        {% if field.errors %}
+                            <span style="color:red">{{ field.errors }}</span>
                         {% endif %}
                     </div>
+                </div>
+
+
+        {% endfor %}
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {%  if enroll_form.why_us.required %}
+                        <label class="control-label"><b>*{{ enroll_form.why_us.label }}</b></label>
+                    {% else %}
+                        <label class="control-label">{{ enroll_form.why_us.label }}</label>
+                    {% endif %}
+                    {{ enroll_form.why_us }}
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {%  if enroll_form.your_expectation.required %}
+                        <label class="control-label"><b>*{{ enroll_form.your_expectation.label }}</b></label>
+                    {% else %}
+                        <label class="control-label">{{ enroll_form.your_expectation.label }}</label>
+                    {% endif %}
+                    {{ enroll_form.your_expectation }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row ">
+             <div class="col-sm-6">
+                <div class="form-group">
+                        <label class="control-label"><b>*{{ enroll_form.course_grade.label }}</b></label>
+
+                    <select class="form-control" id="id_course_grade" name="course_grade" placeholder="" >
+                        <option value="{{ enroll_form.instance.course_grade_id}}" selected="selected">{{ enroll_form.instance.course_grade}}</option>
+                    </select>
+                </div>
+            </div>
+             <div class="col-sm-6 ">
+                <div class="form-group">
+                    <label class="control-label"><b>*课程费用</b></label>
+
+                    <input type="text" class="form-control" value="RMB{{ enroll_form.instance.course_grade.price }}" disabled>
+
                 </div>
             </div>
 
         </div>
-        <div class="panel-footer">
-            <div class="row">
-                <div style="margin-left: 100px">
-                    请仔细核对用户提交的信息和上传的身份证件，若信息没有问题则点击
-                    <button id="enrollment_approved" class="btn btn-danger  btn-rounded">允许报名</button>，
-                    否则请点击
-                    <button id="enrollment_refused" class="btn btn-danger  btn-rounded">驳回申请</button>，并通知其修改信息并重新上传身份证件
+        <div class="row ">
+             <div class="col-sm-12" style="height: 400px;overflow: auto" >
+
+                <pre>{{ enroll_form.instance.course_grade.contract.content }}</pre>
+
+            </div>
+        </div>
+
+        <div class="row ">
+             <div class="col-sm-6">
+                <div class="form-group">
+                    {{ enroll_form.contract_agreed }}
+                        <label class="control-label"><b>*{{ enroll_form.contract_agreed.label }}</b></label>
+                    {% if enroll_form.contract_agreed.errors %}
+                        <span style="color:red">必须勾选同意才能继续!</span>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    <div class="panel">
-        <div class="panel-heading">
-            <h3 style="display: inline" class="panel-title">以下为学员上传的证件信息</h3><a href="/crm/file_download/?file_path=D:\oldboy\OldBoyCRM/statics/enrolled_data/{{ customer.id }}"><button class="btn btn-danger  btn-rounded">点击下载</button></a>
-        </div>
-        <div class="panel-body">
-             <div style="margin: 20px" class="row">
-                 {% for file in files %}
-                     <img style="width: 250px;height: 200px" src="/static/enrolled_data/{{ customer.id }}/{{ file }}">
-                 {% endfor %}
-             </div>
+
+    </div>
+    <div class="panel-footer">
+        <div class="row">
+            <div>
+                请<a href="/crm/file_download/?file_path={{ file_path }}/{{ customer.id }}"><button class="btn btn-danger  btn-rounded">点击下载</button></a>学员的身份证照片，
+            </div>
+            <div>
+                请仔细核对用户提交的信息和上传的身份证件，若信息没有问题则点击
+                <button id="enrollment_approved" class="btn btn-danger  btn-rounded">允许报名</button>，
+                否则请点击
+                <button id="enrollment_refused" class="btn btn-danger  btn-rounded">驳回申请</button>，并通知其修改信息并重新上传身份证件
+            </div>
         </div>
     </div>
 {% endblock %}

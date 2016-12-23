@@ -331,26 +331,27 @@ def file_download(request):
     customer_file_path = request.GET.get('file_path')
     if customer_file_path:
 
-        filename = '%s.zip'  %customer_file_path.split('/')[-1] #compress filename
+        filename = '%s.zip' % customer_file_path.split('/')[-1]     # compress filename
 
         file_list = os.listdir(customer_file_path)
-        zipfile_obj = zipfile.ZipFile("%s/%s" %(settings.ENROLL_DATA_DIR,filename) ,'w',zipfile.ZIP_DEFLATED)
+        zipfile_obj = zipfile.ZipFile("%s/%s" % (settings.ENROLL_DATA_DIR, filename), 'w', zipfile.ZIP_DEFLATED)
         for f_name in file_list:
-            zipfile_obj.write("%s/%s" % (customer_file_path,f_name),f_name)
+            zipfile_obj.write("%s/%s" % (customer_file_path, f_name), f_name)
         zipfile_obj.close()
 
         response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
-        #response = HttpResponse(content_type='application/force-download') # mimetype is replaced by content_type for django 1.7
+        # response = HttpResponse(content_type='application/force-download')
+        #  mimetype is replaced by content_type for django 1.7
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         response['X-Sendfile'] = smart_str(customer_file_path)
-        #response['Content-Length'] = os.stat(file_path).st_size
+        # response['Content-Length'] = os.stat(file_path).st_size
         # It's usually a good idea to set the 'Content-Length' header too.
         # You can also set any other required headers: Cache-Control, etc.
 
         return response
 
     else:
-        raise  KeyError
+        raise KeyError
 
 
 @login_required
@@ -1322,6 +1323,7 @@ def enrollment_approve(request, customer):
     enrollmentinformation = models.Enrollment.objects.filter(customer=customer,
                                                              contract_agreed=1, contract_approved=0).last()
     enroll_form = forms.EnrollmentForm(instance=enrollmentinformation)
+    file_path = ENROLL_DATA_DIR
     path = os.path.join(ENROLL_DATA_DIR, str(customer.id))
     files = os.listdir(path)
     return render(request, 'crm/enrollment/enrollment_approve.html', {
@@ -1331,39 +1333,45 @@ def enrollment_approve(request, customer):
         'files': files,
         'customer': customer,
         'enrollmentinformation': enrollmentinformation,
+        'file_path': file_path,
     })
 
 
 def enrollment_payment(request, customer):
     status = 'payment'
     customer = customer
+    enrollmentinformation = models.Enrollment.objects.filter(customer=customer,
+                                                             contract_agreed=1, contract_approved=1).last()
     if request.method == 'POST':
         form = forms.PaymentrecordForm(data=request.POST)
         if form.is_valid():
-            customer.status = 'signed'
-            customer.save()
-            payment_obj = models.PaymentRecord.objects.create(customer=customer, consultant=customer.consultant,
-                                                              classlist_id=request.POST.get('classlist'),
-                                                              pay_type=request.POST.get('pay_type'),
-                                                              paid_fee=request.POST.get('paid_fee'),
-                                                              note=request.POST.get('note'),)
-            print(payment_obj)
-            try:
-                StuAccount.objects.get(stu_name=customer)
-                pass
-            except ObjectDoesNotExist as e:
-                stu_acc_pwd = makePassword()
-                stu_acc_pwd_has = hashstr(stu_acc_pwd)
-                stu_acc = StuAccount.objects.create(stu_name=customer, stu_pwd=stu_acc_pwd_has)
-                object = message(subject='createaccount', toaddrs=[customer.qq + '@qq.com'], )
-                object.getcontent(username=customer.name, classname=payment_obj.classlist,
-                                  account=customer.qq, password=stu_acc_pwd)
-                object.sendmessage()
-            return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
+            if int(request.POST.get('paid_fee')) < 500:
+                form.add_error('paid_fee', '至少需要缴费500元')
+                return render(request, 'crm/enrollment/enrollment_payment.html', locals())
+            else:
+                customer.status = 'signed'
+                customer.save()
+                payment_obj = models.PaymentRecord.objects.create(customer=customer, consultant=customer.consultant,
+                                                                  classlist_id=request.POST.get('classlist'),
+                                                                  pay_type=request.POST.get('pay_type'),
+                                                                  paid_fee=request.POST.get('paid_fee'),
+                                                                  note=request.POST.get('note'),)
+                print(payment_obj)
+                try:
+                    StuAccount.objects.get(stu_name=customer)
+                    pass
+                except ObjectDoesNotExist as e:
+                    stu_acc_pwd = makePassword()
+                    stu_acc_pwd_has = hashstr(stu_acc_pwd)
+                    stu_acc = StuAccount.objects.create(stu_name=customer, stu_pwd=stu_acc_pwd_has)
+                    object = message(subject='createaccount', toaddrs=[customer.qq + '@qq.com'], )
+                    object.getcontent(username=customer.name, classname=payment_obj.classlist,
+                                      account=customer.qq, password=stu_acc_pwd)
+                    object.sendmessage()
+                return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
         else:
-            return redirect(request, 'crm/enrollment/enrollment_payment.html', locals())
-    enrollmentinformation = models.Enrollment.objects.filter(customer=customer,
-                                                             contract_agreed=1, contract_approved=1).last()
+            return render(request, 'crm/enrollment/enrollment_payment.html', locals())
+
     form = forms.PaymentrecordForm()
     return render(request, 'crm/enrollment/enrollment_payment.html', locals())
 
@@ -1375,27 +1383,35 @@ def payment(request, payment_id):
     if request.method == 'POST':
         form = forms.PaymentrecordForm(instance=paymentinformation, data=request.POST)
         if form.is_valid():
-            if request.POST.get('pay_type') == 'tution':
-                try:
-                    models.PaymentRecord.objects.get(customer=customer, pay_type='deposit')
-                    customer.status = 'signed'
-                except Exception:
-                    customer.status = 'paid_in_full'
-            elif request.POST.get('pay_type') == 'deposit':
-                customer.status = 'signed'
-            elif request.POST.get('pay_type') == 'refund':
-                customer.status = 'unregistered'
-                try:
-                    models.PaymentRecord.objects.get(customer=customer, pay_type='tution')
-                    customer.status = 'paid_in_full'
-                except Exception:
+            if int(request.POST.get('paid_fee')) < 500:
+                form.add_error('paid_fee', '至少需要缴费500元')
+                return render(request, 'crm/payment.html', {
+                    'paymentinformation': paymentinformation,
+                    'form': form,
+                    'customer': customer
+                })
+            else:
+                if request.POST.get('pay_type') == 'tution':
                     try:
                         models.PaymentRecord.objects.get(customer=customer, pay_type='deposit')
                         customer.status = 'signed'
                     except Exception:
-                        pass
-            customer.save()
-            form.save()
+                        customer.status = 'paid_in_full'
+                elif request.POST.get('pay_type') == 'deposit':
+                    customer.status = 'signed'
+                elif request.POST.get('pay_type') == 'refund':
+                    customer.status = 'unregistered'
+                    try:
+                        models.PaymentRecord.objects.get(customer=customer, pay_type='tution')
+                        customer.status = 'paid_in_full'
+                    except Exception:
+                        try:
+                            models.PaymentRecord.objects.get(customer=customer, pay_type='deposit')
+                            customer.status = 'signed'
+                        except Exception:
+                            pass
+                customer.save()
+                form.save()
         else:
             return render(request, 'crm/payment.html', {
                 'paymentinformation': paymentinformation,
