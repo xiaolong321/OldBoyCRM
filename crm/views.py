@@ -1323,6 +1323,7 @@ def enrollment_approve(request, customer):
     enrollmentinformation = models.Enrollment.objects.filter(customer=customer,
                                                              contract_agreed=1, contract_approved=0).last()
     enroll_form = forms.EnrollmentForm(instance=enrollmentinformation)
+    file_path = ENROLL_DATA_DIR
     path = os.path.join(ENROLL_DATA_DIR, str(customer.id))
     files = os.listdir(path)
     return render(request, 'crm/enrollment/enrollment_approve.html', {
@@ -1332,6 +1333,7 @@ def enrollment_approve(request, customer):
         'files': files,
         'customer': customer,
         'enrollmentinformation': enrollmentinformation,
+        'file_path': file_path,
     })
 
 
