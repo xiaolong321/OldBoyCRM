@@ -105,12 +105,12 @@
         </div>
     <div class="panel">
         <div class="panel-heading">
-            <h3 style="display: inline" class="panel-title">以下为学员上传的证件信息</h3><a href="/crm/file_download/?file_path=D:\oldboy\OldBoyCRM/enrolled_data/{{ customer.id }}"><button class="btn btn-danger  btn-rounded">点击下载</button></a>
+            <h3 style="display: inline" class="panel-title">以下为学员上传的证件信息</h3><a href="/crm/file_download/?file_path={{ file_path }}/{{ customer.id }}"><button class="btn btn-danger  btn-rounded">点击下载</button></a>
         </div>
         <div class="panel-body">
              <div style="margin: 20px" class="row">
                  {% for file in files %}
-                     <img style="width: 250px;height: 200px" src="/static/enrolled_data/{{ customer.id }}/{{ file }}">
+                     <img style="width: 250px;height: 200px" src="/media/{{ customer.id }}/{{ file }}">
                  {% endfor %}
              </div>
         </div>

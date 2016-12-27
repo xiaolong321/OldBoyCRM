@@ -26,7 +26,8 @@ from common.message import message
 import string
 import random
 import os
-from OldboyCRM.settings import ENROLL_DATA_DIR, consultant_list
+import shutil
+from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, consultant_list
 import shutil
 
 
@@ -330,11 +331,15 @@ def file_download(request):
 
     customer_file_path = request.GET.get('file_path')
     if customer_file_path:
-
-        filename = '%s.zip' % customer_file_path.split('/')[-1]     # compress filename
-
+        customer_id = customer_file_path.split('/')[-1]
+        customer = models.Customer.objects.filter(id=customer_id).first()
+        filename = '%s.zip' % customer_id     # compress filename
         file_list = os.listdir(customer_file_path)
-        zipfile_obj = zipfile.ZipFile("%s/%s" % (settings.ENROLL_DATA_DIR, filename), 'w', zipfile.ZIP_DEFLATED)
+        if customer_file_path.startswith(ENROLL_DATA_DIR):
+            zipfile_obj = zipfile.ZipFile("%s/%s" % (ENROLL_DATA_DIR, filename), 'w', zipfile.ZIP_DEFLATED)
+        elif customer_file_path.startswith(CONSULT_DATA_DIR):
+            zipfile_obj = zipfile.ZipFile("%s/%s/%s" % (CONSULT_DATA_DIR, customer.consultant.id, filename), 'w',
+                                          zipfile.ZIP_DEFLATED)
         for f_name in file_list:
             zipfile_obj.write("%s/%s" % (customer_file_path, f_name), f_name)
         zipfile_obj.close()
@@ -817,7 +822,18 @@ def customers_library(request, page, *args, **kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc'not in values):
-            ord = ['-id']   # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']
+            # customers= models.Customer.objects.filter(**direct_org).select_related().order_by('-consultrecord__date').distinct().groupby('consultrecord__date')[pageObj.start:pageObj.end]
+            # # customers_obj= models.Customer.objects.filter(**direct_org).select_related().order_by('-consultrecord__date')
+            # # customers = []
+            # # flag = 0
+            # # for customer in customers_obj:
+            # #     if pageObj.start < flag < pageObj.end:
+            # #         if customer not in customers:
+            # #             customers.append(customer)
+            # #     flag += 1
+            # # customers = customers[pageObj.start:pageObj.end]
+            # print(customers)
         else:
             ord = []
 
@@ -844,26 +860,73 @@ def customers_library(request, page, *args, **kwargs):
 # @login_required
 # @check_permission
 def addcustomer(request, referralfromid=None):
-    username = request.session['username']
-    curr_user = models.UserProfile.objects.get(name=username)
+    curr_user = request.user
+    username = request.user.email
     if request.method == 'POST':
-        form = forms.AddCustomerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
-            customer = models.Customer.objects.filter(qq=request.POST.get('qq')).first()
-            customer.referral_from = from_student
-            customer.save()
-            return HttpResponseRedirect(resolve_url('tracking', 'all', 'all', 'all', 'all', 'all', 'all', '1'))
+        upload_path = '%s/%s/%s' % (settings.CONSULT_DATA_DIR, curr_user.id, 'temporary')
+        if request.FILES:
+            if not os.path.exists(upload_path):
+                os.makedirs(upload_path)
+            abs_filepath = "%s/%s" % (upload_path, request.FILES['file'].name)
+            if len(os.listdir(upload_path)) < 4:
+                if request.FILES['file'].size < 5 * 1024 * 1024:  # 5MB
+                    with open(abs_filepath, 'wb') as f:
+                        for chunk in request.FILES['file'].chunks():
+                            f.write(chunk)
+                    return HttpResponse('upload success')
+                else:
+                    return HttpResponseForbidden('文件大小不能超过5MB')
+            else:
+                return HttpResponseForbidden('最多上传不超过4个文件')
         else:
-            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
             form = forms.AddCustomerForm(data=request.POST)
-            return render(request, 'crm/addcustomer.html', {
-                'form': form,
-                'username': username,
-                'curr_user': curr_user,
-                'from_student': from_student
-            })
+            if request.POST.get('source') == 'referral':
+                from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
+            else:
+                from_student = None
+            if form.is_valid():
+                file_sources_upload_path = "%s/%s/%s" % (settings.CONSULT_DATA_DIR, curr_user.id, 'temporary')
+                file_uploaded = False
+                try:
+                    if len(os.listdir(file_sources_upload_path)) > 0:  # has file in this dir
+                        form.save()
+                        from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
+                        customer = models.Customer.objects.filter(qq=request.POST.get('qq')).first()
+                        customer.referral_from = from_student
+                        customer.save()
+                        file_upload_path = "%s/%s/%s" % (settings.CONSULT_DATA_DIR, curr_user.id, customer.id)
+                        if not os.path.exists(file_upload_path):
+                            os.makedirs(file_upload_path)
+                        root = file_sources_upload_path
+                        a = os.walk(root)
+                        for x in a:
+                            if len(x[-1]) > 0:
+                                for j in x[-1]:
+                                    os.rename(x[0] + '/' + j, file_upload_path + '/' + j)
+                        return HttpResponseRedirect(
+                            resolve_url('tracking', 'all', 'all', 'all', 'all', 'all', 'all', '1'))
+                except Exception:
+                    file_uploaded = False
+                if not file_uploaded:
+                    return render(request, 'crm/addcustomer.html', {
+                        'form': form,
+                        'username': username,
+                        'curr_user': curr_user,
+                        'from_student': from_student,
+                        'file_upload_err': u'咨询内容截图未上传!',
+                    })
+            else:
+                print(form.errors)
+                uploaded_files = []
+                if os.path.exists(upload_path):
+                    uploaded_files = os.listdir(upload_path)
+                return render(request, 'crm/addcustomer.html', {
+                    'form': form,
+                    'username': username,
+                    'curr_user': curr_user,
+                    'from_student': from_student,
+                    'uploaded_files': uploaded_files,
+                })
     if referralfromid:
         referralfrom = Referral.objects.filter(id=referralfromid).first()
         form = forms.AddCustomerForm(
@@ -1084,28 +1147,35 @@ def enroll_done(request, *args, **kwargs):
 
 @login_required
 @check_permission
-def consult_record(request,id):
+def consult_record(request, id):
     username = request.session['username']
     customer = models.Customer.objects.get(id=id)
     customer_record = models.ConsultRecord.objects.filter(customer__id=customer.id).order_by('-date')
 
-
     if request.method == 'POST':
         form = forms.AddConsultRecordForm(request.POST)
-
         if form.is_valid():
             cd = form.cleaned_data
-
             form.save()
-            return HttpResponseRedirect('/crm/consult_record/%d' % (customer.id))
-
+            print(type(customer.last_consult_date), customer.last_consult_date)
+            customer.last_consult_date = datetime.datetime.now()
+            customer.save()
+            return HttpResponseRedirect('/crm/consult_record/%d' % customer.id)
         else:
-
             form = forms.AddConsultRecordForm(request.POST,instance=customer)
-            return render(request,'crm/consult_record.html',{'customer':customer,'customer_record':customer_record,'username':username,'form':form})
+            return render(request, 'crm/consult_record.html', {
+                'customer': customer,
+                'customer_record': customer_record,
+                'username': username,
+                'form': form
+            })
     form = forms.AddConsultRecordForm(instance=customer)
-
-    return render(request,'crm/consult_record.html',{'customer':customer,'customer_record':customer_record,'form':form,'username':username})
+    return render(request, 'crm/consult_record.html', {
+        'customer': customer,
+        'customer_record': customer_record,
+        'form': form,
+        'username': username
+    })
 
 
 def my_login(request):
@@ -1156,7 +1226,7 @@ def error(request):
 def customer_detail(request, id):
     username = request.session['username']
     cus = models.Customer.objects.get(id=id)
-    print(cus)
+    consult_record_picture_path = CONSULT_DATA_DIR
     from_student = None
     try:
         from_student = models.Customer.objects.filter(id=cus.referral_from.id).first()
@@ -1177,7 +1247,12 @@ def customer_detail(request, id):
             form.add_error('consultant', '课程顾问选择出现错误，请刷新后重试')
     else:
         form = forms.AddCustomerForm(instance=cus)
-    return render(request, 'crm/customer_detail.html', {'customer': cus, 'form': form, 'from_student': from_student})
+    return render(request, 'crm/customer_detail.html', {
+        'customer': cus,
+        'form': form,
+        'from_student': from_student,
+        'picture_path': consult_record_picture_path
+    })
 
 
 @login_required
@@ -1307,6 +1382,7 @@ def enrollment_agree(request, customer):
 
 def enrollment_approve(request, customer):
     status = 'approve'
+    file_path = ENROLL_DATA_DIR
     if request.method == 'POST':
         if request.POST.get('flag') == 'enrollment_approved':
             enrollmentinformation = models.Enrollment.objects.filter(id=request.POST.get('enrollment_id'))
@@ -1332,6 +1408,7 @@ def enrollment_approve(request, customer):
         'files': files,
         'customer': customer,
         'enrollmentinformation': enrollmentinformation,
+        'file_path':file_path
     })
 
 

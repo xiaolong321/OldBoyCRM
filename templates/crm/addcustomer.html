@@ -1,5 +1,13 @@
 {%extends 'crm/dashboard.html'%}
 
+{% block header-resource-files %}
+
+    <link href="/static/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+    <script src="/static/plugins/dropzone/dropzone.min.js"></script>
+
+{% endblock %}
+
 {% block dash-content%}
 
     <div class="col-sm-12 text-left">
@@ -96,11 +104,46 @@
             </form>
         </div>
     </div>
+            <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">咨询信息上传 {% if file_upload_err %}<span style="color: red">{{ file_upload_err }}</span>{% endif %}</h3>
+            </div>
+            <div class="panel-body">
+                 <div class="row">
+                    {% if uploaded_files %}
+                    <h5>已上传文件</h5>
+                        <ul>
+                         {% for file in uploaded_files %}
+                             <li>{{ file }}</li>
+                         {% endfor %}
+                        </ul>
+                    {% endif %}
+                 </div>
+                <!--Dropzonejs-->
+                <!--===================================================-->
+                <form id="demo-dropzone" action="#" class="dropzone dz-clickable">{% csrf_token %}
+                    <div class="dz-default dz-message">
+                        <div class="dz-icon icon-wrap icon-circle icon-wrap-md">
+                            <i class="fa fa-cloud-upload fa-3x"></i>
+                        </div>
+                        <div>
+                            <p class="dz-text">将截图拖拽到此区域或点击上传按钮</p>
+                            <p class="text-muted">请将咨询过程内容截图并上传</p>
+                        </div>
+                    </div>
+
+                </form>
+                <!--===================================================-->
+                <!-- End Dropzonejs -->
+
+            </div>
+        </div>
+
 
 {% endblock %}
 
 {%block dash-footer-js%}
-
+    <script src="/static/plugins/bootstrap-validator/bootstrapValidator.min.js"></script>
     <script>
     $(function () {
         $('select#id_source').change(function () {

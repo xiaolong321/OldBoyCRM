@@ -11,8 +11,6 @@ from crm.myauth import UserProfile
 
 # Create your models here.
 class teacher(models.Model):
-    teacher = models.OneToOneField(UserProfile)
-    classes = models.ForeignKey(ClassList)
 
     class Meta:
         verbose_name = "老师列表"
