@@ -19,6 +19,8 @@ from  crm import urls as crm_urls
 from crm import views as crm_views
 from teacher import urls as teacher_urls
 from student import urls as stu_urls
+from OldboyCRM.settings import ENROLL_DATA_DIR
+
 
 urlpatterns = [
     url(r'^stu/',include(stu_urls)),

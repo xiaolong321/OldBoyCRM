@@ -5,7 +5,12 @@
     <div class="col-sm-12 text-left">
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title text-center">请填写如下表格(加粗字体为必填项)</h3>
+                <h3 class="panel-title text-center">
+                    请填写如下表格(加粗字体为必填项)
+                    <a href="/crm/file_download/?file_path={{ picture_path }}/{{ customer.consultant.id }}/{{ customer.id }}">
+                        <button style="float: right; margin-top: 10px" class="btn btn-danger  btn-rounded">点击下载学员咨询记录截图</button>
+                    </a>
+                </h3>
             </div>
             <!--Horizontal Form-->
             <!--===================================================-->
@@ -154,7 +159,6 @@
 {#                $('select#id_referral_from').parent().parent().remove();#}
             }
         })
-        $('select#id_source').trigger('change')
     })
     </script>
 
