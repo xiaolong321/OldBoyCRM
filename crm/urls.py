@@ -4,6 +4,7 @@ from django.conf.urls import include, url
 from crm import views
 
 
+
 urlpatterns = [
     url(r'^$', views.dashboard, name='crm_dashboard'),  # 销售基页
     url(r'^survery/(\d+)/', views.survery, name="survery"),

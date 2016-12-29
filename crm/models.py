@@ -53,29 +53,37 @@ class Customer(models.Model):
                    ('others', u"其它"),
                    )
     source = models.CharField(u'客户来源', max_length=64, choices=source_type, default='qq')
-    referral_from = models.ForeignKey('self', verbose_name=u"转介绍自学员", help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名", blank=True, null=True, related_name="internal_referral")
+    referral_from = models.ForeignKey('self', verbose_name=u"转介绍自学员",
+                                      help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名", blank=True,
+                                      null=True, related_name="internal_referral")
     course = models.CharField(u"咨询课程", max_length=64, choices=course_choices)
     class_type = models.CharField(u"班级类型", max_length=64, choices=class_type_choices)
     customer_note = models.TextField(u"客户咨询内容详情", help_text=u"客户咨询的大概情况,客户个人信息备注等...")
     work_status_choices = (('employed', '在职'), ('unemployed', '无业'))
-    work_status = models.CharField(u"职业状态", choices=work_status_choices, max_length=32, default='employed', blank=True, null=True)
+    work_status = models.CharField(u"职业状态", choices=work_status_choices, max_length=32, default='employed',
+                                   blank=True, null=True)
     company = models.CharField(u"目前就职公司", max_length=64, blank=True, null=True)
     salary = models.CharField(u"当前薪资", max_length=64, blank=True, null=True)
     status_choices = (('signed', u"已报名"),
                       ('unregistered', u"未报名"),
                       ('paid_in_full', u"学费已交齐"))
-    status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered", help_text=u"选择客户此时的状态")
+    status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered",
+                              help_text=u"选择客户此时的状态")
     consultant = models.ForeignKey(UserProfile, verbose_name=u"课程顾问")
     date = models.DateField(u"咨询日期", auto_now_add=True)
+    last_consult_date = models.DateField(u"最后跟进日期", auto_now_add=True)
     class_list = models.ManyToManyField('ClassList', verbose_name=u"已报班级", blank=True)
 
     def colored_status(self):
         if self.status == "signed":
-            format_td = format_html('<span style="padding:2px;background-color:yellowgreen;color:white">已报名</span>')
+            format_td = format_html(
+                '<span style="padding:2px;background-color:yellowgreen;color:white">已报名</span>')
         elif self.status == "unregistered":
-            format_td = format_html('<span style="padding:2px;background-color:gray;color:white">未报名</span>')
+            format_td = format_html(
+                '<span style="padding:2px;background-color:gray;color:white">未报名</span>')
         elif self.status == "paid_in_full":
-            format_td = format_html('<span style="padding:2px;background-color:orange;color:white">学费已交齐</span>')
+            format_td = format_html(
+                '<span style="padding:2px;background-color:orange;color:white">学费已交齐</span>')
         return format_td
 
     def get_enrolled_course(self):
