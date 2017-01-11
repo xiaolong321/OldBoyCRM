@@ -41,7 +41,7 @@
 												<td style="text-align:center;">{{item.5}}</td>
 												<td style="width: 300px;height: auto;">{{item.6|default:'--'}}</td>
 
-												{%if item.5 = 'N/A'%}
+												{%if item.5 == 'N/A'%}
 												<td  style="text-align:center">
 													<a href="{% url 'uploadfile' item.3 item.4 item.0 %}">
 														<button class="btn btn-lg btn-default btn-active-success" >提交作业

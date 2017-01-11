@@ -3,7 +3,7 @@
         <div class="panel">
             <div class="panel-heading">
                 <h3 class="panel-title">
-                    {{ request.user }} 老师您好，这是 {{ courselist.first }} 的详细信息
+                    {{ request.user }} 老师您好，这是 {{ courselist.first.course }} 的详细信息
                     <div style="float: right">
                         <a href="{% url 'createcourse' class_id %}">
                             创建一节新的课程
@@ -26,7 +26,7 @@
                             <tr>
                                 <td>
                                     <a href="{% url 'courserecord' course.id %}">
-                                        {{ course.day_num}}
+                                        {{ course.course }}第{{ course.day_num}}天
                                     </a>
                                 </td>
                                 <td>{{ course.teacher }}</td>
