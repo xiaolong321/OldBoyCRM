@@ -338,7 +338,30 @@ def file_download(request):
                     if filename.endswith('.zip'):
                         response = FileResponse(open('{}/{}'.format(customer_file_path, filename), 'rb'))
             elif len(customer_file_path.split(HOMEWORK_DATA_DIR)[-1].split('/')) == 3:
+                # if os.path.exists(os.path.join(customer_file_path, 'all')):
+                #     shutil.rmtree(os.path.join(customer_file_path, 'all'))
                 filename = '%s.zip' % customer_file_path.split('/')[-1]
+                zipfile_path = os.path.dirname(customer_file_path)
+                zipfile_obj = zipfile.ZipFile("%s/%s" % (zipfile_path, filename), 'w', zipfile.ZIP_DEFLATED)
+
+
+                # for dirpath, dirnames, filenames in os.walk(os.path.join(customer_file_path,'all')):
+                #     for file in filenames:
+                #         zipfile_obj.write(os.path.join(dirpath, file), os.path.join(dirpath.split(os.path.join(customer_file_path,'all'))[-1], file))
+
+
+                for dirpath, dirnames, filenames in os.walk(customer_file_path):
+                    print(dirpath, dirnames, filenames)
+                    for file in filenames:
+                        if file.endswith('.zip'):
+                            f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
+                            for file_obj in f.namelist():
+                                unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
+                                                                             file.split('.zip')[0]))
+                                zipfile_obj.write(unzipfile, os.path.join(file.split('.zip')[0], file_obj))
+
+
+                zipfile_obj.close()
                 response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
 
         else:
@@ -735,8 +758,8 @@ def signed(request,page,*args,**kwargs):
     return render(request, 'crm/signed.html', result)
 
 
-#@login_required
-#@check_permission
+@login_required
+@check_permission
 def customers_library(request, page, *args, **kwargs):
 
     username = request.session['username']
@@ -1286,7 +1309,7 @@ def class_detail(request, *args, **kwargs):
     cus_status = map(lambda x: {'type': x[0], 'name': x[1]}, cus_status)
     cus_status = list(cus_status)
 
-    staffs = models.UserProfile.objects.filter(groups__name__in=consultant_list).values('email', 'name')  # 客户顾问
+    staffs = models.UserProfile.objects.all().values('email', 'name')  # 客户顾问
     staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
     staffs = list(staffs)
 
@@ -1439,7 +1462,6 @@ def enrollment_payment(request, customer):
                 form.add_error('paid_fee', '至少需要缴费500元')
                 return render(request, 'crm/enrollment/enrollment_payment.html', locals())
             else:
-                customer.class_list.add(enrollmentinformation.course_grade)
                 customer.status = 'signed'
                 customer.save()
                 payment_obj = models.PaymentRecord.objects.create(customer=customer, consultant=customer.consultant,

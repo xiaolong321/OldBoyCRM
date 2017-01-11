@@ -2,11 +2,11 @@
     {%block dash-filter%}
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ request.user }}老师您好，这是{{ courserecords.first.course_record }}详细情况</h3>
+                <h3 class="panel-title">{{ request.user }}老师您好，这是{{ studyrecords.first.course_record }}详细情况</h3>
             </div>
             <div class="panel-body">
                 <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                    <div>
+                    <div style="float: left">
                         <select class="set_all">
                             <option>设置所有已选择学生的签到状态</option>
                             <option value ="checked">全部设置为正常签到</option>
@@ -14,6 +14,9 @@
                             <option value ="late">全部设置为迟到</option>
                             <option value ="leave_early">全部设置为早退</option>
                         </select>
+                    </div>
+                    <div style="float: right">
+                        <a href="/crm/file_download/?file_path={{ homework_path }}/{{ studyrecords.first.course_record.course.id }}/{{ studyrecords.first.course_record.day_num }}"><button>下载本节课全部学生作业</button></a>
                     </div>
                     <thead>
                         <tr>
@@ -26,16 +29,17 @@
                             <th>签到情况</th>
                             <th>成绩</th>
                             <th>备注</th>
+                            <th>下载作业</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for courserecord in courserecords %}
-                            <tr student_id = '{{ courserecord.student_id }}', course_id = '{{ courserecord.course_record_id }}'>
+                        {% for studyrecord in studyrecords %}
+                            <tr student_id = '{{ studyrecord.student_id }}', course_id = '{{ studyrecord.course_record_id }}'>
                                 <td>
                                     <input type="checkbox">
                                 </td>
-                                <td>{{ courserecord.student_id }}</td>
-                                <td>{{ courserecord.student.name }}</td>
+                                <td>{{ studyrecord.student_id }}</td>
+                                <td>{{ studyrecord.student.name }}</td>
                                 <td>
                                     <select class="record">
                                         <option></option>
@@ -63,7 +67,10 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input class="note" placeholder="{{ courserecord.note }}">
+                                    <textarea type="text" class="note" placeholder="{{ studyrecord.note }}"></textarea>
+                                </td>
+                                <td>
+                                    <a href="/crm/file_download/?file_path={{ homework_path }}/{{ studyrecord.course_record.course.id }}/{{ studyrecord.course_record.day_num }}/{{ studyrecord.student.id }}"><button>下载作业</button></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -77,9 +84,9 @@
     {%block dash-footer-js%}
         <script>
             $(function () {
-                {% for courserecord in courserecords %}
-                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".record").children("[value='{{ courserecord.record }}']").attr('selected', 'selected');
-                    $("tr[student_id='{{ courserecord.student_id }}'][course_id='{{ courserecord.course_record_id }}").children("td").children(".score").children("[value='{{ courserecord.score }}']").attr('selected', 'selected');
+                {% for studyrecord in studyrecords %}
+                    $("tr[student_id='{{ studyrecord.student_id }}'][course_id='{{ studyrecord.course_record_id }}").children("td").children(".record").children("[value='{{ studyrecord.record }}']").attr('selected', 'selected');
+                    $("tr[student_id='{{ studyrecord.student_id }}'][course_id='{{ studyrecord.course_record_id }}").children("td").children(".score").children("[value='{{ studyrecord.score }}']").attr('selected', 'selected');
                 {% endfor %}
 
                 $('select.set_all').change(function () {
@@ -100,7 +107,7 @@
                             }
                         })
                     });
-                $('select.record,select.score,input.note').change(function () {
+                $('select.record,select.score,textarea.note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
                     var course_id = $(this).parent().parent().attr('course_id');
                     var status = $(this).attr('class');

@@ -1,8 +1,6 @@
-#coding:utf-8
+# coding:utf-8
 
-
-
-#权限样式 app_权限名字
+# 权限样式 app_权限名字
 perm_dic={
     'crm_views_customer_detail':['customer_detail','GET',[]],
     'crm_edit_own_customer_info':['customer_detail','POST',[]],
@@ -21,6 +19,10 @@ perm_dic={
     'crm_view_addcustomer':['addcustomer','GET',[]],
     'crm_edit_addcustomer':['addcustomer','POST',[]],
     'crm_view_dashboard':['dashboard','GET',[]],
+    'crm_view_enrollment': ['enrollment', 'GET', []],
+    'crm_edit_enrollment': ['enrollment', 'POST', []],
+    'crm_view_payment': ['payment', 'GET', []],
+    'crm_edit_payment': ['payment', 'POST', []],
 
 }
 

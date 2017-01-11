@@ -8,4 +8,6 @@ consult_data/!.gitkeep
 consult_data/*
 enrolled_data/!.gitkeep
 enrolled_data/*
+homework_data/!.gitkeep
+homework_data/*
 __pycache__/

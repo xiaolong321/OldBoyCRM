@@ -14,7 +14,6 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from crm import models as crmmodels
 from django.utils.encoding import smart_str
 import time
-from student.tasks import uploadhomework
 
 
 #装饰器 验证用户登录
@@ -191,21 +190,38 @@ def homework(request, class_id, day_num):
         if not os.path.exists(upload_path):
             os.makedirs(upload_path)
     response_dic = {'files': {}}
+
     if request.method == 'POST':
         if request.FILES:
             if request.FILES['file'].name.endswith('.zip'):
+                # abs_filepath = "%s/%s" % (upload_path, request.FILES['file'].name)
                 if len(os.listdir(upload_path)) < 1:
                     abs_filepath = "%s/%s" % (upload_path, '%s.zip' % student.name)
                     with open(abs_filepath, 'wb') as f:
                         for chunk in request.FILES['file'].chunks():
                             f.write(chunk)
-                    uploadhomework.delay(class_id, day_num, upload_path)
+                    from student.tasks import uploadhomework
+                    uploadhomework.delay(class_id, day_num, upload_path, abs_filepath, student)
+
+                    # unzipfile_path = "%s/%s/%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id, day_num, 'all')
+                    # filename = '%s.zip' % upload_path.split('/')[-2]
+                    # zipfile_path = "%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id)
+                    # # zipfile_obj = zipfile.ZipFile("%s/%s" % (zipfile_path, filename), 'a', zipfile.ZIP_DEFLATED)
+                    # f = zipfile.ZipFile(abs_filepath, 'r')
+                    # for file_obj in f.namelist():
+                    #     unzipfile = f.extract(file_obj, os.path.join(unzipfile_path,student.name))
+                    #     # zipfile_obj.write(unzipfile, os.path.join(student.name, file_obj))
+                    # # zipfile_obj.close()
+
                 else:
                     return HttpResponseForbidden('只允许上传一个文件')
+
             else:
                 return HttpResponseForbidden('只允许上传.zip格式的文件')
             get_uploaded_fileinfo(response_dic, upload_path)
+            print('--------', response_dic)
             return HttpResponse(json.dumps(response_dic))
+
     else:
         get_uploaded_fileinfo(response_dic, upload_path)
         study_record = crmmodels.StudyRecord.objects.filter(course_record=course_record, student=student).first()
