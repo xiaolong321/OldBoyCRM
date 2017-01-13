@@ -8,23 +8,23 @@ from crm.myauth import UserProfile
 
 
 course_choices = (
-                      ('LinuxL1',u'Linux中高级'),
-                      ('LinuxL2',u'Linux架构师'),
-                      ('Linux51',u'Linux中高级(51网络)'),
-                      ('LinuxL251',u'Linux中高级+架构合成班(51网络)'),
-                      ('PythonDevOps',u'Python自动化开发'),
-                      ('PythonFullStack',u'Python高级全栈开发'),
-                      ('PythonDevOps51',u'Python自动化开发(51网络)'),
-                      ('LinuxL1Online',u'Linux运维(网络-随到随学)'),
-                      ('PythonFullStack51',u'Python全栈开发(51网络)'),
-                      ('BigDataDev',u"大数据开发课程"),
-                      ('Cloud',u"云计算课程"),
+                      ('LinuxL1', u'Linux中高级'),
+                      ('LinuxL2', u'Linux架构师'),
+                      ('Linux51', u'Linux中高级(51网络)'),
+                      ('LinuxL251', u'Linux中高级+架构合成班(51网络)'),
+                      ('PythonDevOps', u'Python自动化开发'),
+                      ('PythonFullStack', u'Python高级全栈开发'),
+                      ('PythonDevOps51', u'Python自动化开发(随到随学)'),
+                      ('LinuxL1Online', u'Linux运维(网络-随到随学)'),
+                      ('PythonFullStack51', u'Python全栈开发(随到随学)'),
+                      ('BigDataDev', u"大数据开发课程"),
+                      ('Cloud', u"云计算课程"),
                       )
 
 
-class_type_choices= (('online',u'网络班'),
-                     ('offline_weekend',u'面授班(周末)',),
-                     ('offline_fulltime',u'面授班(脱产)',),
+class_type_choices= (('online', u'网络班'),
+                     ('offline_weekend', u'面授班(周末)',),
+                     ('offline_fulltime', u'面授班(脱产)',),
                      )
 
 
@@ -218,39 +218,46 @@ class ClassList(models.Model):
 
 
 class CourseRecord(models.Model):
-    course = models.ForeignKey(ClassList,verbose_name=u"班级(课程)")
-    day_num = models.IntegerField(u"节次",help_text=u"此处填写第几节课或第几天课程...,必须为数字")
-    date = models.DateField(auto_now_add=True,verbose_name=u"上课日期")
-    teacher = models.ForeignKey(UserProfile,verbose_name=u"讲师")
-    has_homework = models.BooleanField(default=True,verbose_name=u"本节有作业")
-    course_memo = models.TextField('本节课程内容',max_length=300, blank=True, null=True)
+    course = models.ForeignKey(ClassList, verbose_name=u"班级(课程)")
+    day_num = models.IntegerField(u"节次", help_text=u"此处填写第几节课或第几天课程...,必须为数字")
+    date = models.DateField(auto_now_add=True, verbose_name=u"上课日期")
+    teacher = models.ForeignKey(UserProfile, verbose_name=u"讲师")
+    course_title = models.CharField('本节课程标题', max_length=64, blank=True, null=True)
+    course_memo = models.TextField('本节课程内容', max_length=300, blank=True, null=True)
+    has_homework = models.BooleanField(default=True, verbose_name=u"本节有作业")
+    homework_title = models.CharField('本节作业标题', max_length=64, blank=True, null=True)
     homework_memo = models.TextField('作业描述', max_length=300, blank=True, null=True)
-    exam = models.TextField('踩分点',max_length=300, blank=True, null=True)
-    course_module = models.ForeignKey('CourseModule',verbose_name='所属模块',null=True, blank=True,related_name='courserecord')
+    exam = models.TextField('踩分点', max_length=300, blank=True, null=True)
+    course_module = models.ForeignKey('CourseModule', verbose_name='所属模块', null=True, blank=True,
+                                      related_name='courserecord')
 
     def __str__(self):
-        return u"%s 第%s天" %(self.course,self.day_num)
+        return u"%s 第%s天" % (self.course, self.day_num)
 
     class Meta:
         verbose_name = u'上课纪录'
         verbose_name_plural = u"上课纪录"
-        unique_together = ('course','day_num')
+        unique_together = ('course', 'day_num')
 
     def get_total_show_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="checked").count()
-        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=checked' >%s</a>" % (self.id, total_shows)
+        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=checked' >%s</a>" \
+               % (self.id, total_shows)
 
     def get_total_late_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="late").count()
-        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=late' >%s</a>" % (self.id,total_shows)
+        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=late' >%s</a>" \
+               % (self.id,total_shows)
 
     def get_total_noshow_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="noshow").count()
-        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=noshow' >%s</a>" % (self.id,total_shows)
+        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=noshow' >%s</a>" \
+               % (self.id,total_shows)
 
     def get_total_leave_early_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="leave_early").count()
-        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=leave_early' >%s</a>" % (self.id,total_shows)
+        return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=leave_early' >%s" \
+               "</a>" % (self.id,total_shows)
 
     get_total_leave_early_num.allow_tags = True
     get_total_noshow_num.allow_tags = True
@@ -277,56 +284,55 @@ class CourseModule(models.Model):
 
 class StudyRecord(models.Model):
     course_record = models.ForeignKey(CourseRecord, verbose_name=u"第几天课程")
-    student = models.ForeignKey(Customer,verbose_name=u"学员")
+    student = models.ForeignKey(Customer, verbose_name=u"学员")
     record_choices = (('checked', u"已签到"),
-                      ('late',u"迟到"),
-                      ('noshow',u"缺勤"),
-                      ('leave_early',u"早退"),
+                      ('late', u"迟到"),
+                      ('noshow', u"缺勤"),
+                      ('leave_early', u"早退"),
                       )
-    record = models.CharField(u"上课纪录",choices=record_choices,default="checked",max_length=64)
+    record = models.CharField(u"上课纪录", choices=record_choices, default="checked", max_length=64)
     score_choices = ((100, 'A+'),
-                     (90,'A'),
-                     (85,'B+'),
-                     (80,'B'),
-                     (70,'B-'),
-                     (60,'C+'),
-                     (50,'C'),
-                     (40,'C-'),
-                     (0,'D'),
-                     (-1,'N/A'),
-                     (-100,'COPY'),
-                     (-1000,'FAIL'),
+                     (90, 'A'),
+                     (85, 'B+'),
+                     (80, 'B'),
+                     (70, 'B-'),
+                     (60, 'C+'),
+                     (50, 'C'),
+                     (40, 'C-'),
+                     (0,' D'),
+                     (-1, 'N/A'),
+                     (-100, 'COPY'),
+                     (-1000, 'FAIL'),
                      )
-    score = models.IntegerField(u"本节成绩",choices=score_choices,default=-1)
+    score = models.IntegerField(u"本节成绩", choices=score_choices, default=-1)
     date = models.DateTimeField(auto_now_add=True)
-    note = models.CharField(u"备注",max_length=255,blank=True,null=True)
-    homework=models.FileField(verbose_name='作业文件',blank=True,null=True,default=None)
-    stu_memo=models.TextField('学员备注',blank=True,null=True)
-
+    note = models.CharField(u"备注", max_length=255, blank=True, null=True)
+    homework=models.FileField(verbose_name='作业文件', blank=True, null=True, default=None)
+    stu_memo=models.TextField('学员备注', blank=True, null=True)
 
     color_dic = {
-         100:"#5DFC70",
-         90 : "greenyellow",
-         85 : "deepskyblue",
-         80 : "#49E3F5",
-         70 : "#1CD4C8",
-         60 : "#FFBF00",
-         50 : "#FF8000",
-         40 : "#FE642E",
-         0 : "red",
-         -1 : "#E9E9E9",
-         -100 : "#585858",
-         -1000 : "darkred"
+         100: "#5DFC70",
+         90: "greenyellow",
+         85: "deepskyblue",
+         80: "#49E3F5",
+         70: "#1CD4C8",
+         60: "#FFBF00",
+         50: "#FF8000",
+         40: "#FE642E",
+         0: "red",
+         -1: "#E9E9E9",
+         -100: "#585858",
+         -1000: "darkred"
     }
 
-
     def __str__(self):
-        return u"%s,学员:%s,纪录:%s, 成绩:%s" %(self.course_record,self.student.name,self.record,self.get_score_display())
+        return u"%s,学员:%s,纪录:%s, 成绩:%s" % (self.course_record,
+                                           self.student.name,self.record,self.get_score_display())
 
     class Meta:
         verbose_name = u'学员学习纪录'
         verbose_name_plural = u"学员学习纪录"
-        unique_together = ('course_record','student')
+        unique_together = ('course_record', 'student')
 
     def colored_record(self):
         color_dic = {
@@ -336,14 +342,14 @@ class StudyRecord(models.Model):
             'leave_early': "#FFFF00",
 
         }
-        html_td= '<span style="padding:5px;background-color:%s;">%s</span>' %(
-            color_dic[self.record],self.get_record_display()
+        html_td= '<span style="padding:5px;background-color:%s;">%s</span>' % (
+            color_dic[self.record], self.get_record_display()
         )
         return html_td
-    def colored_score(self):
 
-        html_td= '<span style="padding:5px;background-color:%s;">%s</span>' %(
-            self.color_dic[self.score],self.score
+    def colored_score(self):
+        html_td= '<div style="padding:5px;background-color:%s;">%s</div>' % (
+            self.color_dic[self.score], self.get_score_display()
         )
         return html_td
     colored_score.allow_tags = True
@@ -466,6 +472,10 @@ class ContractTemplate(models.Model):
             ('crm_edit_consult_record', ' 编辑 跟进记录 '),
             ('crm_view_addcustomer', ' 访问 添加新客户 页面 '),
             ('crm_edit_addcustomer', ' 编辑 添加新客户 '),
+            ('crm_view_enrollment', ' 访问 为客户报名 页面 '),
+            ('crm_edit_enrollment', ' 编辑 为客户报名 '),
+            ('crm_view_payment', ' 访问 客户缴费 页面 '),
+            ('crm_edit_payment', ' 编辑 客户缴费 '),
         )
 
 

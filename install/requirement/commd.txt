@@ -9,3 +9,5 @@ Pillow==3.0.0
 pyasn1==0.1.9
 PyYAML==3.11
 SQLAlchemy==1.0.12
+celery==4.0.0
+django-celery-result==1.0.0
