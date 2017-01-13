@@ -11,7 +11,7 @@ import json, os, random, zipfile, datetime
 from crm import survery_handle
 from crm import class_grade
 from crm import forms
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from OldboyCRM import settings
 from django.http import FileResponse
 from django.utils.encoding import smart_str
@@ -478,7 +478,7 @@ def sale_table(request):
 
 @login_required
 @check_permission
-def tracking(request,page,*args,**kwargs):
+def tracking(request, page, *args, **kwargs):
     ord = []
     username = request.session['username']
     user = request.session['email']
@@ -526,7 +526,7 @@ def tracking(request,page,*args,**kwargs):
     ayear = datetime.timedelta(days=365)
     ayearbef = (now - ayear).strftime('%Y-%m-%d')  # 一年前
 
-    direct_org = {'consultant__email': user,'status': 'unregistered'}
+    direct_org = { 'status': 'unregistered'}
 
     for item in kwargs.keys():
 
@@ -549,27 +549,38 @@ def tracking(request,page,*args,**kwargs):
             if kwargs[item] != 'all':
                 direct_org[item] = kwargs[item]
 
-
-
     if GET.get('qq'):
-        qq_num_err={}
+        qq_num_err = {}
         qq = GET['qq']
         try:
             qq = int(qq)
         except ValueError as e:
-            qq_num_err={'qq_num_error':'只能输入QQ号'}
+            qq_num_err={'qq_num_error': '只能输入QQ号'}
 
+        direct_org.update({'qq': qq})
+        print(direct_org)
 
-        direct_org.update({'qq':qq})
+        con = Q()
+        q1 = Q()
+        q1.connector = 'AND'
+        for key, value in direct_org.items():
+            q1.children.append((key, value))
+        q1.children.append(('consultant__email', user))
+        q2 = Q()
+        q2.connector = 'AND'
+        for key, value in direct_org.items():
+            q2.children.append((key, value))
+        q2.children.append(('consultrecord__consultant__email', user))
+        con.add(q1, 'OR')
+        con.add(q2, 'OR')
 
-        customers = models.Customer.objects.filter(**direct_org)
-        count = models.Customer.objects.filter(**direct_org).count()
-        fil = {'customers': customers, 'count': count,}
+        customers = models.Customer.objects.filter(con).distinct()
+        count = customers.count()
+        fil = {'customers': customers, 'count': count, }
         fil.update(qq_num_err)
         result.update(fil)
 
     else:
-
         try:
             page = int(page)
         except:
@@ -577,11 +588,9 @@ def tracking(request,page,*args,**kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
         else:
             ord = []
-
-
 
         for key in request.COOKIES.keys():
             if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
@@ -591,9 +600,24 @@ def tracking(request,page,*args,**kwargs):
                     elif request.COOKIES[key] == 'asc':
                         ord.append(key)
 
-        count = models.Customer.objects.filter(**direct_org).count()
+
+
+        con = Q()
+        q1 = Q()
+        q1.connector = 'AND'
+        for key, value in direct_org.items():
+            q1.children.append((key, value))
+        q1.children.append(('consultant__email', user))
+        q2 = Q()
+        q2.connector = 'AND'
+        for key, value in direct_org.items():
+            q2.children.append((key, value))
+        q2.children.append(('consultrecord__consultant__email', user))
+        con.add(q1, 'OR')
+        con.add(q2, 'OR')
+        count = models.Customer.objects.filter(con).distinct().count()
         pageObj = PageInfo(page, count, 50)
-        customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
+        customers = models.Customer.objects.filter(con).distinct().select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
         fil = {'customers': customers, 'count': count, 'fenye': fenye}
@@ -706,7 +730,7 @@ def signed(request,page,*args,**kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
         else:
             ord = []
 
@@ -1340,7 +1364,19 @@ def Statistical(request):
 @check_permission
 def enrollment(request, customer_id):
     customer = models.Customer.objects.filter(id=customer_id).first()
+
+    trackers = models.UserProfile.objects.filter(consultrecord__customer__id=customer_id)
+    print(customer.consultant)
+    print(request.user)
+    for tracker in trackers:
+        print(tracker)
+    flag = False
     if customer.consultant == request.user:
+        flag = True
+    for tracker in trackers:
+        if tracker == request.user:
+            flag = True
+    if flag:
         enrollmentinformation = models.Enrollment.objects.filter(customer=customer).last()
         if enrollmentinformation:
             paymentinformation = models.PaymentRecord.objects.filter(customer=customer,
@@ -1459,6 +1495,9 @@ def enrollment_payment(request, customer):
                     object.getcontent(username=customer.name, classname=payment_obj.classlist,
                                       account=customer.qq, password=stu_acc_pwd)
                     object.sendmessage()
+                models.ConsultRecord.objects.create(customer=customer, note='因报名而更换课程顾问，原课程顾问为{},更换为{}'.format(customer.consultant, request.user), status=7, consultant=request.user)
+                customer.consultant = request.user
+                customer.save()
                 return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
         else:
             return render(request, 'crm/enrollment/enrollment_payment.html', locals())
