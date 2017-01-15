@@ -468,6 +468,7 @@ class ContractTemplate(models.Model):
             ('crm_view_statistical', '访问 销售报表 页面'),
             ('crm_view_classlist', '访问 班级列表 页面'),
             ('crm_view_classdetail', '访问 班级详细信息 页面'),
+            ('crm_edit_classdetail', '编辑 班级详细信息 页面'),
             ('crm_view_consult_record', '访问 跟进记录 页面'),
             ('crm_edit_consult_record', ' 编辑 跟进记录 '),
             ('crm_view_addcustomer', ' 访问 添加新客户 页面 '),

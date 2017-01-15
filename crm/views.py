@@ -51,6 +51,7 @@ def index(request):
     return render(request, 'crm/index.html')
 
 
+@login_required
 def survery(request, survery_id):
     if request.method == "GET":
         try:
@@ -112,6 +113,7 @@ def view_class_grade(request,class_id):
                                                   })
 
 
+@login_required
 def grade_check(request):
 
     if request.method == 'GET':
@@ -159,11 +161,13 @@ def stu_lack_check_records(request):
     return HttpResponseRedirect("/crm/grade/%s" % class_id)
 
 
+@login_required
 def scholarship(request):
 
     return render(request,'crm/scholarship.html')
 
 
+@login_required
 def compliant(request):
 
     if request.method == "GET":
@@ -178,12 +182,13 @@ def compliant(request):
         return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
 
 
+@login_required
 def stu_faq(request):
 
     return render(request,"crm/stu_faq.html")
 
 
-# @login_required
+@login_required
 def get_grade_chart(request,stu_id):
     stu_obj = models.Customer.objects.get(id=stu_id)
 
@@ -760,8 +765,8 @@ def signed(request,page,*args,**kwargs):
     return render(request, 'crm/signed.html', result)
 
 
-#@login_required
-#@check_permission
+@login_required
+@check_permission
 def customers_library(request, page, *args, **kwargs):
 
     username = request.session['username']
@@ -895,8 +900,8 @@ def customers_library(request, page, *args, **kwargs):
     return render(request, 'crm/customers_library.html', result)
 
 
-# @login_required
-# @check_permission
+@login_required
+@check_permission
 def addcustomer(request, referralfromid=None):
     curr_user = request.user
     username = request.user.email
@@ -983,6 +988,7 @@ def addcustomer(request, referralfromid=None):
         return render(request, 'crm/addcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user})
 
 
+@login_required
 def searchcustomer(request):
     if request.method == 'POST':
         from_student_qq = request.POST.get('student_qq')
@@ -1217,15 +1223,11 @@ def consult_record(request, id):
 
 
 def login_url(request):
-    print(1)
     next_url = request.GET.get('next')
     print(next_url)
-    print(2)
     if next_url == '/crm/':
-        print(3)
         return my_login(request)
     if next_url == '/teacher/':
-        print(4)
         return teacher_my_login(request)
 
 
@@ -1317,6 +1319,30 @@ def class_list(request,*args,**kwargs):
 @login_required
 @check_permission
 def class_detail(request, *args, **kwargs):
+    if request.method == 'POST':
+        student_qq = request.POST.get('student_qq')
+        customer=models.Customer.objects.filter(qq=student_qq).first()
+        if not customer:
+            return HttpResponse('客户信息有误，请刷新后重试')
+        try:
+            student = StuAccount.objects.get(stu_name=customer)
+            stu_acc_pwd = makePassword()
+            stu_acc_pwd_has = hashstr(stu_acc_pwd)
+            student.stu_pwd = stu_acc_pwd_has
+            student.save()
+
+
+        except ObjectDoesNotExist as e:
+            stu_acc_pwd = makePassword()
+            stu_acc_pwd_has = hashstr(stu_acc_pwd)
+            stu_acc = StuAccount.objects.create(stu_name=customer, stu_pwd=stu_acc_pwd_has)
+        object = message(subject='reset_student_password', toaddrs=[customer.qq + '@qq.com'], )
+        object.getcontent(username=customer.name,
+                          account=customer.qq, password=stu_acc_pwd)
+        object.sendmessage()
+        return HttpResponse('重置密码成功')
+
+
     id = kwargs['id']
     ord=[]
     current_url = request.path
@@ -1509,9 +1535,10 @@ def enrollment_payment(request, customer):
                     object.getcontent(username=customer.name, classname=payment_obj.classlist,
                                       account=customer.qq, password=stu_acc_pwd)
                     object.sendmessage()
-                models.ConsultRecord.objects.create(customer=customer, note='因报名而更换课程顾问，原课程顾问为{},更换为{}'.format(customer.consultant, request.user), status=7, consultant=request.user)
-                customer.consultant = request.user
-                customer.save()
+                if not customer.consultant == request.user:
+                    models.ConsultRecord.objects.create(customer=customer, note='因报名而更换课程顾问，原课程顾问为{},更换为{}'.format(customer.consultant, request.user), status=7, consultant=request.user)
+                    customer.consultant = request.user
+                    customer.save()
                 return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
         else:
             return render(request, 'crm/enrollment/enrollment_payment.html', locals())
@@ -1519,7 +1546,8 @@ def enrollment_payment(request, customer):
     form = forms.PaymentrecordForm()
     return render(request, 'crm/enrollment/enrollment_payment.html', locals())
 
-
+@login_required
+@check_permission
 def payment(request, payment_id):
     payment_id = payment_id
     paymentinformation = models.PaymentRecord.objects.filter(id=payment_id).first()

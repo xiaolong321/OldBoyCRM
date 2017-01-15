@@ -14,6 +14,7 @@ perm_dic_CRM = {
     'crm_view_classlist':['class_list','GET',[]],
     'crm_view_statistical':['statistical','GET',[]],
     'crm_view_classdetail':['class_detail','GET',[]],
+    'crm_edit_classdetail':['class_detail','POST',[]],
     'crm_view_consult_record':['consult_record','GET',[]],
     'crm_edit_consult_record':['consult_record','POST',[]],
     'crm_view_addcustomer':['addcustomer','GET',[]],
@@ -23,7 +24,6 @@ perm_dic_CRM = {
     'crm_edit_enrollment': ['enrollment', 'POST', []],
     'crm_view_payment': ['payment', 'GET', []],
     'crm_edit_payment': ['payment', 'POST', []],
-
 }
 
 

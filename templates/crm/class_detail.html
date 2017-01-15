@@ -206,28 +206,58 @@
 													</div>
 
 											</th>
+                                            <th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span ></span>
+													</div>
+													<div class="div2-ico-sort">
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+
+											</th>
+
 										</tr>
 									</thead>
 									<tbody>
 									{%for customer in customers%}
 									<tr>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
-											<td>{{customer.stu_id}}</td>
-											<td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
+                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
+                                        <td>{{customer.stu_id}}</td>
+                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
 
-											<td>{{customer.consultant.name}}</td>
-											<td>
-												{%if customer.status == 'signed' %}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-mint">{{customer.get_status_display}}</div></a>
-												{%elif customer.status == 'unregistered'%}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-danger">{{customer.get_status_display}}</div></a>
-												{%else%}
-												<a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-pink">{{customer.get_status_display}}</div></a>
-												{%endif%}
-											</td>
-											<td class=" btn-hover-info">
-												<a href="{%url 'enroll_done'  customer.qq %}">
-													<div>{{customer.paymentrecord_set.last.get_pay_type_display}}&emsp; <i class="fa fa-jpy" aria-hidden="true"></i>&ensp;{{customer.paymentrecord_set.last.paid_fee}}</div></a></td>
+                                        <td>{{customer.consultant.name}}</td>
+                                        <td>
+                                            {%if customer.status == 'signed' %}
+                                            <a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-mint">{{customer.get_status_display}}</div></a>
+                                            {%elif customer.status == 'unregistered'%}
+                                            <a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-danger">{{customer.get_status_display}}</div></a>
+                                            {%else%}
+                                            <a href="{%url 'enroll_done' customer.qq%}"><div class="label label-table label-pink">{{customer.get_status_display}}</div></a>
+                                            {%endif%}
+                                        </td>
+                                        <td class=" btn-hover-info">
+                                            <a href="{%url 'enroll_done'  customer.qq %}">
+                                                <div>{{customer.paymentrecord_set.last.get_pay_type_display}}&emsp; <i class="fa fa-jpy" aria-hidden="true"></i>&ensp;{{customer.paymentrecord_set.last.paid_fee}}
+                                                </div>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <button class="reset_student_password" student_qq="{{ customer.qq }}">重置该学员的用户密码</button>
+                                        </td>
+                                    </tr>
 
 
 									{%endfor%}
@@ -252,4 +282,25 @@
 				</div>
 
 {%endblock%}
+{%block dash-footer-js%}
+    <script>
+        $(function () {
+            $('button.reset_student_password').click(function () {
+                var student_qq = $(this).attr('student_qq')
+                $.ajax({
+                    url: location.href,
+                    type: 'POST',
+                    data: {student_qq: student_qq},
+                    success: function (data) {
+                        if(data == '重置密码成功'){
+                            alert(data)
+                        }else {
+                            alert('操作有误，请重新操作')
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock %}
 
