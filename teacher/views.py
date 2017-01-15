@@ -4,9 +4,47 @@ from teacher import models
 from teacher.permissions import check_permission
 from OldboyCRM.settings import HOMEWORK_DATA_DIR
 from teacher import forms
+from crm import forms as crm_forms
+from django.contrib.auth import login, logout, authenticate
 
 
 # Create your views here.
+
+
+def my_login(request):
+    curr_url = request.GET.get('next','/teacher')
+    error=''
+    if request.method =='POST':
+        result = {}
+        form = crm_forms.LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(
+                username = cd['username'],
+                password = cd['password'],
+            )
+            if user:
+                login(request,user)
+                human_username = models.UserProfile.objects.get(email=request.POST['username'])
+                request.session['username']=human_username.name
+                request.session['email']=request.POST['username']
+
+                response = HttpResponseRedirect(curr_url)
+                return response
+            else:
+                error = '用户名或密码错误'
+                form = crm_forms.LoginForm(request.POST)
+
+                return render(request, 'teacher/login.html', {'form': form,'error':error})
+        else:
+            error='请输入用户名/密码'
+    form = crm_forms.LoginForm()
+    return render(request,'teacher/login.html',{'form':form,'error':error})
+
+
+def my_logout(request):
+    request.session.clear()
+    return  HttpResponseRedirect(resolve_url('/teacher/login'))
 
 
 @login_required

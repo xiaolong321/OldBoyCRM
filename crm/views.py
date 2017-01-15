@@ -11,7 +11,7 @@ import json, os, random, zipfile, datetime
 from crm import survery_handle
 from crm import class_grade
 from crm import forms
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from OldboyCRM import settings
 from django.http import FileResponse
 from django.utils.encoding import smart_str
@@ -29,6 +29,7 @@ import os
 import shutil
 from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, consultant_list
 from django.utils.http import urlquote
+from teacher.views import my_login as teacher_my_login
 
 
 def hashstr(inputstr):
@@ -50,6 +51,7 @@ def index(request):
     return render(request, 'crm/index.html')
 
 
+@login_required
 def survery(request, survery_id):
     if request.method == "GET":
         try:
@@ -111,6 +113,7 @@ def view_class_grade(request,class_id):
                                                   })
 
 
+@login_required
 def grade_check(request):
 
     if request.method == 'GET':
@@ -158,11 +161,13 @@ def stu_lack_check_records(request):
     return HttpResponseRedirect("/crm/grade/%s" % class_id)
 
 
+@login_required
 def scholarship(request):
 
     return render(request,'crm/scholarship.html')
 
 
+@login_required
 def compliant(request):
 
     if request.method == "GET":
@@ -177,12 +182,13 @@ def compliant(request):
         return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
 
 
+@login_required
 def stu_faq(request):
 
     return render(request,"crm/stu_faq.html")
 
 
-# @login_required
+@login_required
 def get_grade_chart(request,stu_id):
     stu_obj = models.Customer.objects.get(id=stu_id)
 
@@ -372,13 +378,13 @@ def file_download(request):
         raise KeyError
 
 
-# @login_required
+@login_required
 def dashboard(request):
     try:
         email = request.session['email']
         dict_org={'consultant__email':email,'status':'unregistered'}
     except KeyError as e:
-        return HttpResponseRedirect(resolve_url('my_login'))
+        return HttpResponseRedirect(resolve_url('login_url'))
     cus=models.Customer.objects.filter(**dict_org)
     today= datetime.date.today()
     customers=[]
@@ -478,7 +484,7 @@ def sale_table(request):
 
 @login_required
 @check_permission
-def tracking(request,page,*args,**kwargs):
+def tracking(request, page, *args, **kwargs):
     ord = []
     username = request.session['username']
     user = request.session['email']
@@ -526,7 +532,7 @@ def tracking(request,page,*args,**kwargs):
     ayear = datetime.timedelta(days=365)
     ayearbef = (now - ayear).strftime('%Y-%m-%d')  # 一年前
 
-    direct_org = {'consultant__email': user,'status': 'unregistered'}
+    direct_org = { 'status': 'unregistered'}
 
     for item in kwargs.keys():
 
@@ -549,27 +555,38 @@ def tracking(request,page,*args,**kwargs):
             if kwargs[item] != 'all':
                 direct_org[item] = kwargs[item]
 
-
-
     if GET.get('qq'):
-        qq_num_err={}
+        qq_num_err = {}
         qq = GET['qq']
         try:
             qq = int(qq)
         except ValueError as e:
-            qq_num_err={'qq_num_error':'只能输入QQ号'}
+            qq_num_err={'qq_num_error': '只能输入QQ号'}
 
+        direct_org.update({'qq': qq})
+        print(direct_org)
 
-        direct_org.update({'qq':qq})
+        con = Q()
+        q1 = Q()
+        q1.connector = 'AND'
+        for key, value in direct_org.items():
+            q1.children.append((key, value))
+        q1.children.append(('consultant__email', user))
+        q2 = Q()
+        q2.connector = 'AND'
+        for key, value in direct_org.items():
+            q2.children.append((key, value))
+        q2.children.append(('consultrecord__consultant__email', user))
+        con.add(q1, 'OR')
+        con.add(q2, 'OR')
 
-        customers = models.Customer.objects.filter(**direct_org)
-        count = models.Customer.objects.filter(**direct_org).count()
-        fil = {'customers': customers, 'count': count,}
+        customers = models.Customer.objects.filter(con).distinct()
+        count = customers.count()
+        fil = {'customers': customers, 'count': count, }
         fil.update(qq_num_err)
         result.update(fil)
 
     else:
-
         try:
             page = int(page)
         except:
@@ -577,11 +594,9 @@ def tracking(request,page,*args,**kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
         else:
             ord = []
-
-
 
         for key in request.COOKIES.keys():
             if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
@@ -591,9 +606,24 @@ def tracking(request,page,*args,**kwargs):
                     elif request.COOKIES[key] == 'asc':
                         ord.append(key)
 
-        count = models.Customer.objects.filter(**direct_org).count()
+
+
+        con = Q()
+        q1 = Q()
+        q1.connector = 'AND'
+        for key, value in direct_org.items():
+            q1.children.append((key, value))
+        q1.children.append(('consultant__email', user))
+        q2 = Q()
+        q2.connector = 'AND'
+        for key, value in direct_org.items():
+            q2.children.append((key, value))
+        q2.children.append(('consultrecord__consultant__email', user))
+        con.add(q1, 'OR')
+        con.add(q2, 'OR')
+        count = models.Customer.objects.filter(con).distinct().count()
         pageObj = PageInfo(page, count, 50)
-        customers = models.Customer.objects.filter(**direct_org).select_related().order_by(*ord)[pageObj.start:pageObj.end]
+        customers = models.Customer.objects.filter(con).distinct().select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
         fil = {'customers': customers, 'count': count, 'fenye': fenye}
@@ -706,7 +736,7 @@ def signed(request,page,*args,**kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-id']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
         else:
             ord = []
 
@@ -735,8 +765,8 @@ def signed(request,page,*args,**kwargs):
     return render(request, 'crm/signed.html', result)
 
 
-#@login_required
-#@check_permission
+@login_required
+@check_permission
 def customers_library(request, page, *args, **kwargs):
 
     username = request.session['username']
@@ -870,8 +900,8 @@ def customers_library(request, page, *args, **kwargs):
     return render(request, 'crm/customers_library.html', result)
 
 
-# @login_required
-# @check_permission
+@login_required
+@check_permission
 def addcustomer(request, referralfromid=None):
     curr_user = request.user
     username = request.user.email
@@ -958,6 +988,7 @@ def addcustomer(request, referralfromid=None):
         return render(request, 'crm/addcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user})
 
 
+@login_required
 def searchcustomer(request):
     if request.method == 'POST':
         from_student_qq = request.POST.get('student_qq')
@@ -1191,6 +1222,15 @@ def consult_record(request, id):
     })
 
 
+def login_url(request):
+    next_url = request.GET.get('next')
+    print(next_url)
+    if next_url == '/crm/':
+        return my_login(request)
+    if next_url == '/teacher/':
+        return teacher_my_login(request)
+
+
 def my_login(request):
     curr_url = request.GET.get('next','/crm')
 
@@ -1279,6 +1319,30 @@ def class_list(request,*args,**kwargs):
 @login_required
 @check_permission
 def class_detail(request, *args, **kwargs):
+    if request.method == 'POST':
+        student_qq = request.POST.get('student_qq')
+        customer=models.Customer.objects.filter(qq=student_qq).first()
+        if not customer:
+            return HttpResponse('客户信息有误，请刷新后重试')
+        try:
+            student = StuAccount.objects.get(stu_name=customer)
+            stu_acc_pwd = makePassword()
+            stu_acc_pwd_has = hashstr(stu_acc_pwd)
+            student.stu_pwd = stu_acc_pwd_has
+            student.save()
+
+
+        except ObjectDoesNotExist as e:
+            stu_acc_pwd = makePassword()
+            stu_acc_pwd_has = hashstr(stu_acc_pwd)
+            stu_acc = StuAccount.objects.create(stu_name=customer, stu_pwd=stu_acc_pwd_has)
+        object = message(subject='reset_student_password', toaddrs=[customer.qq + '@qq.com'], )
+        object.getcontent(username=customer.name,
+                          account=customer.qq, password=stu_acc_pwd)
+        object.sendmessage()
+        return HttpResponse('重置密码成功')
+
+
     id = kwargs['id']
     ord=[]
     current_url = request.path
@@ -1340,7 +1404,19 @@ def Statistical(request):
 @check_permission
 def enrollment(request, customer_id):
     customer = models.Customer.objects.filter(id=customer_id).first()
+
+    trackers = models.UserProfile.objects.filter(consultrecord__customer__id=customer_id)
+    print(customer.consultant)
+    print(request.user)
+    for tracker in trackers:
+        print(tracker)
+    flag = False
     if customer.consultant == request.user:
+        flag = True
+    for tracker in trackers:
+        if tracker == request.user:
+            flag = True
+    if flag:
         enrollmentinformation = models.Enrollment.objects.filter(customer=customer).last()
         if enrollmentinformation:
             paymentinformation = models.PaymentRecord.objects.filter(customer=customer,
@@ -1459,6 +1535,10 @@ def enrollment_payment(request, customer):
                     object.getcontent(username=customer.name, classname=payment_obj.classlist,
                                       account=customer.qq, password=stu_acc_pwd)
                     object.sendmessage()
+                if not customer.consultant == request.user:
+                    models.ConsultRecord.objects.create(customer=customer, note='因报名而更换课程顾问，原课程顾问为{},更换为{}'.format(customer.consultant, request.user), status=7, consultant=request.user)
+                    customer.consultant = request.user
+                    customer.save()
                 return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
         else:
             return render(request, 'crm/enrollment/enrollment_payment.html', locals())
@@ -1466,7 +1546,8 @@ def enrollment_payment(request, customer):
     form = forms.PaymentrecordForm()
     return render(request, 'crm/enrollment/enrollment_payment.html', locals())
 
-
+@login_required
+@check_permission
 def payment(request, payment_id):
     payment_id = payment_id
     paymentinformation = models.PaymentRecord.objects.filter(id=payment_id).first()
