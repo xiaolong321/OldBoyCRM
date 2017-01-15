@@ -2,7 +2,8 @@
 
 from django.core.urlresolvers import resolve
 from django.shortcuts import render
-from OldboyCRM.settings import perm_dic_teacher as perm_dic
+from crm.permission_dict import perm_dic_teacher as perm_dic
+
 
 
 def perm_check(*args,**kwargs):

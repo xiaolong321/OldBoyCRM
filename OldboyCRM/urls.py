@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^crm/', include(crm_urls)),
     url(r'^teacher/', include(teacher_urls)),
     url(r'^$', crm_views.index ),
+    url(r'^login/$', crm_views.login_url, name='login_url'),
 ]

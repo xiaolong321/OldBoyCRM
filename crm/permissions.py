@@ -2,7 +2,7 @@
 
 from django.core.urlresolvers import resolve
 from django.shortcuts import render,redirect,HttpResponse
-from crm.permission_dict import perm_dic
+from crm.permission_dict import perm_dic_CRM as perm_dic
 
 
 

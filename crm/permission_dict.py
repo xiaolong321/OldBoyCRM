@@ -1,7 +1,7 @@
 # coding:utf-8
 
 # 权限样式 app_权限名字
-perm_dic={
+perm_dic_CRM = {
     'crm_views_customer_detail':['customer_detail','GET',[]],
     'crm_edit_own_customer_info':['customer_detail','POST',[]],
     'crm_view_customer_enro':['cus_enroll','GET',[]],
@@ -27,7 +27,12 @@ perm_dic={
 }
 
 
-
-
-
-
+perm_dic_teacher = {
+    'teacher_view_teacher_dashboard': ['teacher_dashboard', 'GET', []],
+    'teacher_view_classlist': ['classlist', 'GET', []],
+    'teacher_view_courselist': ['courselist', 'GET', []],
+    'teacher_view_courserecord': ['courserecord', 'GET', []],
+    'teacher_edit_courserecord': ['courserecord', 'POST', []],
+    'teacher_view_createcourse': ['createcourse', 'GET', []],
+    'teacher_edit_createcourse': ['createcourse', 'POST', []],
+}

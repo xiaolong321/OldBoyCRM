@@ -29,6 +29,7 @@ import os
 import shutil
 from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, consultant_list
 from django.utils.http import urlquote
+from teacher.views import my_login as teacher_my_login
 
 
 def hashstr(inputstr):
@@ -372,13 +373,13 @@ def file_download(request):
         raise KeyError
 
 
-# @login_required
+@login_required
 def dashboard(request):
     try:
         email = request.session['email']
         dict_org={'consultant__email':email,'status':'unregistered'}
     except KeyError as e:
-        return HttpResponseRedirect(resolve_url('my_login'))
+        return HttpResponseRedirect(resolve_url('login_url'))
     cus=models.Customer.objects.filter(**dict_org)
     today= datetime.date.today()
     customers=[]
@@ -1213,6 +1214,19 @@ def consult_record(request, id):
         'form': form,
         'username': username
     })
+
+
+def login_url(request):
+    print(1)
+    next_url = request.GET.get('next')
+    print(next_url)
+    print(2)
+    if next_url == '/crm/':
+        print(3)
+        return my_login(request)
+    if next_url == '/teacher/':
+        print(4)
+        return teacher_my_login(request)
 
 
 def my_login(request):
