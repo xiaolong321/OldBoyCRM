@@ -17,8 +17,8 @@
                     <tbody>
                         {% for class in classlists %}
                             <tr>
-                                <td>
-                                    <a href="{% url 'courselist' class.id %}">
+                                <td >
+                                    <a class="btn-link" href="{% url 'courselist' class.id %}">
                                         {{ class}}
                                     </a>
                                 </td>

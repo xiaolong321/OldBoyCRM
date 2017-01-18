@@ -17,9 +17,7 @@ urlpatterns = [
     url(r'^stu_faq/', views.stu_faq, name="stu_faq"),
     url(r'^stu_lack_check_records/', views.stu_lack_check_records, name="stu_lack_check_records"),
     url(r'^grade_chart/(\d+)/', views.get_grade_chart, name="get_grade_chart"),
-    url(r'^enrollment_student/', views.stu_enrollment, name="stu_enrollment"),
     url(r'^training_contract/', views.training_contract, name="training_contract"),
-    url(r'^file_download/', views.file_download, name="file_download"),
     url(r'^tracking-(?P<source>\S+)-(?P<course>\S+)-(?P<class_type>\S+)-(?P<status>\S+)-(?P<filter_date>\S+)-(?P<consultant__email>\S+).html/(?P<page>\d*)',
         views.tracking, name='tracking'),  # 跟踪用户
     url(

@@ -33,7 +33,7 @@
                                 {% autoescape off %}
                                     {{ study_record.colored_score }}</td>
                                 {% endautoescape %}
-                            <td><a href=# class="to_homework_page" has_homework="{{ study_record.course_record.has_homework }}" url="{% url 'homework' study_record.course_record.course.id study_record.course_record.day_num %}">作业管理</a></td>
+                            <td><a href=# class="to_homework_page" has_homework="{{ study_record.course_record.has_homework }}" url="{% url 'homework' study_record.course_record.course.id study_record.course_record.day_num %}"><button class="btn, btn-info">作业管理</button></a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

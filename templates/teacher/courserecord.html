@@ -1,13 +1,31 @@
 {% extends 'teacher/dashboard.html'%}
+{% load homework_tag %}
     {%block dash-filter%}
+
+        <div class="modal-dialog" id="homework_modal" style=" position: fixed;right: 0;left: 0;z-index: 1040;display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">准备下载中</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <img src="/static/img/wait.gif">
+                        <span style="margin-left: 30px; font-size: 20px">系统正在为您准备下载内容，请稍候</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ request.user }}老师您好，这是{{ studyrecords.first.course_record }}详细情况</h3>
+                <h3 class="panel-title">{{ request.user }}老师您好，这是{{ courserecord }}详细情况</h3>
             </div>
             <div class="panel-body">
                 <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
                     <div style="float: left">
-                        <select class="set_all">
+                        <select class="form-control set_all">
                             <option>设置所有已选择学生的签到状态</option>
                             <option value ="checked">全部设置为正常签到</option>
                             <option value ="noshow">全部设置为缺勤</option>
@@ -16,20 +34,45 @@
                         </select>
                     </div>
                     <div style="float: right">
-                        <a href="/crm/file_download/?file_path={{ homework_path }}/{{ studyrecords.first.course_record.course.id }}/{{ studyrecords.first.course_record.day_num }}"><button>下载本节课全部学生作业</button></a>
+                        {% homework_download_button  homework_path studyrecords.first.course_record.course.id studyrecords.first.course_record.day_num %}
                     </div>
                     <thead>
                         <tr>
                             <th>
-                                <button class="select_all">全选</button>
-                                <button class="select_reserve">反选</button>
+                                <button class="btn btn-success select_all">全选</button>
+                                <button class="btn btn-danger select_reserve">反选</button>
+                                共计{{ studyrecords.count }}人
                             </th>
                             <th>学号</th>
                             <th>姓名</th>
-                            <th>签到情况</th>
-                            <th>成绩</th>
+                            <th>
+                                <select class="form-control sieve record_sieve">
+                                    <option value="all">按签到情况查看</option>
+                                    <option value ="checked">只查看正常签到</option>
+                                    <option value ="late">只查看迟到</option>
+                                    <option value ="noshow">只查看缺勤</option>
+                                    <option value ="leave_early">只查看早退</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select class="form-control sieve score_sieve">
+                                    <option value="all">按成绩查看</option>
+                                    <option value ="100">只查看成绩A+</option>
+                                    <option value ="90">只查看成绩A</option>
+                                    <option value ="85">只查看成绩B+</option>
+                                    <option value ="80">只查看成绩B</option>
+                                    <option value ="70">只查看成绩B-</option>
+                                    <option value ="60">只查看成绩C+</option>
+                                    <option value ="50">只查看成绩C</option>
+                                    <option value ="40">只查看成绩C-</option>
+                                    <option value ="0">只查看成绩D</option>
+                                    <option value ="-1">只查看成绩N/A</option>
+                                    <option value ="-100">只查看成绩COPY</option>
+                                    <option value ="-1000">只查看成绩FAIL</option>
+                                </select>
+                            </th>
                             <th>备注</th>
-                            <th>下载作业</th>
+                            <th><div><h6>下载作业</h6></div></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,8 +84,7 @@
                                 <td>{{ studyrecord.student_id }}</td>
                                 <td>{{ studyrecord.student.name }}</td>
                                 <td>
-                                    <select class="record">
-                                        <option></option>
+                                    <select class="form-control record">
                                         <option value ="checked">正常签到</option>
                                         <option value ="late">迟到</option>
                                         <option value ="noshow">缺勤</option>
@@ -50,11 +92,10 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="score">
-                                        <option></option>
+                                    <select class="form-control score">
                                         <option value ="100">A+</option>
                                         <option value ="90">A</option>
-                                        <option value ="85">B+<option>
+                                        <option value ="85">B+</option>
                                         <option value ="80">B</option>
                                         <option value ="70">B-</option>
                                         <option value ="60">C+</option>
@@ -70,7 +111,8 @@
                                     <textarea type="text" class="note" placeholder="{{ studyrecord.note }}"></textarea>
                                 </td>
                                 <td>
-                                    <a href="/crm/file_download/?file_path={{ homework_path }}/{{ studyrecord.course_record.course.id }}/{{ studyrecord.course_record.day_num }}/{{ studyrecord.student.id }}"><button>下载作业</button></a>
+                                    {% homework_download_button  homework_path studyrecord.course_record.course.id studyrecord.course_record.day_num studyrecord.student.id %}
+{#                                    <button class="homework_download" homework_path={{ homework_path }}/{{ studyrecord.course_record.course.id }}/{{ studyrecord.course_record.day_num }}/{{ studyrecord.student.id }}>下载作业</button>#}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -84,29 +126,34 @@
     {%block dash-footer-js%}
         <script>
             $(function () {
+                $('.record_sieve').children("[value='{{ record_sieve }}']").attr('selected', 'selected');
+                $('.score_sieve').children("[value='{{ score_sieve }}']").attr('selected', 'selected');
+
                 {% for studyrecord in studyrecords %}
                     $("tr[student_id='{{ studyrecord.student_id }}'][course_id='{{ studyrecord.course_record_id }}").children("td").children(".record").children("[value='{{ studyrecord.record }}']").attr('selected', 'selected');
                     $("tr[student_id='{{ studyrecord.student_id }}'][course_id='{{ studyrecord.course_record_id }}").children("td").children(".score").children("[value='{{ studyrecord.score }}']").attr('selected', 'selected');
                 {% endfor %}
 
+
                 $('select.set_all').change(function () {
                     var all_information = $(this).val();
-                    $("input[type='checkbox']:checked").parent().parent().find('select.record').val(all_information).trigger('change')
+                    $("input[type='checkbox']:checked").parent().parent().find('select.record').val(all_information).trigger('change');
                 });
 
-                    $('button.select_all').click(function () {
-                        $("input[type='checkbox']").prop('checked',true)
-                    });
+                $('button.select_all').click(function () {
+                    $("input[type='checkbox']").prop('checked',true);
+                });
 
-                    $('button.select_reserve').click(function () {
-                        $("input[type='checkbox']").each(function(){
-                            if($(this).prop('checked')){
-                                $(this).prop('checked',false);
-                            }else{
-                                $(this).prop('checked',true);
-                            }
-                        })
-                    });
+                $('button.select_reserve').click(function () {
+                    $("input[type='checkbox']").each(function(){
+                        if($(this).prop('checked')){
+                            $(this).prop('checked',false);
+                        }else{
+                            $(this).prop('checked',true);
+                        }
+                    })
+                });
+
                 $('select.record,select.score,textarea.note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
                     var course_id = $(this).parent().parent().attr('course_id');
@@ -122,6 +169,31 @@
                             information:information
                         }
                     })
+                })
+
+                $('button.homework_download').click(function () {
+                    var status = 'homework_download';
+                    var homework_path = $(this).attr('homework_path');
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            file_path: homework_path
+                        },
+                        beforesend: $('#homework_modal').css('display','block'),
+                        success:function (data) {
+                            $('#homework_modal').css('display','none');
+                            window.location.href='/file_download/?file_path=' + homework_path;
+                        }
+                    })
+                })
+
+                $('select.sieve').change(function () {
+                    var status = 'sieve';
+                    var record_sieve = $('.record_sieve').val();
+                    var score_sieve = $('.score_sieve').val();
+                    window.location.href = '/teacher/courserecord/'+ {{ class_id }} + '?status=' + status +'&record_sieve=' + record_sieve + '&score_sieve=' + score_sieve;
                 })
             })
 
