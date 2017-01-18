@@ -334,7 +334,6 @@ def training_contract(request):
 
 @login_required
 def file_download(request):
-
     customer_file_path = request.GET.get('file_path')
     if customer_file_path:
         if customer_file_path.startswith(HOMEWORK_DATA_DIR):
@@ -345,6 +344,13 @@ def file_download(request):
                         response = FileResponse(open('{}/{}'.format(customer_file_path, filename), 'rb'))
             elif len(customer_file_path.split(HOMEWORK_DATA_DIR)[-1].split('/')) == 3:
                 filename = '%s.zip' % customer_file_path.split('/')[-1]
+                # zipfile_path = "%s/%s" % (settings.HOMEWORK_DATA_DIR, customer_file_path.split('/')[-2])
+                # zipfile_obj = zipfile.ZipFile("%s/%s" % (zipfile_path, filename), 'w', zipfile.ZIP_DEFLATED)
+                # for dirpath, dirnames, filenames in os.walk(os.path.join(customer_file_path, 'all')):
+                #     print(dirpath, dirnames, filenames)
+                #     for file in filenames:
+                #         zipfile_obj.write(os.path.join(dirpath,file),os.path.join(dirpath.split(os.path.join(customer_file_path,'all'))[-1],file))
+                # zipfile_obj.close()
                 response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
 
         else:
@@ -358,9 +364,10 @@ def file_download(request):
                 zipfile_obj = zipfile.ZipFile("%s/%s/%s" % (CONSULT_DATA_DIR, customer.consultant.id, filename), 'w',
                                               zipfile.ZIP_DEFLATED)
             for f_name in file_list:
-                zipfile_obj.write("%s/%s" % (customer_file_path, f_name))
+                zipfile_obj.write("%s/%s" % (customer_file_path, f_name), f_name)
             zipfile_obj.close()
             response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
+
 
         # response = FileResponse(open('%s.zip' % customer_file_path, 'rb'))
         # response = HttpResponse(content_type='application/force-download')

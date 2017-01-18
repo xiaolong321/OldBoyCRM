@@ -6,7 +6,7 @@
                     {{ request.user }} 老师您好，这是 {{ courselist.first.course }} 的详细信息
                     <div style="float: right">
                         <a href="{% url 'createcourse' class_id %}">
-                            创建一节新的课程
+                            <button class="btn btn-info">创建一节新的课程</button>
                         </a>
                     </div>
                 </h3>
@@ -19,19 +19,33 @@
                             <th>讲师</th>
                             <th>上课时间</th>
                             <th>是否有作业</th>
+                            <th>出席人数</th>
+                            <th>缺勤人数</th>
+                            <th>迟到人数</th>
+                            <th>早退人数</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for course in courselist %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'courserecord' course.id %}">
+                                    <a class="btn-link" href="{% url 'courserecord' course.id %}">
                                         {{ course.course }}第{{ course.day_num}}天
                                     </a>
                                 </td>
                                 <td>{{ course.teacher }}</td>
                                 <td>{{ course.date }}</td>
-                                <td>{{ course.has_homework }}</td>
+                                <td>
+                                    {% if course.has_homework %}
+                                        是
+                                    {% else %}
+                                        否
+                                    {% endif %}
+                                </td>
+                                <td>{{ course.get_total_show_num }}</td>
+                                <td>{{ course.get_total_noshow_num }}</td>
+                                <td>{{ course.get_total_late_num }}</td>
+                                <td>{{ course.get_total_leave_early_num }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

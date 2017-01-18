@@ -1,4 +1,4 @@
-#_*_coding:utf8_*_
+# _*_coding:utf8_*_
 
 from django.db import models
 from django.utils.html import format_html
@@ -241,20 +241,36 @@ class CourseRecord(models.Model):
 
     def get_total_show_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="checked").count()
+        return total_shows
+
+    def get_total_show_num_url(self):
+        total_shows = self.studyrecord_set.select_related().filter(record="checked").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=checked' >%s</a>" \
                % (self.id, total_shows)
 
     def get_total_late_num(self):
+        total_shows = self.studyrecord_set.select_related().filter(record="late").count()
+        return total_shows
+
+    def get_total_late_num_url(self):
         total_shows = self.studyrecord_set.select_related().filter(record="late").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=late' >%s</a>" \
                % (self.id,total_shows)
 
     def get_total_noshow_num(self):
         total_shows = self.studyrecord_set.select_related().filter(record="noshow").count()
+        return total_shows
+
+    def get_total_noshow_num_url(self):
+        total_shows = self.studyrecord_set.select_related().filter(record="noshow").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=noshow' >%s</a>" \
                % (self.id,total_shows)
 
     def get_total_leave_early_num(self):
+        total_shows = self.studyrecord_set.select_related().filter(record="leave_early").count()
+        return total_shows
+
+    def get_total_leave_early_num_url(self):
         total_shows = self.studyrecord_set.select_related().filter(record="leave_early").count()
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=leave_early' >%s" \
                "</a>" % (self.id,total_shows)

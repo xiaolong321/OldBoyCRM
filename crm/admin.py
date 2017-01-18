@@ -84,10 +84,10 @@ class ClassListAdmin(admin.ModelAdmin):
 
 class CourseRecordAdmin(admin.ModelAdmin):
     list_display = ('course','day_num','date','teacher',
-                    "get_total_show_num",
-                    "get_total_noshow_num",
-                    "get_total_late_num",
-                    "get_total_leave_early_num",
+                    "get_total_show_num_url",
+                    "get_total_noshow_num_url",
+                    "get_total_late_num_url",
+                    "get_total_leave_early_num_url",
                     'has_homework',
                     'course_module'
                     )

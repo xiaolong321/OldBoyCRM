@@ -6,6 +6,10 @@ from OldboyCRM.settings import HOMEWORK_DATA_DIR
 from teacher import forms
 from crm import forms as crm_forms
 from django.contrib.auth import login, logout, authenticate
+import os
+from crm import views as crm_views
+import zipfile
+from OldboyCRM import settings
 
 
 # Create your views here.
@@ -71,29 +75,60 @@ def courselist(request,class_id):
 @login_required
 @check_permission
 def courserecord(request, course_id):
+    class_id = course_id
+    courserecord = models.CourseRecord.objects.filter(id=class_id).first()
+    homework_path = HOMEWORK_DATA_DIR
     if request.method == 'GET':
-        class_id = course_id
-        studyrecords = models.StudyRecord.objects.filter(course_record_id=course_id, course_record__course__teachers=request.user)
-        homework_path = HOMEWORK_DATA_DIR
-        return render(request, 'teacher/courserecord.html', locals())
+        status = request.GET.get('status')
+        filter_dic = {}
+        filter_dic['course_record_id'] = class_id
+        filter_dic['course_record__course__teachers'] = request.user
+        if status == 'sieve':
+            record_sieve = request.GET.get('record_sieve')
+            score_sieve = request.GET.get('score_sieve')
+            if not record_sieve == 'all':
+                filter_dic['record'] = record_sieve
+            if not score_sieve == 'all':
+                filter_dic['score'] = score_sieve
+            print(filter_dic)
+            studyrecords = models.StudyRecord.objects.filter(**filter_dic)
+            return render(request, 'teacher/courserecord.html', locals())
+        else:
+            record_sieve = 'all'
+            score_sieve = 'all'
+            studyrecords = models.StudyRecord.objects.filter(**filter_dic)
+            return render(request, 'teacher/courserecord.html', locals())
 
     if request.method == 'POST':
-        student_id = request.POST.get('student_id',)
-        course_id = request.POST.get('course_id', )
         status = request.POST.get('status')
-        information = request.POST.get('information')
-        obj = models.StudyRecord.objects.filter(course_record_id=course_id, student_id=student_id,)
-        if obj:
-            up_dict = {status:information}
-            obj.update(**up_dict)
+        if status == 'homework_download':
+            customer_file_path = request.POST.get('file_path')
+            filename = '%s.zip' % customer_file_path.split('/')[-1]
+            zipfile_path = "%s/%s" % (settings.HOMEWORK_DATA_DIR, customer_file_path.split('/')[-2])
+            zipfile_obj = zipfile.ZipFile("%s/%s" % (zipfile_path, filename), 'w', zipfile.ZIP_DEFLATED)
+            for dirpath, dirnames, filenames in os.walk(os.path.join(customer_file_path, 'all')):
+                print(dirpath, dirnames, filenames)
+                for file in filenames:
+                    zipfile_obj.write(os.path.join(dirpath, file),
+                                      os.path.join(dirpath.split(os.path.join(customer_file_path, 'all'))[-1], file))
+            zipfile_obj.close()
+            return HttpResponse('下载文件准备就绪')
         else:
-            create_dict ={
-                'course_record_id':course_id,
-                'student_id':student_id,
-                status:information,
-            }
-            models.StudyRecord.objects.create(**create_dict)
-        return HttpResponse('OK')
+            student_id = request.POST.get('student_id',)
+            course_id = request.POST.get('course_id', )
+            information = request.POST.get('information')
+            obj = models.StudyRecord.objects.filter(course_record_id=course_id, student_id=student_id,)
+            if obj:
+                up_dict = {status:information}
+                obj.update(**up_dict)
+            else:
+                create_dict ={
+                    'course_record_id':course_id,
+                    'student_id':student_id,
+                    status:information,
+                }
+                models.StudyRecord.objects.create(**create_dict)
+            return HttpResponse('OK')
 
 
 @login_required

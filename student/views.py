@@ -15,6 +15,7 @@ from crm import models as crmmodels
 from django.utils.encoding import smart_str
 import time
 from student.tasks import uploadhomework
+import shutil
 
 
 #装饰器 验证用户登录
@@ -199,7 +200,17 @@ def homework(request, class_id, day_num):
                     with open(abs_filepath, 'wb') as f:
                         for chunk in request.FILES['file'].chunks():
                             f.write(chunk)
-                    uploadhomework.delay(class_id, day_num, upload_path)
+                    customer_file_path = "%s/%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id, day_num,)
+                    if os.path.exists(os.path.join(customer_file_path, 'all',student.name)):
+                        shutil.rmtree(os.path.join(customer_file_path, 'all',student.name))
+                    for dirpath, dirnames, filenames in os.walk(upload_path):
+                        print(dirpath, dirnames, filenames)
+                        for file in filenames:
+                            f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
+                            for file_obj in f.namelist():
+                                unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
+                                                                             file.split('.zip')[0]))
+                    # uploadhomework.delay(class_id, day_num, upload_path)
                 else:
                     return HttpResponseForbidden('只允许上传一个文件')
             else:
