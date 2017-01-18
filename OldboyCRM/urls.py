@@ -31,5 +31,5 @@ urlpatterns = [
     url(r'^login/$', crm_views.login_url, name='login_url'),
     url(r'^enrollment_student/', crm_views.stu_enrollment, name="stu_enrollment"),
     url(r'^file_download/', crm_views.file_download, name="file_download"),
-
+    url(r'^survery/(\d+)/', crm_views.survery, name="survery"),
 ]
