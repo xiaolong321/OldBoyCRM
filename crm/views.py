@@ -51,7 +51,6 @@ def index(request):
     return render(request, 'crm/index.html')
 
 
-@login_required
 def survery(request, survery_id):
     if request.method == "GET":
         try:
@@ -1232,9 +1231,9 @@ def consult_record(request, id):
 def login_url(request):
     next_url = request.GET.get('next')
     print(next_url)
-    if next_url == '/crm/':
+    if next_url.startswith('/crm/'):
         return my_login(request)
-    if next_url == '/teacher/':
+    if next_url.startswith('/teacher/'):
         return teacher_my_login(request)
 
 
