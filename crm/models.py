@@ -275,14 +275,14 @@ class CourseRecord(models.Model):
         return "<a href='../studyrecord/?course_record__id__exact=%s&record__exact=leave_early' >%s" \
                "</a>" % (self.id,total_shows)
 
-    get_total_leave_early_num.allow_tags = True
-    get_total_noshow_num.allow_tags = True
-    get_total_late_num.allow_tags = True
-    get_total_show_num.allow_tags = True
-    get_total_show_num.short_description = u"出勤人数"
-    get_total_noshow_num.short_description = u"缺勤人数"
-    get_total_late_num.short_description = u"迟到人数"
-    get_total_leave_early_num.short_description = u"早退人数"
+    get_total_leave_early_num_url.allow_tags = True
+    get_total_noshow_num_url.allow_tags = True
+    get_total_late_num_url.allow_tags = True
+    get_total_show_num_url.allow_tags = True
+    get_total_show_num_url.short_description = u"出勤人数"
+    get_total_noshow_num_url.short_description = u"缺勤人数"
+    get_total_late_num_url.short_description = u"迟到人数"
+    get_total_leave_early_num_url.short_description = u"早退人数"
 
 
 class CourseModule(models.Model):
