@@ -284,7 +284,7 @@
                         'csrfmiddlewaretoken'  :   csrftoken
                     }
 
-                    $.post("/crm/survery/{{ survery_obj.id }}/", data ,function(callback){
+                    $.post(window.location.href, data ,function(callback){
 
                         console.log("callback;");
                         console.log(callback);
