@@ -32,4 +32,10 @@ urlpatterns = [
     url(r'^enrollment_student/', crm_views.stu_enrollment, name="stu_enrollment"),
     url(r'^file_download/', crm_views.file_download, name="file_download"),
     url(r'^survery/(\d+)/', crm_views.survery, name="survery"),
+    url(r'^grade/single/', crm_views.grade_check, name="single_stu_grade_check"),
+    url(r'^scholarship/', crm_views.scholarship, name="scholarship"),
+    url(r'^training_contract/', crm_views.training_contract, name="training_contract"),
+    url(r'^compliant/', crm_views.compliant, name="compliant"),
+    url(r'^stu_faq/', crm_views.stu_faq, name="stu_faq"),
+
 ]
