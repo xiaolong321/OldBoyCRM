@@ -142,26 +142,23 @@ def createcourse(request, class_id):
         day_num = 1
     if request.method == 'GET':
         form = forms.CourserecordForm()
-        print(form)
-        for field in form:
-            print(field.name)
         return render(request, 'teacher/createcourse.html', locals())
     if request.method == 'POST':
         form = forms.CourserecordForm(data=request.POST)
         if form.is_valid():
             if not request.POST.get('course_title'):
-                form.add_error('course_title','请输入课程标题')
+                form.add_error('course_title', '请输入课程标题')
                 return render(request, 'teacher/createcourse.html', locals())
             if request.POST.get('has_homework'):
                 if not request.POST.get('homework_title'):
                     form.add_error('homework_title', '请输入作业标题')
                     return render(request, 'teacher/createcourse.html', locals())
-                else:
-                    form.save()
-                    return HttpResponseRedirect(resolve_url('courselist', class_id))
-            else:
-                form.save()
-                return HttpResponseRedirect(resolve_url('courselist',class_id))
+            form.save()
+            courserecord = models.CourseRecord.objects.filter(course_id=class_id, day_num=request.POST.get('day_num')).first()
+            student_list = courserecord.course.customer_set.select_related()
+            for student in student_list:
+                models.StudyRecord.objects.get_or_create(course_record=courserecord, student=student,)
+            return HttpResponseRedirect(resolve_url('courselist', class_id))
         else:
             print(form.errors)
             return render(request, 'teacher/createcourse.html', locals())
