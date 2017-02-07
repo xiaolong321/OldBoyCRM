@@ -33,8 +33,11 @@
                             <option value ="leave_early">全部设置为早退</option>
                         </select>
                     </div>
-                    <div style="float: right">
-                        {% homework_download_button  homework_path studyrecords.first.course_record.course.id studyrecords.first.course_record.day_num %}
+
+                    <div style="float: right;margin-right: 20px">
+                        <button class="btn btn-purple saveall">
+                            保存全部修改
+                        </button>
                     </div>
                     <thead>
                         <tr>
@@ -72,7 +75,9 @@
                                 </select>
                             </th>
                             <th>备注</th>
-                            <th><div><h6>下载作业</h6></div></th>
+                            <th><div><h6>
+                                {% homework_download_button  homework_path studyrecords.first.course_record.course.id studyrecords.first.course_record.day_num %}
+                            </h6></div></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,7 +89,7 @@
                                 <td>{{ studyrecord.student_id }}</td>
                                 <td>{{ studyrecord.student.name }}</td>
                                 <td>
-                                    <select class="form-control record">
+                                    <select class="form-control record" status="record">
                                         <option value ="checked">正常签到</option>
                                         <option value ="late">迟到</option>
                                         <option value ="noshow">缺勤</option>
@@ -92,7 +97,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-control score">
+                                    <select class="form-control score" status="score">
                                         <option value ="100">A+</option>
                                         <option value ="90">A</option>
                                         <option value ="85">B+</option>
@@ -108,7 +113,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <textarea type="text" class="note" placeholder="{{ studyrecord.note }}"></textarea>
+                                    <textarea type="text" class="note" status="note">{{ studyrecord.note }}</textarea>
                                 </td>
                                 <td>
                                     {% homework_download_button  homework_path studyrecord.course_record.course.id studyrecord.course_record.day_num studyrecord.student.id %}
@@ -118,6 +123,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                                <div style="float: right;margin-right: 20px">
+                        <button class="btn btn-purple saveall">
+                            保存全部修改
+                        </button>
+                    </div>
             </div>
         </div>
     {% endblock %}
@@ -157,7 +167,7 @@
                 $('select.record,select.score,textarea.note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
                     var course_id = $(this).parent().parent().attr('course_id');
-                    var status = $(this).attr('class');
+                    var status = $(this).attr('status');
                     var information = $(this).val();
                     $.ajax({
                         url: window.location.href,
@@ -169,6 +179,12 @@
                             information:information
                         }
                     })
+                })
+
+                $('.saveall').click(function () {
+                    $('select.record,select.score,textarea.note').trigger('change')
+                    alert('修改内容保存成功')
+                    window.location.reload()
                 })
 
                 $('button.homework_download').click(function () {
