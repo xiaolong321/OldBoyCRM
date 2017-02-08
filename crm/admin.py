@@ -190,8 +190,11 @@ class CompliantAdmin(admin.ModelAdmin):
 class StudentFAQAdmin(admin.ModelAdmin):
     list_display = ('title','author','date')
 
+
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('customer','course_grade','contract_agreed','contract_approved','enrolled_date','enrollment_link','customer_info_download')
+    search_fields = ('customer__qq',)
+    list_display = ('customer', 'course_grade', 'contract_agreed', 'contract_approved', 'enrolled_date',
+                    'enrollment_link', 'customer_info_download')
     raw_id_fields = ('customer',)
 
     def get_actions(self, request):
@@ -229,6 +232,11 @@ class OnlineStuRecordsAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
+
+class OnlineStuAssignmentAdmin(admin.ModelAdmin):
+    raw_id_fields = ('enrollment',)
+    search_fields = ('enrollment__customer__qq',)
+
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)
 admin.site.register(models.Enrollment,EnrollmentAdmin)
@@ -247,3 +255,4 @@ admin.site.register(models.Assistant,AssistantAdmin)
 admin.site.register(models.OnlineStuRecords,OnlineStuRecordsAdmin)
 admin.site.register(models.CourseModule)
 admin.site.register(models.MessageTemplate)
+admin.site.register(models.OnlineStuAssignment,OnlineStuAssignmentAdmin)

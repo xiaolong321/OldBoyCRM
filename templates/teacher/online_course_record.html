@@ -1,0 +1,142 @@
+{% extends 'teacher/dashboard.html'%}
+{% load homework_tag %}
+    {%block dash-filter%}
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">.
+
+                    {{ request.user }} 老师您好，这是 {{ studyrecords.first.student.name }} 的详细学习情况
+                    <div style="float: right">
+                        <button class="test_pass btn btn-info" >学员当前模块已通过考核</button>
+                    </div>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <table id="demo-dt-basic" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>节次</th>
+                            <th>所属模块</th>
+                            <th>成绩</th>
+                            <th>备注</th>
+                            <th>进度情况</th>
+                            <th><div><h6>下载作业</h6></div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for studyrecord in studyrecords %}
+                            <tr student_id = '{{ studyrecord.student_id }}', course_id = '{{ studyrecord.course_record_id }}'>
+                                <td>{{ studyrecord.course_record.day_num }}</td>
+                                <td>{{ studyrecord.course_record.course_module.name }}</td>
+                                <td>
+                                    <select class="form-control score" status="score">
+                                        <option value ="100">A+</option>
+                                        <option value ="90">A</option>
+                                        <option value ="85">B+</option>
+                                        <option value ="80">B</option>
+                                        <option value ="70">B-</option>
+                                        <option value ="60">C+</option>
+                                        <option value ="50">C</option>
+                                        <option value ="40">C-</option>
+                                        <option value ="0">D</option>
+                                        <option value ="-1">N/A</option>
+                                        <option value ="-100">COPY</option>
+                                        <option value ="-1000">FAIL</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <textarea type="text" class="note" status="note" placeholder="{{ studyrecord.note }}"></textarea>
+                                </td>
+                                <td>
+                                    {% if OnlineStuAssignment.status == 'graduate' %}
+                                        <div style="color: greenyellow">已经学习完毕</div>
+                                    {% else %}
+                                        {% if studyrecord.course_record.day_num < day_num %}
+                                            <div style="color: greenyellow">已经学习完毕</div>
+                                        {% elif studyrecord.course_record.day_num == day_num %}
+                                            <div style="color: cornflowerblue">正在学习</div>
+                                        {% elif studyrecord.course_record.day_num > day_num %}
+                                            <div style="color: orangered">未学习</div>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% homework_download_button  homework_path studyrecord.course_record.course.id studyrecord.course_record.day_num studyrecord.student.id %}
+{#                                    <button class="homework_download" homework_path={{ homework_path }}/{{ studyrecord.course_record.course.id }}/{{ studyrecord.course_record.day_num }}/{{ studyrecord.student.id }}>下载作业</button>#}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endblock %}
+
+
+    {%block dash-footer-js%}
+        <script>
+            $(function () {
+                {% for studyrecord in studyrecords %}
+                    $("tr[student_id='{{ studyrecord.student_id }}'][course_id='{{ studyrecord.course_record_id }}").children("td").children(".score").children("[value='{{ studyrecord.score }}']").attr('selected', 'selected');
+                {% endfor %}
+
+                $('.test_pass').click(function () {
+                    var status = 'test_pass'
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            status:status,
+                        },
+                        success:function (data) {
+                            alert(data)
+                            window.location.reload()
+                        }
+                    })
+                })
+
+                $('select.score,textarea.note').change(function () {
+                    var student_id = $(this).parent().parent().attr('student_id');
+                    var course_id = $(this).parent().parent().attr('course_id');
+                    var status = $(this).attr('status');
+                    var information = $(this).val();
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            student_id:student_id,
+                            course_id:course_id,
+                            status:status,
+                            information:information
+                        }
+                    })
+                })
+
+                $('button.homework_download').click(function () {
+                    var status = 'homework_download';
+                    var homework_path = $(this).attr('homework_path');
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            status: status,
+                            file_path: homework_path
+                        },
+                        beforesend: $('#homework_modal').css('display','block'),
+                        success:function (data) {
+                            $('#homework_modal').css('display','none');
+                            window.location.href='/file_download/?file_path=' + homework_path;
+                        }
+                    })
+                })
+
+                $('select.sieve').change(function () {
+                    var status = 'sieve';
+                    var record_sieve = $('.record_sieve').val();
+                    var score_sieve = $('.score_sieve').val();
+                    window.location.href = '/teacher/courserecord/'+ {{ class_id }} + '?status=' + status +'&record_sieve=' + record_sieve + '&score_sieve=' + score_sieve;
+                })
+            })
+
+        </script>
+	{%endblock%}
