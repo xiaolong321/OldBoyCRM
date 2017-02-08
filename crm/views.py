@@ -1524,7 +1524,7 @@ def enrollment_payment(request, customer):
                 customer.class_list.add(enrollmentinformation.course_grade)
                 customer.status = 'signed'
                 customer.save()
-                payment_obj = models.PaymentRecord.objects.create(customer=customer, consultant=customer.consultant,
+                payment_obj = models.PaymentRecord.objects.create(customer=customer, consultant=request.user,
                                                                   classlist_id=request.POST.get('classlist'),
                                                                   pay_type=request.POST.get('pay_type'),
                                                                   paid_fee=request.POST.get('paid_fee'),
@@ -1532,7 +1532,6 @@ def enrollment_payment(request, customer):
                 print(payment_obj)
                 try:
                     StuAccount.objects.get(stu_name=customer)
-                    pass
                 except ObjectDoesNotExist as e:
                     stu_acc_pwd = makePassword()
                     stu_acc_pwd_has = hashstr(stu_acc_pwd)
@@ -1545,6 +1544,9 @@ def enrollment_payment(request, customer):
                     models.ConsultRecord.objects.create(customer=customer, note='因报名而更换课程顾问，原课程顾问为{},更换为{}'.format(customer.consultant, request.user), status=7, consultant=request.user)
                     customer.consultant = request.user
                     customer.save()
+                if enrollmentinformation.course_grade.class_type == 'pick_up_study':
+                    courserecord = models.CourseRecord.objects.filter(course=enrollmentinformation.course_grade, day_num=1).first()
+                    models.OnlineStuAssignment.objects.get_or_create(enrollment=enrollmentinformation, schedule=courserecord)
                 return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
         else:
             return render(request, 'crm/enrollment/enrollment_payment.html', locals())
