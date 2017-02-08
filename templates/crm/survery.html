@@ -87,9 +87,11 @@
 												<div class="pad-all">
                                                     {% if question.anwser_type == 'score' %}
 					                                    {% load_score_list %}
-
+                                                        <textarea placeholder="评分原因..." rows="3" class="form-control"></textarea>
+                                                    {% elif question.anwser_type == 'suggestion' %}
+                                                        <textarea placeholder="必填，不少于15字" rows="3" class="form-control"></textarea>
                                                     {% endif %}
-                                                    <textarea placeholder="评分原因..." rows="3" class="form-control"></textarea>
+
 
                                                 </div>
 											</div>
