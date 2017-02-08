@@ -6,8 +6,10 @@
                 <h3 class="panel-title">.
 
                     {{ request.user }} 老师您好，这是 {{ studyrecords.first.student.name }} 的详细学习情况
-                    <div style="float: right">
-                        <button class="test_pass btn btn-info" >学员当前模块已通过考核</button>
+                <div style="float: right;margin-right: 20px">
+                        <button class="btn btn-purple saveall">
+                            保存全部修改
+                        </button>
                     </div>
                 </h3>
             </div>
@@ -20,7 +22,7 @@
                             <th>成绩</th>
                             <th>备注</th>
                             <th>进度情况</th>
-                            <th><div><h6>下载作业</h6></div></th>
+                            <th><div><h6><button class="test_pass btn btn-info" >学员当前模块已通过考核</button></h6></div></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,6 +70,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div style="float: right;margin-right: 20px">
+                    <button class="btn btn-purple saveall">
+                        保存全部修改
+                    </button>
+                </div>
             </div>
         </div>
     {% endblock %}
@@ -110,6 +117,11 @@
                             information:information
                         }
                     })
+                })
+                $('.saveall').click(function () {
+                    $('select.score,textarea.note').trigger('change')
+                    alert('修改内容保存成功')
+                    window.location.reload()
                 })
 
                 $('button.homework_download').click(function () {
