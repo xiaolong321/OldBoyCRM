@@ -112,7 +112,6 @@ def view_class_grade(request,class_id):
                                                   })
 
 
-@login_required
 def grade_check(request):
 
     if request.method == 'GET':
@@ -160,13 +159,11 @@ def stu_lack_check_records(request):
     return HttpResponseRedirect("/crm/grade/%s" % class_id)
 
 
-@login_required
 def scholarship(request):
 
     return render(request,'crm/scholarship.html')
 
 
-@login_required
 def compliant(request):
 
     if request.method == "GET":
@@ -181,7 +178,6 @@ def compliant(request):
         return render(request,"crm/compliant.html",{"compliant_form":compliant_form})
 
 
-@login_required
 def stu_faq(request):
 
     return render(request,"crm/stu_faq.html")
