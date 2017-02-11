@@ -18,7 +18,10 @@ def homework_download_button(homework_path, course_id, day_num, student_id=None)
         file_path = homework_path + '/' + course_id + '/' + day_num + '/' + student_id
         buttoncontent = '作业下载'
         if os.path.exists(file_path):
-            result = "<a href=/file_download/?file_path={}><button class='btn btn-info'>{}</button></a>".format(file_path,buttoncontent)
+            if not os.listdir(file_path):
+                result = "<button class='btn'>未交作业</button>"
+            else:
+                result = "<a href=/file_download/?file_path={}><button class='btn btn-info'>{}</button></a>".format(file_path,buttoncontent)
         else:
             result = "<button class='btn'>未交作业</button>"
     else:

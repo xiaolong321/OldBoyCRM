@@ -25,6 +25,7 @@ course_choices = (
 class_type_choices= (('online', u'网络班'),
                      ('offline_weekend', u'面授班(周末)',),
                      ('offline_fulltime', u'面授班(脱产)',),
+                     ('pick_up_study', u'随到随学')
                      )
 
 
@@ -50,6 +51,9 @@ class Customer(models.Model):
                    ('tencent_messaging', u"广点通"),
                    ('school_propaganda', u"高校宣讲"),
                    ('51cto', u"51cto"),
+                   ('newellpush', u"智汇推"),
+                   ('wangmeng', u"网盟"),
+                   ('DSP', u"DSP"),
                    ('others', u"其它"),
                    )
     source = models.CharField(u'客户来源', max_length=64, choices=source_type, default='qq')
@@ -195,14 +199,15 @@ class PaymentRecord(models.Model):
 
 
 class ClassList(models.Model):
-    course = models.CharField(u"课程名称",max_length=64,choices=course_choices)
+    course = models.CharField(u"课程名称", max_length=64, choices=course_choices)
     semester = models.IntegerField(u"学期")
-    price = models.IntegerField(u"学费",default=10000)
-    memo = models.CharField('说明',blank=True, null=True, max_length=100)
+    price = models.IntegerField(u"学费", default=10000)
+    memo = models.CharField('说明', blank=True, null=True, max_length=100)
     start_date = models.DateField(u"开班日期")
-    graduate_date = models.DateField(u"结业日期",blank=True,null=True)
-    contract = models.ForeignKey('ContractTemplate',verbose_name=u"选择合同模版",blank=True,null=True)
-    teachers = models.ManyToManyField(UserProfile,verbose_name=u"讲师")
+    graduate_date = models.DateField(u"结业日期", blank=True, null=True)
+    contract = models.ForeignKey('ContractTemplate', verbose_name=u"选择合同模版", blank=True, null=True)
+    teachers = models.ManyToManyField(UserProfile, verbose_name=u"讲师")
+    class_type = models.CharField(choices=class_type_choices, max_length=64, verbose_name=u'课程类型', blank=True, null=True)
 
 
     def __str__(self):
@@ -543,12 +548,35 @@ class OnlineStuRecords(models.Model):
         verbose_name_plural = u"随到随学学员助教分配记录"
 
 
+class OnlineStuAssignment(models.Model):
+    enrollment = models.OneToOneField(Enrollment, verbose_name=u'随到随学报名情况')
+    assistant = models.ForeignKey(Assistant, verbose_name=u"助教", blank=True, null=True)
+    status_choices = (
+        ('studying', '正在学习'),
+        ('suspend', '休学中'),
+        ('graduate', '已经毕业')
+    )
+    status = models.CharField(u"已毕业", choices=status_choices, max_length=64, default='studying')
+    note = models.TextField(u"备注", blank=True, null=True)
+    date = models.DateTimeField(u'开始学习时间', auto_now_add=True)
+    schedule = models.ForeignKey(CourseRecord, verbose_name=u'学习进度', blank=True, null=True)
+
+    def __str__(self):
+        return '%s' % self.enrollment
+
+    class Meta:
+        verbose_name = u'随到随学'
+        verbose_name_plural = u'随到随学'
+
+
 class MessageTemplate(models.Model):
-    subject = models.CharField(u"邮件主题",max_length=128,unique=True)
+    subject = models.CharField(u"邮件主题", max_length=128, unique=True)
     content = models.TextField(u"邮件内容")
     date = models.DateField(auto_now_add=True)
+
     def __str__(self):
         return self.subject
+
     class Meta:
         verbose_name = u"邮件模版"
         verbose_name_plural = u"邮件模版"

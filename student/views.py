@@ -168,7 +168,7 @@ def delete_file(request, class_id, day_num):
         filename = request.POST.get('filename')
         file_abs = "%s/%s" %(upload_path, filename.strip())
         if os.path.isfile(file_abs):
-            os.remove(file_abs)
+            shutil.rmtree(os.path.dirname(file_abs))
             response['msg'] = "file '%s' got deleted " % filename
         else:
             response["error"] = "file '%s' does not exist on server"% filename
@@ -201,15 +201,16 @@ def homework(request, class_id, day_num):
                         for chunk in request.FILES['file'].chunks():
                             f.write(chunk)
                     customer_file_path = "%s/%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id, day_num,)
-                    if os.path.exists(os.path.join(customer_file_path, 'all',student.name)):
-                        shutil.rmtree(os.path.join(customer_file_path, 'all',student.name))
-                    for dirpath, dirnames, filenames in os.walk(upload_path):
-                        print(dirpath, dirnames, filenames)
-                        for file in filenames:
-                            f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
-                            for file_obj in f.namelist():
-                                unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
-                                                                             file.split('.zip')[0]))
+                    if not course_record.course.class_type == 'pick_up_study':
+                        if os.path.exists(os.path.join(customer_file_path, 'all', student.name)):
+                            shutil.rmtree(os.path.join(customer_file_path, 'all', student.name))
+                        for dirpath, dirnames, filenames in os.walk(upload_path):
+                            print(dirpath, dirnames, filenames)
+                            for file in filenames:
+                                f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
+                                for file_obj in f.namelist():
+                                    unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
+                                                                                 file.split('.zip')[0]))
                     # uploadhomework.delay(class_id, day_num, upload_path)
                 else:
                     return HttpResponseForbidden('只允许上传一个文件')
