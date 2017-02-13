@@ -28,6 +28,9 @@
     <link href="/static/plugins/pace/pace.min.css" rel="stylesheet">
     <script src="/static/plugins/pace/pace.min.js"></script>
 
+    <!--Bootstrap Datepicker [ OPTIONAL ]-->
+    <link href="/static/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
+
 
 	<!--dashboard子模版继承填充头部样式-->
 	{%block dash-header%}
@@ -717,6 +720,10 @@
 	<script src="/static/js/dash_customer.js"></script>
 
 	<script src="/static/plugins/echart/echarts.common.min.js"></script>
+
+    <!--Bootstrap Datepicker [ OPTIONAL ]-->
+    <script src="/static/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
 	<!--dashboard子模版继承填充尾部js样式-->
 	{%block dash-footer-js%}
 
@@ -794,6 +801,22 @@
 	});
 		});
 
+
+        $('#time_range').click(function () {
+            var start_time = $("#time_range_start").val()
+            var end_time = $("#time_range_end").val()
+            if(start_time == ''){
+                alert('请选择一个开始时间')
+            }else if(end_time == ''){
+                alert('请选择一个结束时间')
+            }else {
+                var current_url = window.location.href.split('?')[0].split('-')
+                current_url[5] = ('range')
+                var to_url = current_url.join('-')
+                console.log(to_url)
+                window.location.href = to_url + '?start_time=' + start_time + '&end_time=' + end_time
+            }
+        })
 
 
 

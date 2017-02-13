@@ -549,9 +549,14 @@ def tracking(request, page, *args, **kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
+                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -707,9 +712,14 @@ def signed(request,page,*args,**kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
+                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -796,7 +806,7 @@ def customers_library(request, page, *args, **kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'},]
 
     result = {
         'cus_sources': cus_sources,
@@ -831,9 +841,15 @@ def customers_library(request, page, *args, **kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年','-').replace('月','-').replace('日','')
+                end_time = GET.get('end_time').replace('年','-').replace('月','-').replace('日','')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
+
 
         else:
             if kwargs[item] != 'all':

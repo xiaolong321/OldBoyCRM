@@ -68,6 +68,14 @@
 			{% for item in filter_date %}
              {% action current_url item 5%}
         	{% endfor %}
+            <div id="demo-dp-range" style="width: 40%;float: left;margin-left: 5px">
+                <li style="float: left;margin: 5px 10px;"><a href="#" id="time_range">自定义</a></li>
+                <div class="input-daterange input-group" id="datepicker">
+                    <input type="text" class="form-control" input="start" id="time_range_start"/>
+                    <span class="input-group-addon">to</span>
+                    <input type="text" class="form-control" name="end" id="time_range_end"/>
+                </div>
+            </div>
 		</ul>
 	</div>
 	<div style="clear: both"></div>
