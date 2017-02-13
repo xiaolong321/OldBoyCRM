@@ -3,90 +3,89 @@
 {% load custom_tag %}
 
 {%block dash-header%}
-<!--Open Sans Font [ OPTIONAL ] -->
-     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">
+    <!--Open Sans Font [ OPTIONAL ] -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;subset=latin" rel="stylesheet">
 
 
 {%endblock%}
 
 {% block dash-filter%}
-<div style="height: 50px;width: auto;border: 1px solid lightgray">
-	<div  style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
-		{% action_all  current_url  1 '以客户来源'%}
-	</div>
-	<div >
-		<ul style="list-style-type: none;">
-
-			{% for item in cus_sources %}
-             {% action current_url item 1%}
-
-        	{% endfor %}
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-<div style="height: auto;width: auto;border: 1px solid lightgray">
-	<div style="float: left;line-height:60px;margin:0px 10px 0px  20px" >{% action_all  current_url  2 '以咨询课程'%}</div>
-	<div >
-		<ul style="list-style-type: none;">
-			{% for item in course %}
-             {% action current_url item 2 %}
-
-        	{% endfor %}
-
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-<div style="height: 50px;width: auto;border: 1px solid lightgray">
-	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  3 '以班级类型'%}</div>
-	<div >
-		<ul style="list-style-type: none;">
-			{% for item in classes %}
-             {% action current_url item 3 %}
-
-        	{% endfor %}
-
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-<div style="height: 50px;width: auto;border: 1px solid lightgray">
-	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  4 '以客户状态'%}</div>
-	<div >
-		<ul style="list-style-type: none;">
-			{% for item in cus_status %}
-             {% action current_url item 4%}
-
-        	{% endfor %}
-
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-<div style="height: 50px;width: auto;border: 1px solid lightgray">
-	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  5 '以咨询日期'%}</div>
-	<div >
-		<ul style="list-style-type: none;">
-			{% for item in filter_date %}
-             {% action current_url item 5%}
-        	{% endfor %}
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-<div style="height: auto;width: auto;border: 1px solid lightgray">
-	<div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  6  '以课程顾问'%}</div>
-	<div >
-		<ul style="list-style-type: none;">
-			{% for item in staffs %}
-             {% action current_url item 6%}
-        	{% endfor %}
-		</ul>
-	</div>
-	<div style="clear: both"></div>
-</div>
-
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div  style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
+            {% action_all  current_url  1 '以客户来源'%}
+        </div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in cus_sources %}
+                    {% action current_url item 1%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div style="height: auto;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height:60px;margin:0px 10px 0px  20px" >{% action_all  current_url  2 '以咨询课程'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in course %}
+                    {% action current_url item 2 %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  3 '以班级类型'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in classes %}
+                    {% action current_url item 3 %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  4 '以客户状态'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in cus_status %}
+                    {% action current_url item 4%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  5 '以咨询日期'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in filter_date %}
+                    {% action current_url item 5%}
+                {% endfor %}
+                <div id="demo-dp-range" style="width: 40%;float: left;margin-left: 5px">
+                    <li style="float: left;margin: 5px 10px;"><a href="#" id="time_range">自定义</a></li>
+                    <div class="input-daterange input-group" id="datepicker">
+                        <input type="text" class="form-control" input="start" id="time_range_start"/>
+                        <span class="input-group-addon">to</span>
+                        <input type="text" class="form-control" name="end" id="time_range_end"/>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <div style="height: auto;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  6  '以课程顾问'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in staffs %}
+                    {% action current_url item 6%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 {% endblock %}
 
 
@@ -417,6 +416,7 @@
 
 
 {%block dash-footer-js%}
+
 
 {%endblock%}
 
