@@ -27,7 +27,7 @@ import string
 import random
 import os
 import shutil
-from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, consultant_list
+from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR, consultant_list
 from django.utils.http import urlquote
 from teacher.views import my_login as teacher_my_login
 
@@ -358,6 +358,9 @@ def file_download(request):
             elif customer_file_path.startswith(CONSULT_DATA_DIR):
                 zipfile_obj = zipfile.ZipFile("%s/%s/%s" % (CONSULT_DATA_DIR, customer.consultant.id, filename), 'w',
                                               zipfile.ZIP_DEFLATED)
+            elif customer_file_path.startswith(ATTENDANCE_DATA_DIR):
+                zipfile_obj = zipfile.ZipFile("%s/%s" % (ATTENDANCE_DATA_DIR, filename), 'w', zipfile.ZIP_DEFLATED)
+
             for f_name in file_list:
                 zipfile_obj.write("%s/%s" % (customer_file_path, f_name), f_name)
             zipfile_obj.close()

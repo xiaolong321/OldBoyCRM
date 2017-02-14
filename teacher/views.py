@@ -1,8 +1,9 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, resolve_url
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 from teacher import models
 from teacher.permissions import check_permission
-from OldboyCRM.settings import HOMEWORK_DATA_DIR
+from OldboyCRM.settings import HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR
 from teacher import forms
 from crm import forms as crm_forms
 from django.contrib.auth import login, logout, authenticate
@@ -10,9 +11,22 @@ import os
 from crm import views as crm_views
 import zipfile
 from OldboyCRM import settings
+import pymysql
+import xlwt
 
 
 # Create your views here.
+
+def changenumtochar(num):           # 将数字转换为已A-Z表示的26进制的字母表现形式，以供写Excel的公式时的定位使用
+    quotient, remainder = divmod(num-1, 26)
+    if quotient > 26:
+        a = changenumtochar(quotient)
+    elif quotient == 0:
+        a = ''
+    else:
+        a = chr(quotient + ord('A')-1)
+    b = chr(remainder + ord('A'))
+    return (a+b)
 
 
 def my_login(request):
@@ -66,16 +80,104 @@ def classlist(request):
 
 
 @login_required
-@check_permission
+# @check_permission
 def courselist(request, class_id):
     class_obj = models.ClassList.objects.filter(id=class_id).first()
-    if class_obj.class_type == 'pick_up_study':
-        student_list = models.OnlineStuAssignment.objects.filter(enrollment__course_grade=class_obj,
-                                                        assistant__name__email=request.user.email)
-        return render(request, 'teacher/online_student_list.html', locals())
+    if request.method == 'POST':
+        # 设置文件导出位置及文件名
+        # savefile = ('D:\linux_s31_kaoqin.xls')
+        savefile = ('{}/{}/{}{}.xls'.format(ATTENDANCE_DATA_DIR, class_id, class_obj.course, class_obj.semester))
+        # if os.path.exists(savefile):
+        #     os.remove(savefile)
+        if not os.path.exists(os.path.dirname(savefile)):
+            os.makedirs(os.path.dirname(savefile))
+
+        # 设置要查询的表，其中要显示的列请勿动。
+        # 得到数据样式   （签到情况，学员姓名，第几天课程）
+        data = models.StudyRecord.objects.filter(course_record__course_id=class_id).values('course_record__date',
+                                                                                           'course_record__day_num',
+                                                                                           'student__name',
+                                                                                           'record',
+                                                                                           'score')
+
+        xls = xlwt.Workbook(encoding="utf-8")  # 创建一个xls对象
+        sheet1 = xls.add_sheet('考勤表', cell_overwrite_ok=True)  # 给 xls 添加一张‘考勤表’的表格
+        sheet2 = xls.add_sheet('成绩表', cell_overwrite_ok=True)  # 给 xls 添加一张‘成绩表’的表格
+        # sheet.write(行，列，'内容') !!!行、列均是从 0 0 开始计数
+        x = 0  # 初始化表格的行
+        y = 0  # 初始化表格的列
+        students = {}  # 内含所有学员名 {姓名：第几天,}     {'李四': 3, }
+        courseday = []  # 内含所有课程天数
+        status1 = {'checked': '已签到', 'late': '迟到', 'noshow': '缺勤', 'leave_early': '早退'}
+        status2 = {100: 'A+', 90: 'A', 85: 'B+', 80: 'B', 70: 'B-', 60: 'C+', 50: 'C', 40: 'C-', 0: 'D', -1: 'N/A', -100: 'COPY', -1000: 'FAIL'}
+        print(data)
+        for one in data:
+            print(one)
+            if one['course_record__day_num'] not in courseday:
+                y = one['course_record__day_num']
+                courseday.append(y)
+                sheet1.write(0, y, '{}第{}天'.format(one['course_record__date'], y))
+                sheet2.write(0, y, '{}第{}天'.format(one['course_record__date'], y))
+
+            if one['student__name'] not in students:
+                # 学员不在students列表内\
+                x += 1
+                students.setdefault(one['student__name'], x)
+                sheet1.write(x, 0, one['student__name'])
+                sheet2.write(x, 0, one['student__name'])
+        for one in data:
+            if not one['student__name'] not in students:
+                for i in courseday:
+                    if i == one['course_record__day_num']:
+                        for sta1 in status1:  # 改英文为中文，显示学员签到情况
+                            if sta1 == one['record']:
+                                sheet1.write((students[one['student__name']]), (i), status1[sta1])
+                        for sta2 in status2:
+                            if sta2 == one['score']:
+                                sheet2.write((students[one['student__name']]), (i), status2[sta2])
+        sheet1.write(0, y+1, '迟到次数')
+        sheet1.write(0, y+2, '早退次数')
+        sheet1.write(0, y+3, '缺勤次数')
+        sheet1.write(0, y+4, '正常签到次数')
+        sheet2.write(0, y+1, '获得A+次数')
+        sheet2.write(0, y+2, '获得A次数')
+        sheet2.write(0, y+3, '获得B+次数')
+        sheet2.write(0, y+4, '获得B次数')
+        sheet2.write(0, y+5, '获得B-次数')
+        sheet2.write(0, y+6, '获得C+次数')
+        sheet2.write(0, y+7, '获得C次数')
+        sheet2.write(0, y+8, '获得C-次数')
+        sheet2.write(0, y+9, '获得D次数')
+        sheet2.write(0, y+10, '获得COPY次数')
+        sheet2.write(0, y+11, '获得FAIL次数')
+        for i in range(0,x):
+            sheet1.write(i+1, y+1, xlwt.Formula('COUNTIF({}{}:{}{},"迟到")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet1.write(i+1, y+2, xlwt.Formula('COUNTIF({}{}:{}{},"早退")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet1.write(i+1, y+3, xlwt.Formula('COUNTIF({}{}:{}{},"缺勤")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet1.write(i+1, y+4, xlwt.Formula('COUNTIF({}{}:{}{},"已签到")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+1, xlwt.Formula('COUNTIF({}{}:{}{},"A+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+2, xlwt.Formula('COUNTIF({}{}:{}{},"A")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+3, xlwt.Formula('COUNTIF({}{}:{}{},"B+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+4, xlwt.Formula('COUNTIF({}{}:{}{},"B")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+5, xlwt.Formula('COUNTIF({}{}:{}{},"B-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+6, xlwt.Formula('COUNTIF({}{}:{}{},"C+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+7, xlwt.Formula('COUNTIF({}{}:{}{},"C")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+8, xlwt.Formula('COUNTIF({}{}:{}{},"C-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+9, xlwt.Formula('COUNTIF({}{}:{}{},"D")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+10, xlwt.Formula('COUNTIF({}{}:{}{},"COPY")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, y+11, xlwt.Formula('COUNTIF({}{}:{}{},"FAIL")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+        xls.save(savefile)
+        return HttpResponse('下载文件准备就绪')
+
     else:
-        courselist = models.CourseRecord.objects.filter(course_id=class_id, course__teachers=request.user)
-        return render(request, 'teacher/courselist.html', locals())
+        if class_obj.class_type == 'pick_up_study':
+            student_list = models.OnlineStuAssignment.objects.filter(enrollment__course_grade=class_obj,
+                                                            assistant__name__email=request.user.email)
+            return render(request, 'teacher/online_student_list.html', locals())
+        else:
+            attendance_path = ATTENDANCE_DATA_DIR
+            courselist = models.CourseRecord.objects.filter(course_id=class_id, course__teachers=request.user)
+            return render(request, 'teacher/courselist.html', locals())
 
 
 @login_required
@@ -191,3 +293,5 @@ def createcourse(request, class_id):
             return HttpResponseRedirect(resolve_url('courselist', class_id))
         else:
             return render(request, 'teacher/createcourse.html', locals())
+
+
