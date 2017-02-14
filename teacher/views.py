@@ -1,6 +1,5 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, resolve_url
 from django.contrib.auth.decorators import login_required
-from django.db import connection
 from teacher import models
 from teacher.permissions import check_permission
 from OldboyCRM.settings import HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR
@@ -11,8 +10,6 @@ import os
 from crm import views as crm_views
 import zipfile
 from OldboyCRM import settings
-import pymysql
-import xlwt
 
 
 # Create your views here.
@@ -80,7 +77,7 @@ def classlist(request):
 
 
 @login_required
-# @check_permission
+@check_permission
 def courselist(request, class_id):
     class_obj = models.ClassList.objects.filter(id=class_id).first()
     if request.method == 'POST':
