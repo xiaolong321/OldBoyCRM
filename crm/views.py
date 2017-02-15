@@ -27,7 +27,7 @@ import string
 import random
 import os
 import shutil
-from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, consultant_list
+from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR, consultant_list
 from django.utils.http import urlquote
 from teacher.views import my_login as teacher_my_login
 
@@ -358,6 +358,9 @@ def file_download(request):
             elif customer_file_path.startswith(CONSULT_DATA_DIR):
                 zipfile_obj = zipfile.ZipFile("%s/%s/%s" % (CONSULT_DATA_DIR, customer.consultant.id, filename), 'w',
                                               zipfile.ZIP_DEFLATED)
+            elif customer_file_path.startswith(ATTENDANCE_DATA_DIR):
+                zipfile_obj = zipfile.ZipFile("%s/%s" % (ATTENDANCE_DATA_DIR, filename), 'w', zipfile.ZIP_DEFLATED)
+
             for f_name in file_list:
                 zipfile_obj.write("%s/%s" % (customer_file_path, f_name), f_name)
             zipfile_obj.close()
@@ -549,9 +552,14 @@ def tracking(request, page, *args, **kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
+                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -707,9 +715,14 @@ def signed(request,page,*args,**kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
+                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -796,7 +809,7 @@ def customers_library(request, page, *args, **kwargs):
     staffs = list(staffs)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
-                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
+                   {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'},]
 
     result = {
         'cus_sources': cus_sources,
@@ -831,9 +844,15 @@ def customers_library(request, page, *args, **kwargs):
             elif kwargs[item] == 'month':
                 direct_org['date__gte'] = amouthbef
                 direct_org['date__lt'] = today
-            else:
+            elif kwargs[item] == 'year':
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
+            elif kwargs[item] == 'range':
+                start_time = GET.get('start_time').replace('年','-').replace('月','-').replace('日','')
+                end_time = GET.get('end_time').replace('年','-').replace('月','-').replace('日','')
+                direct_org['date__gte'] = start_time
+                direct_org['date__lt'] = end_time
+
 
         else:
             if kwargs[item] != 'all':

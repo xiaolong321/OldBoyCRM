@@ -20,6 +20,7 @@ class teacher(models.Model):
             ('teacher_view_teacher_dashboard', '访问 老师 主页'),
             ('teacher_view_classlist', '访问 教授课程 页面'),
             ('teacher_view_courselist', '访问 课程节次 页面'),
+            ('teacher_edit_courselist', '下载出勤记录 页面'),
             ('teacher_view_courserecord', '访问 课程节次详细 页面'),
             ('teacher_edit_courserecord', '编辑 课程节次详细 页面'),
             ('teacher_view_createcourse', '访问 创建课程节次 页面'),

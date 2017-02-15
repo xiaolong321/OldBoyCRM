@@ -9,6 +9,9 @@
                             <button class="btn btn-info">创建一节新的课程</button>
                         </a>
                     </div>
+                    <div style="float: right;margin-right: 20px">
+                        <button class="btn btn-info" id="attendance" attendance_path={{ attendance_path }}/{{ class_id }}>下载详细的考勤记录表</button>
+                    </div>
                 </h3>
             </div>
             <div class="panel-body">
@@ -53,3 +56,25 @@
             </div>
         </div>
     {% endblock %}
+	{%block dash-footer-js%}
+        <script>
+        $(function () {
+            $('#attendance').click(function () {
+                var class_id = {{ class_id }}
+                var attendance_path = $(this).attr('attendance_path')
+                $.ajax({
+                    url: window.location.href,
+                    type: 'POST',
+                    data: {
+                        class_id: class_id,
+                    },
+                    success:function (data) {
+                        if(data == '下载文件准备就绪'){
+                            window.location.href = '/file_download/?file_path=' + attendance_path
+                        }
+                    }
+                })
+            })
+        })
+        </script>
+	{%endblock%}

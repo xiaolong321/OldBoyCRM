@@ -31,6 +31,7 @@ perm_dic_teacher = {
     'teacher_view_teacher_dashboard': ['teacher_dashboard', 'GET', []],
     'teacher_view_classlist': ['classlist', 'GET', []],
     'teacher_view_courselist': ['courselist', 'GET', []],
+    'teacher_edit_courselist': ['courselist', 'POST', []],
     'teacher_view_courserecord': ['courserecord', 'GET', []],
     'teacher_edit_courserecord': ['courserecord', 'POST', []],
     'teacher_view_createcourse': ['createcourse', 'GET', []],

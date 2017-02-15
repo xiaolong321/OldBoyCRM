@@ -18,14 +18,15 @@ class crm_tests(TestCase):
         self.assertGreaterEqual(lenth, 5)
 
     def test_addcustomer(self):
-        # ret = self.client.login(username='qjl@qq.com', password='qjl171012')
-        ret = self.client.post('/crm/login/', {'username': 'qjl@qq.com', 'password': 'qjl171012', 'next': '/crm/'})
+        ret = self.client.login(username='qjl@qq.com', password='qjl171012')
+        self.client.session
+        # ret = self.client.post('/crm/login/', {'username': 'qjl@qq.com', 'password': 'qjl171012', 'next': '/crm/'})
         response = self.client.get('/crm/addcustomer/')
-        print('7777777777', response)
+        #print('7777777777', response, '888888888', ret)
         self.assertEqual(response.status_code, 200)
 
 
     def test_searchcustomer(self):
         ret = self.client.post('/crm/login/', {'username': 'qjl@qq.com', 'password': 'qjl171012', 'next': '/crm/'})
         response = self.client.post('/crm/searchcustomer')
-        print('+++++++', response)
+        #print('+++++++', response)

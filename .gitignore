@@ -10,4 +10,6 @@ enrolled_data/!.gitkeep
 enrolled_data/*
 homework_data/!.gitkeep
 homework_data/*
+attendance_data/!.gitkeep
+attendance_data/*
 __pycache__/
