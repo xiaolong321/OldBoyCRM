@@ -209,7 +209,7 @@
                     var status = 'sieve';
                     var record_sieve = $('.record_sieve').val();
                     var score_sieve = $('.score_sieve').val();
-                    window.location.href = '/teacher/courserecord/'+ {{ class_id }} + '?status=' + status +'&record_sieve=' + record_sieve + '&score_sieve=' + score_sieve;
+                    window.location.href = '/teacher/courserecord/'+ {{ class_id }} + '/' + {{ student_id }} + '?status=' + status +'&record_sieve=' + record_sieve + '&score_sieve=' + score_sieve;
                 })
             })
 
