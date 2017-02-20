@@ -80,16 +80,16 @@ def action(current_url,item,number):
     length = len(url_part_list)-1
     if number == length:
         if url_part_list[length] == item['type'] + '.html/1':
-            temp = "<li style='background:#363c40;padding:3px 10px;float: left;margin: 5px 10px;'><a href='%s'style='color:white'>%s</a></li>"
+            temp = "<li style='background:#363c40;padding:3px 10px;float: left;margin: 5px 10px;'><a class='action_url' href='#' href_url='%s'style='color:white'>%s</a></li>"
         else:
-            temp = "<li style='float: left;margin: 5px 10px;'><a href='%s'>%s</a></li>"
+            temp = "<li style='float: left;margin: 5px 10px;'><a class='action_url' href='#' href_url='%s'>%s</a></li>"
 
         url_part_list[length] = str(item['type']) + '.html/1'
     else:
         if url_part_list[number] == item['type']:
-            temp = "<li style='background:#363c40;padding:0px 5px;float: left;margin: 5px 10px;'><a href='%s'style='color:white'>%s</a></li>"
+            temp = "<li style='background:#363c40;padding:0px 5px;float: left;margin: 5px 10px;'><a class='action_url' href='#' href_url='%s'style='color:white'>%s</a></li>"
         else:
-            temp = "<li style='float: left;margin: 5px 10px;'><a href='%s'>%s</a></li>"
+            temp = "<li style='float: left;margin: 5px 10px;'><a class='action_url' href='#' href_url='%s'>%s</a></li>"
 
         url_part_list[number] = str(item['type'])
 
@@ -111,7 +111,7 @@ def action_all(current_url,index,type_name):
         url_part_list[index] = 'all.html/1'
     else:
         url_part_list[index] = 'all'
-    temp = '''<a href="%s"title='取消筛选'><b>%s:</b></a>'''
+    temp = '''<a class="action_url" href='#' href_url="%s"title='取消筛选'><b>%s:</b></a>'''
     url_path = '-'.join(url_part_list)
     temp = temp %(url_path,type_name)
     return mark_safe(temp)

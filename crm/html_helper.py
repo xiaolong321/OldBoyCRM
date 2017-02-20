@@ -33,20 +33,20 @@ def Page(page, all_page_count,url_path):
 
     # first_html = "<a href='/crm/customers_library/%d'>首页</a>" % (1,)
     first_html = '''<li class="footable-page-arrow">
-									<a data-page="first" href="%s/%d">«</a>
+									<a class="action_url" data-page="first" href='#' href_url="%s/%d">«</a>
 								</li>'''% (url_path,1)
     page_html.append(first_html)
 
     if page <= 1:
         # pre_html = "<a href=''>前一页</a>"
         pre_html = '''<li class="footable-page-arrow">
-									<a data-page="prev" href="#">‹</a>
+									<a class="action_url" data-page="prev" href="#">‹</a>
 								</li>'''
 
     else:
         # pre_html = "<a href='/crm/customers_library/%d'>前一页</a>" % (page - 1,)
         pre_html = '''<li class="footable-page-arrow">
-									<a data-page="prev" href="%s/%d">‹</a>
+									<a class="action_url" data-page="prev" href='#' href_url="%s/%d">‹</a>
 								</li>''' % (url_path,page - 1)
     page_html.append(pre_html)
 
@@ -69,32 +69,32 @@ def Page(page, all_page_count,url_path):
         if page == i + 1:
             # a_html = "<a style='color:red' href='/crm/customers_library/%d' > %d </a>" % (i + 1, i + 1)
             a_html = '''<li class="footable-page" >
-									<a data-page="" href="%s/%d" style='color:white;background:#5e455b;'>%d</a>
+									<a class="action_url" data-page="" href='#' href_url="%s/%d" style='color:white;background:#5e455b;'>%d</a>
 								</li>''' % (url_path,i + 1, i + 1)
         else:
             # a_html = "<a  href='/crm/customers_library/%d' > %d </a>" % (i + 1, i + 1)
             a_html = '''<li class="footable-page">
-									<a data-page="" href="%s/%d">%d</a>
+									<a class="action_url" data-page="" href='#' href_url="%s/%d">%d</a>
 								</li>''' % (url_path,i + 1, i + 1)
         page_html.append(a_html)
 
     if page < all_page_count:
         # aft_html = "<a href='/crm/customers_library/%d'>下一页</a>" % (page + 1)
         aft_html = '''  <li class="footable-page-arrow">
-						    <a data-page="next" href="%s/%d">›</a>
+						    <a class="action_url"class="action_url" data-page="next" href='#' href_url="%s/%d">›</a>
 					    </li>''' % (url_path,page + 1)
 
     else:
         # aft_html = "<a href=''>下一页</a>"
         aft_html = '''<li class="footable-page-arrow">
-							<a data-page="next" href="#">›</a>
+							<a class="action_url" data-page="next" href="#">›</a>
 					</li>'''
     page_html.append(aft_html)
     if all_page_count >0:
 
-        end_html = '''<li class="footable-page-arrow"><a data-page="last" href="%s/%d">»</a></li>'''% (url_path,all_page_count)
+        end_html = '''<li class="footable-page-arrow"><a class="action_url" data-page="last" href='#' href_url="%s/%d">»</a></li>'''% (url_path,all_page_count)
     else:
-        end_html = '''<li class="footable-page-arrow"><a data-page="last" href="%s/%d">»</a></li>''' % (url_path, 1)
+        end_html = '''<li class="footable-page-arrow"><a class="action_url" data-page="last" href='#' href_url="%s/%d">»</a></li>''' % (url_path, 1)
 
     page_html.append(end_html)
 

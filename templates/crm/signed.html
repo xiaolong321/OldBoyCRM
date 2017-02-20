@@ -69,11 +69,15 @@
              {% action current_url item 5%}
         	{% endfor %}
             <div id="demo-dp-range" style="width: 40%;float: left;margin-left: 5px">
-                <li style="float: left;margin: 5px 10px;"><a href="#" id="time_range">自定义</a></li>
+                {% if start_time and end_time %}
+                    <li style="float: left;margin: 5px 10px;"><button style="background-color:#363c40;color:white" href="#" id="time_range">查询时间范围</button></li>
+                {% else %}
+                    <li style="float: left;margin: 5px 10px;"><button id="time_range">查询时间范围</button></li>
+                {% endif %}
                 <div class="input-daterange input-group" id="datepicker">
-                    <input type="text" class="form-control" input="start" id="time_range_start"/>
+                    <input type="text" class="form-control" input="start" id="time_range_start" {% if start_time %}value="{{ start_time }}"{% endif %}/>
                     <span class="input-group-addon">to</span>
-                    <input type="text" class="form-control" name="end" id="time_range_end"/>
+                    <input type="text" class="form-control" name="end" id="time_range_end"{% if end_time %}value="{{ end_time }}"{% endif %}/>
                 </div>
             </div>
 		</ul>
