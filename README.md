@@ -31,6 +31,9 @@ CELERY_RESULT_SERIALIZER = 'json'
 ## rabbitmq
 service rabbitmq-server start
 ## celery
-celery -A OldboyCRM worker -l info (在OLDBOYCRM目录内)
+
+celery -A OldboyCRM worker -l info (在OLDBOYCRM目录内) #deprecated
+
 ## CRM
 python manage.py runserver (在OLDBOYCRM目录内)
+
