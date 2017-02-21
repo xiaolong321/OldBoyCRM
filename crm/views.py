@@ -556,10 +556,12 @@ def tracking(request, page, *args, **kwargs):
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
             elif kwargs[item] == 'range':
-                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
-                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
-                direct_org['date__gte'] = start_time
-                direct_org['date__lt'] = end_time
+                start_time = GET.get('start_time')
+                end_time = GET.get('end_time')
+                direct_org['date__gte'] = start_time.replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__lt'] = end_time.replace('年', '-').replace('月', '-').replace('日', '')
+                result['start_time'] = start_time
+                result['end_time'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -574,7 +576,6 @@ def tracking(request, page, *args, **kwargs):
             qq_num_err={'qq_num_error': '只能输入QQ号'}
 
         direct_org.update({'qq': qq})
-        print(direct_org)
 
         con = Q()
         q1 = Q()
@@ -585,7 +586,8 @@ def tracking(request, page, *args, **kwargs):
         q2 = Q()
         q2.connector = 'AND'
         for key, value in direct_org.items():
-            q2.children.append((key, value))
+            if not key == 'status':
+                q2.children.append((key, value))
         q2.children.append(('consultrecord__consultant__email', user))
         con.add(q1, 'OR')
         con.add(q2, 'OR')
@@ -627,7 +629,8 @@ def tracking(request, page, *args, **kwargs):
         q2 = Q()
         q2.connector = 'AND'
         for key, value in direct_org.items():
-            q2.children.append((key, value))
+            if not key == 'status':
+                q2.children.append((key, value))
         q2.children.append(('consultrecord__consultant__email', user))
         con.add(q1, 'OR')
         con.add(q2, 'OR')
@@ -719,10 +722,12 @@ def signed(request,page,*args,**kwargs):
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
             elif kwargs[item] == 'range':
-                start_time = GET.get('start_time').replace('年', '-').replace('月', '-').replace('日', '')
-                end_time = GET.get('end_time').replace('年', '-').replace('月', '-').replace('日', '')
-                direct_org['date__gte'] = start_time
-                direct_org['date__lt'] = end_time
+                start_time = GET.get('start_time')
+                end_time = GET.get('end_time')
+                direct_org['date__gte'] = start_time.replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['date__lt'] = end_time.replace('年', '-').replace('月', '-').replace('日', '')
+                result['start_time'] = start_time
+                result['end_time'] = end_time
 
         else:
             if kwargs[item] != 'all':
@@ -848,10 +853,12 @@ def customers_library(request, page, *args, **kwargs):
                 direct_org['date__gte'] = ayearbef
                 direct_org['date__lt'] = today
             elif kwargs[item] == 'range':
-                start_time = GET.get('start_time').replace('年','-').replace('月','-').replace('日','')
-                end_time = GET.get('end_time').replace('年','-').replace('月','-').replace('日','')
-                direct_org['date__gte'] = start_time
-                direct_org['date__lt'] = end_time
+                start_time = GET.get('start_time')
+                end_time = GET.get('end_time')
+                direct_org['date__gte'] = start_time.replace('年','-').replace('月','-').replace('日','')
+                direct_org['date__lt'] = end_time.replace('年','-').replace('月','-').replace('日','')
+                result['start_time'] = start_time
+                result['end_time'] = end_time
 
 
         else:
@@ -980,7 +987,6 @@ def addcustomer(request, referralfromid=None):
                         'file_upload_err': u'咨询内容截图未上传!',
                     })
             else:
-                print(form.errors)
                 uploaded_files = []
                 if os.path.exists(upload_path):
                     uploaded_files = os.listdir(upload_path)
@@ -1038,12 +1044,10 @@ def cus_enroll(request, *args, **kwargs):
             old_approved = enroll_ment.contract_approved        # False
             old_agree = enroll_ment.contract_agreed             # False
             old_memo = enroll_ment.memo                         # None
-            print(old_agree, old_approved, old_memo)
             new_approved = request.POST.get('contract_approved', False)
             if new_approved == 'on':
                 new_approved = True
             new_memo = request.POST.get('memo', None)
-            print(new_approved,new_memo)
             if old_memo != new_memo:
                 enroll_ment.memo = new_memo
                 enroll_ment.save()
@@ -1053,7 +1057,6 @@ def cus_enroll(request, *args, **kwargs):
                 if not old_agree:
                     return HttpResponse(json.dumps("学员尚未完成报名"))
                 if not models.PaymentRecord.objects.filter(customer=customer, classlist=had_class):
-                    print('11111111111111111111111111', models.PaymentRecord.objects.filter(customer=customer, classlist=had_class))
                     return HttpResponse(json.dumps("未查到学员押金交付记录"))
                 else:
                     if old_approved:
@@ -1067,7 +1070,6 @@ def cus_enroll(request, *args, **kwargs):
             else:
                 return HttpResponse(json.dumps('报名报已经更新'))
         except ObjectDoesNotExist as e:
-            print(e)
             # 此为新加报名表
             if not models.ContractTemplate.objects.filter(classlist=had_class):
                 return HttpResponse(json.dumps("该课程没有对应的合同模板，请联系您的主管为该课程添加合同模板"))
@@ -1085,7 +1087,6 @@ def cus_enroll(request, *args, **kwargs):
                 formes['form%s'% index] = form
             result = {'classes': classes, 'customer': customer, 'username': username}
             result['formes']=formes
-            print(result)
             return render(request, 'crm/customer_enrollment.html', result)
 
         else:
@@ -1125,7 +1126,7 @@ def enroll_done(request, *args, **kwargs):
                 shutil.rmtree(path)
                 return HttpResponse(json.dumps('已经驳回该客户的报名申请'))
         except Exception as e:
-            print(e)
+            pass
         customer = models.Customer.objects.get(id=request.POST['customer'])
         new_classlist = models.ClassList.objects.get(id=request.POST.get('classlist'))
         consultant = models.UserProfile.objects.get(id=request.POST.get('consultant'))
@@ -1222,7 +1223,6 @@ def consult_record(request, id):
         if form.is_valid():
             cd = form.cleaned_data
             form.save()
-            print(type(customer.last_consult_date), customer.last_consult_date)
             customer.last_consult_date = datetime.datetime.now()
             customer.save()
             return HttpResponseRedirect('/crm/consult_record/%d' % customer.id)
@@ -1309,8 +1309,6 @@ def customer_detail(request, id):
     except Exception:
         pass
     if request.method == 'POST':
-        print(request.POST.get('consultant'))
-        print(cus.consultant.id)
         if int(request.POST.get('consultant')) == cus.consultant.id:
             form = forms.AddCustomerForm(data=request.POST, instance=cus)
             if form.is_valid():
@@ -1429,10 +1427,6 @@ def enrollment(request, customer_id):
     customer = models.Customer.objects.filter(id=customer_id).first()
 
     trackers = models.UserProfile.objects.filter(consultrecord__customer__id=customer_id)
-    print(customer.consultant)
-    print(request.user)
-    for tracker in trackers:
-        print(tracker)
     flag = False
     if customer.consultant == request.user:
         flag = True
@@ -1546,7 +1540,6 @@ def enrollment_payment(request, customer):
                                                                   pay_type=request.POST.get('pay_type'),
                                                                   paid_fee=request.POST.get('paid_fee'),
                                                                   note=request.POST.get('note'),)
-                print(payment_obj)
                 try:
                     StuAccount.objects.get(stu_name=customer)
                 except ObjectDoesNotExist as e:
