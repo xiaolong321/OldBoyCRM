@@ -1,36 +1,36 @@
 # OldBoyCRM
 
-# CRMÔËĞĞ»·¾³
-python3£¨±àĞ´»·¾³Îªpython3.5.1£©
-# ÇëÓÅÏÈ²é¿´ install ÎÄ¼ş¼ĞÏÂ ÄÚÈİ.
-ÊÖ¹¤´´½¨ÎÄ¼ş¼Ğ logs
-## °²×°Ë³Ğò
-### Éú²ú»·¾³
+# CRMè¿è¡Œç¯å¢ƒ
+python3ï¼ˆç¼–å†™ç¯å¢ƒä¸ºpython3.5.1ï¼‰
+# è¯·ä¼˜å…ˆæŸ¥çœ‹ install æ–‡ä»¶å¤¹ä¸‹ å†…å®¹.
+æ‰‹å·¥åˆ›å»ºæ–‡ä»¶å¤¹ logs
+## å®‰è£…é¡ºåº
+### ç”Ÿäº§ç¯å¢ƒ
 pip install -r ./install/requirement/commd.txt
-###¿ª·¢»·¾³
+###å¼€å‘ç¯å¢ƒ
 pip install -r ./install/requirement/dev.txt
-## pychram ÅäÖÃ
-²»½¨ÒéÖ±½ÓÅäÖÃÉú²ú»·¾³.ÇëÊ¹ÓÃdev»·¾³ÅäÖÃ.½øĞĞÏà¹Ø²Ù×÷.
-dev »·¾³ÅäÖÃÊ±.ÇëĞŞ¸Ä
+## pychram é…ç½®
+ä¸å»ºè®®ç›´æ¥é…ç½®ç”Ÿäº§ç¯å¢ƒ.è¯·ä½¿ç”¨devç¯å¢ƒé…ç½®.è¿›è¡Œç›¸å…³æ“ä½œ.
+dev ç¯å¢ƒé…ç½®æ—¶.è¯·ä¿®æ”¹
 
 
-# ËùĞèÅä¼ş
+# æ‰€éœ€é…ä»¶
 ## celery
-######ÔÚsettingsÄÚÉèÖÃ
+######åœ¨settingså†…è®¾ç½®
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-## Òì²½¶ÓÁĞ
-Ä¬ÈÏÊ¹ÓÃrabbitmq×÷ÎªÒì²½¶ÓÁĞ£¬¿ÉÒÔÔÚsettingsÖĞĞŞ¸ÄÅäÖÃÊ¹ÓÃÆäËû¶ÓÁĞ
-rabbitmqÏÂÔØµØÖ·:[www.rabbitmq.com/download.html](http://www.rabbitmq.com/download.html)
+## å¼‚æ­¥é˜Ÿåˆ—
+é»˜è®¤ä½¿ç”¨rabbitmqä½œä¸ºå¼‚æ­¥é˜Ÿåˆ—ï¼Œå¯ä»¥åœ¨settingsä¸­ä¿®æ”¹é…ç½®ä½¿ç”¨å…¶ä»–é˜Ÿåˆ—
 
-# ³ÌĞò¿ªÆôÃüÁîĞ¡»ã
+
+# ç¨‹åºå¼€å¯å‘½ä»¤å°æ±‡
 ## rabbitmq
 service rabbitmq-server start
 ## celery
-celery -A OldboyCRM worker -l info (ÔÚOLDBOYCRMÄ¿Â¼ÄÚ)
+celery -A OldboyCRM worker -l info (åœ¨OLDBOYCRMç›®å½•å†…)
 ## CRM
-python manage.py runserver (ÔÚOLDBOYCRMÄ¿Â¼ÄÚ)
+python manage.py runserver (åœ¨OLDBOYCRMç›®å½•å†…)
