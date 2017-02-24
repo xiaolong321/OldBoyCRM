@@ -37,5 +37,5 @@ urlpatterns = [
     url(r'^training_contract/', crm_views.training_contract, name="training_contract"),
     url(r'^compliant/', crm_views.compliant, name="compliant"),
     url(r'^stu_faq/', crm_views.stu_faq, name="stu_faq"),
-
+    url(r'^punishment/$', crm_views.punishment, name="punishment"),
 ]

@@ -24,6 +24,8 @@ perm_dic_CRM = {
     'crm_edit_enrollment': ['enrollment', 'POST', []],
     'crm_view_payment': ['payment', 'GET', []],
     'crm_edit_payment': ['payment', 'POST', []],
+    'crm_view_punishment': ['punishment', 'GET', []],
+    'crm_edit_punishment': ['punishment', 'POST', []],
 }
 
 

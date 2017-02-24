@@ -1,0 +1,136 @@
+{%extends 'teacher/dashboard.html'%}
+
+{% block dash-content%}
+    <div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">请填写如下表格(加粗字体为必填项)</h3>
+            </div>
+            <form class="form-horizontal" action=" " method="POST">
+                {% csrf_token %}
+                <div class="panel-body ">
+                    <div class="form-group text-left from_student">
+                        <label class="col-lg-3 control-label "><b>请输入QQ号</b></label>
+                        <div class="col-sm-6">
+                            <input style="width:90%;float:left" class="form-control from_student" id="id_stu_id" maxlength="64" placeholder="" type="text" value="{% if student_qq %}{{ student_qq }}{% endif %}">
+                            <button class="from_student" style="float:right;line-height:25px" type="button">查询</button>
+                        </div>
+                        <div class="col-sm-3" style="color: red;">{{ error_message_qq }}</div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="col-lg-3 control-label"><b>学员信息</b></label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="id_enrollment" name="enrollment">
+                                {% if enrollments == None %}
+                                    <option value="">---------</option>
+                                {% else%}
+                                    <option value="">请选择学员信息</option>
+                                {% endif %}
+                                {% for enrollment in enrollments %}
+                                    {% if enrollment.id == enrollment_id %}
+                                        <option value="{{ enrollment.id }}" selected="selected">{{ enrollment }}</option>
+                                    {% else %}
+                                        <option value="{{ enrollment.id }}">{{ enrollment }}</option>
+                                    {% endif %}
+                                {% endfor%}
+                            </select>
+                        </div>
+                        <div class="col-sm-3" style="color: red;">{{ error_message_enrollment }}</div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="col-lg-3 control-label"><b>违反规则</b></label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="id_rule" name="rule" placeholder="">
+                                <option value="">请选择违反规则</option>
+                                {% for rule in rules %}
+                                    {% if rule.id == rule_id%}
+                                        <option value="{{ rule.id }}" selected="selected">{{ rule.name }}</option>
+                                    {% else %}
+                                        <option value="{{ rule.id }}">{{ rule.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-3" style="color: red;">{{ error_message_rule }}</div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="col-lg-3 control-label"><b>执行人</b></label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="id_performer" name="performer" placeholder="">
+                                <option value="{{ request.user.id }}" selected="selected">{{ request.user }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="col-lg-3 control-label">备注</label>
+                        <div class="col-sm-6">
+                            <textarea class="form-control" id="id_note" maxlength="128" name="note" placeholder="" type="text"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="col-lg-3 control-label">事件发生时间</label>
+                        <div class="col-sm-6 input-daterange input-group" id="datepicker">
+                            <input type="text" class="form-control" name="date" {% if start_time %}value="{{ start_time }}"{% endif %}/>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="提交">
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if punishments %}
+        <div class="col-sm-12 text-left">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">这是该学员收到的处罚记录</h3>
+                </div>
+                <div class="panel-body">
+                    <table id="demo-dt-basic" class="table table-striped" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>客户信息</th>
+                                <th>规则名称</th>
+                                <th>规则详细</th>
+                                <th>扣分</th>
+                                <th>罚款</th>
+                                <th>执行人</th>
+                                <th>执行时间</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for punishment in punishments %}
+                                <tr>
+                                    <td>{{ punishment.enrollment }}</td>
+                                    <td>{{ punishment.rule.name }}</td>
+                                    <td>{{ punishment.rule.detail }}</td>
+                                    <td>{{ punishment.rule.points }}</td>
+                                    <td>{{ punishment.rule.fine}}</td>
+                                    <td>{{ punishment.performer}}</td>
+                                    <td>{{ punishment.date}}</td>
+                                    <td>{{ punishment.note}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block dash-footer-js %}
+    <script>
+        $('button.from_student').click(function () {
+            var student_qq = $('input.from_student').val();
+            if(student_qq == ''){
+                alert('请先输入学员的QQ号码')
+            }else {
+                window.location.href = {% url 'punishment' %} + '?student_qq=' + student_qq
+            }
+        })
+    </script>
+{% endblock %}

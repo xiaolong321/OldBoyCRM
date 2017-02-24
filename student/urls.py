@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^myhomework/$', views.Myhomework, name='myhomework'),
     url(r'^delete_file/$', views.DeleteFile, name='delete_file'),
     url(r'^downloadfile/$', views.DownloadFile, name='downloadfile'),
+    url(r'^mypunishment/$', views.mypunishment, name='mypunishment'),
+    url(r'^punishmentdetail/(?P<enrollment_id>\d+)/$', views.punishmentdetail, name='punishmentdetail'),
 ]

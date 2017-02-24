@@ -138,7 +138,6 @@ def class_detail(request, class_id):
     stu_obj = models.Customer.objects.get(qq=username)
     myclass = crmmodels.ClassList.objects.filter(id=class_id)
     study_records = crmmodels.StudyRecord.objects.filter(course_record__course=myclass, student_id=stu_obj.id)
-    print(study_records)
     # course_records = crmmodels.CourseRecord.objects.filter(course=myclass)
     # for course_record in course_records:
     #     study_record = crmmodels.StudyRecord.objects.filter(course_record = course_record, student_id=stu_obj.id)
@@ -196,22 +195,25 @@ def homework(request, class_id, day_num):
         if request.FILES:
             if request.FILES['file'].name.endswith('.zip'):
                 if len(os.listdir(upload_path)) < 1:
-                    abs_filepath = "%s/%s" % (upload_path, '%s.zip' % student.name)
-                    with open(abs_filepath, 'wb') as f:
-                        for chunk in request.FILES['file'].chunks():
-                            f.write(chunk)
-                    customer_file_path = "%s/%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id, day_num,)
-                    if not course_record.course.class_type == 'pick_up_study':
-                        if os.path.exists(os.path.join(customer_file_path, 'all', student.name)):
-                            shutil.rmtree(os.path.join(customer_file_path, 'all', student.name))
-                        for dirpath, dirnames, filenames in os.walk(upload_path):
-                            print(dirpath, dirnames, filenames)
-                            for file in filenames:
-                                f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
-                                for file_obj in f.namelist():
-                                    unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
-                                                                                 file.split('.zip')[0]))
-                    # uploadhomework.delay(class_id, day_num, upload_path)
+                    if request.FILES['file'].size <= 5 * 1024 * 1024:
+                        abs_filepath = "%s/%s" % (upload_path, '%s.zip' % student.name)
+                        with open(abs_filepath, 'wb') as f:
+                            for chunk in request.FILES['file'].chunks():
+                                f.write(chunk)
+                        customer_file_path = "%s/%s/%s" % (settings.HOMEWORK_DATA_DIR, class_id, day_num,)
+                        if not course_record.course.class_type == 'pick_up_study':
+                            if os.path.exists(os.path.join(customer_file_path, 'all', student.name)):
+                                shutil.rmtree(os.path.join(customer_file_path, 'all', student.name))
+                            for dirpath, dirnames, filenames in os.walk(upload_path):
+                                print(dirpath, dirnames, filenames)
+                                for file in filenames:
+                                    f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
+                                    for file_obj in f.namelist():
+                                        unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
+                                                                                     file.split('.zip')[0]))
+                        # uploadhomework.delay(class_id, day_num, upload_path)
+                    else:
+                        return HttpResponseForbidden('只允许上传大小小于5M的文件')
                 else:
                     return HttpResponseForbidden('只允许上传一个文件')
             else:
@@ -631,3 +633,23 @@ def Myrecommendation(request):
             recommendation.status = '等待沟通'
     user = models.StuAccount.objects.filter(stu_name__qq=request.session['username']).first()
     return render(request, 'stu/myrecommendation.html', locals())
+
+
+def mypunishment(request):
+    result = {'enrollment_records': []}
+    enrollments = crmmodels.Enrollment.objects.filter(customer__qq=request.session['username'])
+    for enrollment in enrollments:
+        punishments = crmmodels.StuPunishmentRecord.objects.filter(enrollment=enrollment)
+        counts = punishments.count()
+        points = 0
+        for punishment in punishments:
+            points += punishment.rule.points
+        result['enrollment_records'].append({'id': enrollment.id, 'course': enrollment.course_grade,
+                                             'teachers': enrollment.course_grade.teachers.all(),
+                                             'counts': counts, 'points': points})
+    return render(request, 'stu/mypunishment.html', result)
+
+
+def punishmentdetail(request,enrollment_id):
+    punishments = models.StuPunishmentRecord.objects.filter(enrollment_id=enrollment_id)
+    return render(request, 'stu/punishmentdetail.html', locals())

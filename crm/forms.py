@@ -4,7 +4,7 @@ __author__ = 'Alex Li'
 
 from django.forms import ModelForm,Textarea,BooleanField
 from django import forms
-from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList
+from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList,StuPunishmentRecord
 
 
 class CompliantForm(ModelForm):
@@ -164,5 +164,4 @@ class ClasslistForm(ModelForm):
         self.fields['contract'].widget.attrs.update({'class': 'form-control'})
         self.fields['teachers'].widget.attrs.update({'class': 'form-control'})
         self.fields['memo'].widget.attrs.update({'class': 'form-control','placeholder':'建议写明该课程为何种课程，何种形式。如：Linux架构师-面授（周末）班', })
-
 

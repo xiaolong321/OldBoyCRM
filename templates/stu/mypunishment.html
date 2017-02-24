@@ -1,0 +1,34 @@
+{%extends 'stu/stu_dash.html'%}
+{% block dash-content%}
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title">这是您学习的全部班级（点击课程名称查看详细处罚记录）</h3>
+        </div>
+        <div class="panel-body">
+            <table id="demo-dt-basic" class="table table-striped" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>课程名称</th>
+                        <th>授课教师</th>
+                        <th>累计违规次数</th>
+                        <th>累计扣分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment_record in enrollment_records %}
+                        <tr>
+                            <td><a href="{% url 'punishmentdetail' enrollment_record.id %}">{{ enrollment_record.course }}</a></td>
+                            <td>
+                                {% for teacher in enrollment_record.teachers %}
+                                    {{ teacher }}
+                                {% endfor %}
+                            </td>
+                            <td>{{ enrollment_record.counts }}</td>
+                            <td>{{ enrollment_record.points}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{%endblock%}

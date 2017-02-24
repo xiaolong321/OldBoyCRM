@@ -1,0 +1,37 @@
+{%extends 'stu/stu_dash.html'%}
+{% block dash-content%}
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title">这是在该班级学习时的处罚记录</h3>
+        </div>
+        <div class="panel-body">
+            <table id="demo-dt-basic" class="table table-striped" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>规则名称</th>
+                        <th>规则详细</th>
+                        <th>扣分</th>
+                        <th>罚款</th>
+                        <th>执行人</th>
+                        <th>执行时间</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for punishment in punishments %}
+                        <tr>
+                            <td>{{ punishment.rule.name }}</td>
+                            <td>{{ punishment.rule.detail }}
+                            </td>
+                            <td>{{ punishment.rule.points }}</td>
+                            <td>{{ punishment.rule.fine}}</td>
+                            <td>{{ punishment.performer}}</td>
+                            <td>{{ punishment.date}}</td>
+                            <td>{{ punishment.note}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{%endblock%}

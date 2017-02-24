@@ -237,6 +237,12 @@ class OnlineStuAssignmentAdmin(admin.ModelAdmin):
     raw_id_fields = ('enrollment',)
     search_fields = ('enrollment__customer__qq',)
 
+
+class StuPunishmentRecordAdmin(admin.ModelAdmin):
+    search_fields = ('enrollment__customer__qq',)
+    raw_id_fields = ('enrollment',)
+
+
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.Customer,CustomerAdmin)
 admin.site.register(models.Enrollment,EnrollmentAdmin)
@@ -256,3 +262,5 @@ admin.site.register(models.OnlineStuRecords,OnlineStuRecordsAdmin)
 admin.site.register(models.CourseModule)
 admin.site.register(models.MessageTemplate)
 admin.site.register(models.OnlineStuAssignment,OnlineStuAssignmentAdmin)
+admin.site.register(models.Rules)
+admin.site.register(models.StuPunishmentRecord, StuPunishmentRecordAdmin)
