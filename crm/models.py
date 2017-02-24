@@ -73,6 +73,7 @@ class Customer(models.Model):
                       ('paid_in_full', u"学费已交齐"))
     status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered",
                               help_text=u"选择客户此时的状态")
+    network_consult = models.BooleanField('网络咨询', default=False)
     consultant = models.ForeignKey(UserProfile, verbose_name=u"课程顾问")
     date = models.DateField(u"咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(u"最后跟进日期", auto_now_add=True)

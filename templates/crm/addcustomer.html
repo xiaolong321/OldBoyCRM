@@ -84,6 +84,10 @@
                                             <option  value="" selected="selected">{{curr_user.class_list.all}}</option>
                                         </select>
                                     </div>
+                                {% elif field.name == 'network_consult' %}
+                                    <div class="col-sm-6" >
+                                        <input class="form-control" id="id_network_consult" name="network_consult" placeholder="" type="checkbox" style="height:20px">
+                                    </div>
                                 {%else%}
                                     <div class="col-sm-6">
                                         {{field}}

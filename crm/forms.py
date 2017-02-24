@@ -30,7 +30,7 @@ class CustomerForm(ModelForm):
         model = Customer
         fields = ('qq', 'name', 'phone', 'email', 'sex',
                   'birthday', 'id_num', 'work_status',
-                  'company', 'salary', 'consultant')
+                  'company', 'salary', 'network_consult', 'consultant')
 
     def __new__(cls, *args, **kwargs):
         # super(CustomerForm, self).__new__(*args, **kwargs)
@@ -43,6 +43,8 @@ class CustomerForm(ModelForm):
                         }
             if field_name in disabled_fields:
                 attr_dic['disabled'] = True
+            if field_name == 'network_consult':
+                attr_dic['height'] = '20px'
             field.widget.attrs.update(attr_dic)
         return ModelForm.__new__(cls)
 
