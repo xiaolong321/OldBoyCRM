@@ -1250,6 +1250,8 @@ def login_url(request):
             return my_login(request)
         if next_url.startswith('/teacher/'):
             return teacher_my_login(request)
+        else:
+            return my_login(request)
     else:
         return render(request, 'crm/index.html')
 
@@ -1614,3 +1616,44 @@ def payment(request, payment_id):
         'form': form,
         'customer': customer
     })
+
+
+@login_required
+@check_permission
+def punishment(request):
+    rules = models.Rules.objects.all()
+    student_qq = request.GET.get('student_qq')
+    if not student_qq:
+        enrollments = None
+    else:
+        enrollments = models.Enrollment.objects.filter(customer__qq=student_qq)
+        if not enrollments:
+            error_message_qq = '未查询到该QQ号的学生资料'
+        else:
+            punishments= models.StuPunishmentRecord.objects.filter(enrollment__customer__qq=student_qq)
+    if request.method == 'POST':
+        create_dict = {}
+        enrollment_id = request.POST.get('enrollment',None)
+        if enrollment_id:
+            enrollment_id = int(enrollment_id)
+        rule_id = request.POST.get('rule', None)
+        if rule_id:
+            rule_id = int(rule_id)
+        note = request.POST.get('note')
+        if enrollment_id:
+            create_dict['enrollment_id'] = enrollment_id
+            if rule_id:
+                create_dict['rule_id'] = rule_id
+                if note:
+                    create_dict['note'] = note
+                date = request.POST.get('date')
+                if date:
+                    create_dict['date'] = date.replace('年', '-').replace('月', '-').replace('日', '')
+                create_dict['performer'] = request.user
+                models.StuPunishmentRecord.objects.create(**create_dict)
+                return HttpResponse('已经添加了该学员的违规记录')
+            else:
+                error_message_rule = '请选择该学员违反的规则'
+        else:
+            error_message_enrollment = '请先选择违纪的学生信息'
+    return render(request, 'crm/punishment.html', locals())

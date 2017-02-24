@@ -73,6 +73,7 @@ class Customer(models.Model):
                       ('paid_in_full', u"学费已交齐"))
     status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered",
                               help_text=u"选择客户此时的状态")
+    network_consult = models.BooleanField('网络咨询', default=False)
     consultant = models.ForeignKey(UserProfile, verbose_name=u"课程顾问")
     date = models.DateField(u"咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(u"最后跟进日期", auto_now_add=True)
@@ -119,7 +120,7 @@ class Enrollment(models.Model):         # store all the enrolled student info
     school = models.IntegerField('校区', choices=school_choice, default=0)
 
     def __str__(self):
-        return self.customer.qq
+        return '{}-{}-{}'.format(self.customer.qq, self.customer.name, self.course_grade)
 
     class Meta:
         verbose_name = u'学员报名表'
@@ -497,7 +498,9 @@ class ContractTemplate(models.Model):
             ('crm_view_enrollment', ' 访问 为客户报名 页面 '),
             ('crm_edit_enrollment', ' 编辑 为客户报名 '),
             ('crm_view_payment', ' 访问 客户缴费 页面 '),
-            ('crm_edit_payment', ' 编辑 客户缴费 '),
+            ('crm_edit_payment', ' 编辑 客户缴费 页面 '),
+            ('crm_view_punishment', ' 访问 违规记录 页面 '),
+            ('crm_edit_punishment', ' 编辑 违规记录 页面 '),
         )
 
 
@@ -580,3 +583,33 @@ class MessageTemplate(models.Model):
     class Meta:
         verbose_name = u"邮件模版"
         verbose_name_plural = u"邮件模版"
+
+
+class Rules(models.Model):
+    name = models.CharField('规则简称', max_length=64)
+    detail = models.CharField('规则详细', max_length=256, blank=True, null=True)
+    points = models.IntegerField('违规扣分', )
+    fine = models.IntegerField('罚款金额')
+
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "学生条例"
+        verbose_name_plural = "学生条例"
+
+
+class StuPunishmentRecord(models.Model):
+    enrollment = models.ForeignKey(Enrollment, verbose_name='学员信息')
+    rule = models.ForeignKey(Rules, verbose_name='违反规则')
+    performer = models.ForeignKey(UserProfile, verbose_name='执行人')
+    note = models.CharField(max_length=128, blank=True,null=True, verbose_name='备注')
+    date = models.DateField(auto_now_add=True, verbose_name='执行时间')
+
+    def __str__(self):
+        return '{}-{}-{}'.format(self.enrollment.customer.name, self.enrollment.course_grade, self.rule)
+
+    class Meta:
+        verbose_name = "学员处罚记录"
+        verbose_name_plural = "学员处罚记录"

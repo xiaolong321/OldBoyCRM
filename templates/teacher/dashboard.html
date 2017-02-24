@@ -108,16 +108,16 @@
 
 									</li>
 
-{#									<li id="tracking">#}
-{#										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">#}
-{#											<i class="fa fa-dashboard"></i>#}
-{#											<span class="menu-title">#}
-{#												<strong>我的跟进</strong>#}
-{#												<!--<span class="label label-success pull-right">New</span>-->#}
-{#											</span>#}
-{#										</a>#}
-{#									</li>#}
-{##}
+									<li id="punishment">
+										<a href="{%url 'punishment' %}">
+											<i class="fa fa-dashboard"></i>
+											<span class="menu-title">
+												<strong>处罚学生</strong>
+												<!--<span class="label label-success pull-right">New</span>-->
+											</span>
+										</a>
+									</li>
+
 {##}
 {#									<li id="signed">#}
 {#										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">#}
@@ -202,6 +202,9 @@
 
                 // 高亮当前选中菜单栏
                 var cur_url_name = location.pathname.split('/')[2];
+                if(cur_url_name == ''){
+                    var cur_url_name = location.pathname.split('/')[1];
+                }
 
                 $('#mainnav-menu li').each(function (i, n) {
                     if ($(this).attr('id') == cur_url_name) {

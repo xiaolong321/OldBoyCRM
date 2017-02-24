@@ -89,6 +89,14 @@
                                         <textarea class="form-control" cols="40" id="id_customer_note" name="customer_note" placeholder="客户咨询的大概情况,客户个人信息备注等..." rows="10" readonly>{{customer.customer_note}}
                                         </textarea>
                                     </div>
+                                {% elif field.name == 'network_consult' %}
+                                    <div class="col-sm-6" >
+                                        {% if field.value %}
+                                            <input class="form-control" id="id_network_consult" name="network_consult" placeholder="" type="checkbox" style="height:20px" checked="checked">
+                                        {% else %}
+                                            <input class="form-control" id="id_network_consult" name="network_consult" placeholder="" type="checkbox" style="height:20px">
+                                        {% endif %}
+                                    </div>
                                 {%else%}
                                     <div class="col-sm-6">
                                         {{field}}

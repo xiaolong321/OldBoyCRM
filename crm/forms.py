@@ -4,7 +4,7 @@ __author__ = 'Alex Li'
 
 from django.forms import ModelForm,Textarea,BooleanField
 from django import forms
-from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList
+from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList,StuPunishmentRecord
 
 
 class CompliantForm(ModelForm):
@@ -30,7 +30,7 @@ class CustomerForm(ModelForm):
         model = Customer
         fields = ('qq', 'name', 'phone', 'email', 'sex',
                   'birthday', 'id_num', 'work_status',
-                  'company', 'salary', 'consultant')
+                  'company', 'salary', 'network_consult', 'consultant')
 
     def __new__(cls, *args, **kwargs):
         # super(CustomerForm, self).__new__(*args, **kwargs)
@@ -43,6 +43,8 @@ class CustomerForm(ModelForm):
                         }
             if field_name in disabled_fields:
                 attr_dic['disabled'] = True
+            if field_name == 'network_consult':
+                attr_dic['height'] = '20px'
             field.widget.attrs.update(attr_dic)
         return ModelForm.__new__(cls)
 
@@ -164,5 +166,4 @@ class ClasslistForm(ModelForm):
         self.fields['contract'].widget.attrs.update({'class': 'form-control'})
         self.fields['teachers'].widget.attrs.update({'class': 'form-control'})
         self.fields['memo'].widget.attrs.update({'class': 'form-control','placeholder':'建议写明该课程为何种课程，何种形式。如：Linux架构师-面授（周末）班', })
-
 
