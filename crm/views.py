@@ -742,7 +742,11 @@ def signed(request,page,*args,**kwargs):
             qq_num_err = {'qq_num_error': '只能输入QQ号'}
 
         direct_org.update({'qq': qq})
-        customers = models.Customer.objects.exclude(**exc).filter(**direct_org)
+        customer_objs = models.Customer.objects.exclude(**exc).filter(**direct_org)
+        customers = []
+        for customer_obj in customer_objs:
+            payment_obj = models.PaymentRecord.objects.filter(customer=customer_obj).exclude(pay_type='refund')
+            customers.append({'customer':customer_obj,'payments':payment_obj})
         count = models.Customer.objects.exclude(**exc).filter(**direct_org).count()
         fil = {'customers': customers, 'count': count,}
         fil.update(qq_num_err)
@@ -1464,7 +1468,7 @@ def enrollment_add(request, customer):
                 return HttpResponse(json.dumps("该课程没有对应的合同模板，请联系您的主管为该课程添加合同模板"))
             try:
                 models.Enrollment.objects.get(customer=customer, course_grade_id=request.POST.get('course_grade'))
-                return HttpResponse(json.dumps("该同学已经报名过随选的课程了，请仔细核对报名信息"))
+                return HttpResponse(json.dumps("该同学已经报名过所选的课程了，请仔细核对报名信息"))
             except Exception:
                 models.Enrollment.objects.create(customer=customer, course_grade_id=request.POST.get('course_grade'),
                                                  memo=request.POST.get('memo'), school=request.POST.get('school'),
@@ -1496,7 +1500,7 @@ def enrollment_approve(request, customer):
         if request.POST.get('flag') == 'enrollment_approved':
             enrollmentinformation = models.Enrollment.objects.filter(id=request.POST.get('enrollment_id'))
             enrollmentinformation.update(contract_approved=1)
-            return HttpResponse(json.dumps('该学院的审批已经通过'))
+            return HttpResponse(json.dumps('该学员的审批已经通过'))
         if request.POST.get('flag') == 'enrollment_refused':
             enrollmentinformation = models.Enrollment.objects.filter(id=request.POST.get('enrollment_id'))
             enrollmentinformation.update(contract_agreed=0)
@@ -1626,11 +1630,20 @@ def punishment(request):
     if not student_qq:
         enrollments = None
     else:
-        enrollments = models.Enrollment.objects.filter(customer__qq=student_qq)
-        if not enrollments:
-            error_message_qq = '未查询到该QQ号的学生资料'
+        customer = models.Customer.objects.filter(qq=student_qq).first()
+        if customer:
+            enrollments = models.Enrollment.objects.filter(customer__qq=student_qq)
+            if not enrollments:
+                error_message_qq = '未查询到该QQ号的学生的报名记录'
+            else:
+                punishments = models.StuPunishmentRecord.objects.filter(enrollment__customer__qq=student_qq)
+                enrollment_id = request.GET.get('enrollment_id')
+                if enrollment_id:
+                    enrollment_id = int(enrollment_id)
+
         else:
-            punishments= models.StuPunishmentRecord.objects.filter(enrollment__customer__qq=student_qq)
+            error_message_qq = '未查询到该QQ号的学生资料'
+
     if request.method == 'POST':
         create_dict = {}
         enrollment_id = request.POST.get('enrollment',None)
@@ -1651,7 +1664,8 @@ def punishment(request):
                     create_dict['date'] = date.replace('年', '-').replace('月', '-').replace('日', '')
                 create_dict['performer'] = request.user
                 models.StuPunishmentRecord.objects.create(**create_dict)
-                return HttpResponse('已经添加了该学员的违规记录')
+                # return render(request, 'teacher/studentinformation.html', {'student_qq': student_qq, 'enrollment_id':enrollment_id})
+                return HttpResponseRedirect(resolve_url('studentinformation') + '?student_qq='+ str(student_qq) + '&enrollment_id=' + str(enrollment_id))
             else:
                 error_message_rule = '请选择该学员违反的规则'
         else:

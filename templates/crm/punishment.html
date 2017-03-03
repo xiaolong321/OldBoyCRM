@@ -129,7 +129,7 @@
             if(student_qq == ''){
                 alert('请先输入学员的QQ号码')
             }else {
-                window.location.href = {% url 'punishment' %} + '?student_qq=' + student_qq
+                window.location.href = '{% url "punishment" %}' + '?student_qq=' + student_qq
             }
         })
     </script>

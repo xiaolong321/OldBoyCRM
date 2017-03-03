@@ -20,7 +20,7 @@
                             <td><a href="{% url 'punishmentdetail' enrollment_record.id %}">{{ enrollment_record.course }}</a></td>
                             <td>
                                 {% for teacher in enrollment_record.teachers %}
-                                    {{ teacher }}
+                                    {{ teacher }},
                                 {% endfor %}
                             </td>
                             <td>{{ enrollment_record.counts }}</td>

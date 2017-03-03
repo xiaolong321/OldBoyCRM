@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
 
@@ -14,4 +14,6 @@ urlpatterns = [
     url(r'^courselist/(?P<class_id>\d+)', views.courselist, name='courselist'),
     url(r'^courserecord/(?P<course_id>\d+)/(?P<student_id>\d+)', views.courserecord, name='courserecord'),
     url(r'^createcourse/(?P<class_id>\d+)', views.createcourse, name='createcourse'),
+    url(r'^studentinformation/$', views.studentinformation, name='studentinformation'),
+    url(r'^study_consult_record/(?P<enrollment_id>\d+)/$', views.study_consult_record, name='study_consult_record'),
 ]

@@ -38,4 +38,8 @@ perm_dic_teacher = {
     'teacher_edit_courserecord': ['courserecord', 'POST', []],
     'teacher_view_createcourse': ['createcourse', 'GET', []],
     'teacher_edit_createcourse': ['createcourse', 'POST', []],
+    'teacher_view_studentinformation': ['studentinformation', 'GET', []],
+    'teacher_edit_studentinformation': ['studentinformation', 'POST', []],
+    'teacher_view_study_consult_record': ['study_consult_record', 'GET', []],
+    'teacher_edit_study_consult_record': ['study_consult_record', 'POST', []],
 }
