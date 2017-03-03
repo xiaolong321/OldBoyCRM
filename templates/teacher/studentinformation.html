@@ -1,0 +1,188 @@
+{%extends 'teacher/dashboard.html'%}
+
+{% block dash-content%}
+    <div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">学生信息</h3>
+            </div>
+            <div class="panel-body ">
+                <form class="form-horizontal" action=" " method="POST">
+                    {% csrf_token %}
+                    <div class="form-group text-left from_student">
+                        <label class="col-lg-3 control-label "><b>请输入QQ号</b></label>
+                        <div class="col-sm-6">
+                            <input style="width:90%;float:left" class="form-control from_student" id="id_stu_id" maxlength="64" placeholder="" type="text" value="{% if student_qq %}{{ student_qq }}{% endif %}">
+                            <button class="from_student" style="float:right;line-height:25px" type="button">查询</button>
+                        </div>
+                        <div class="col-sm-3" style="color: red;">{{ error_information }}</div>
+                    </div>
+                </form>
+            {% if status == 'True' %}
+                <ul class="nav nav-tabs">
+                    {% for enrollment in enrollments %}
+                        {% if enrollment.id == enrollment_id %}
+                            <li class="active"><a href="{% url 'studentinformation'%}?student_qq={{ student_qq }}&enrollment_id={{ enrollment.id }}"><i class="fa"></i> {{ enrollment.course_grade }}</a></li>
+                        {% else %}
+                            <li><a href="{% url 'studentinformation'%}?student_qq={{ student_qq }}&enrollment_id={{ enrollment.id }}"><i class="fa"></i> {{ enrollment.course_grade }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="panel-control">
+                                <form method="post" action="{% url 'single_stu_grade_check' %}" style="display: inline">
+                                    {% csrf_token %}
+                                    <input name="search_str" type="text" value="{{ student_qq }}" style="display: none;margin-bottom: 20px" >
+                                    <button type="submit" class="btn btn-mint">查看该学员的详细成绩信息</button>
+                                </form>
+                            </div>
+                            <h3 class="panel-title">基本信息</h3>
+                        </div>
+                        <div class="panel-body ">
+                            <div style="width: 100%">
+                                <div style="width:33%;display: inline-block" >授课老师：
+                                    {% for teacher in enrollment_item.course_grade.teachers.all %}
+                                        {{ teacher }},
+                                    {% endfor %}
+                                </div>
+                                <div style="width:33%;display: inline-block" >开课时间：{{ enrollment_item.course_grade.start_date }}</div>
+                                <div style="width:33%;display: inline-block" >结束时间：{{ enrollment_item.course_grade.graduate_date }}</div>
+                                <div style="width:33%;display: inline-block" >课程总节数：{{ nums_class }}</div>
+                                <div style="width:33%;display: inline-block" >正常出勤次数：{{ nums_checked }}</div>
+                                <div style="width:33%;display: inline-block" >缺勤次数：{{ nums_noshow }}</div>
+                                <div style="width:33%;display: inline-block" >迟到次数：{{ nums_late }}</div>
+                                <div style="width:33%;display: inline-block" >早退次数：{{ nums_leave_early }}</div>
+                                <div style="width:33%;display: inline-block" >获得A+分数次数：{{ nums_100 }}</div>
+                                <div style="width:33%;display: inline-block" >获得A分数次数：{{ nums_90 }}</div>
+                                <div style="width:33%;display: inline-block" >获得C及以下分数次数：{{ nums_50 }}</div>
+                                <div style="width:33%;display: inline-block" >未交作业及抄作业次数：{{ nums_0 }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="panel-control">
+                                <a class="btn btn-mint" href="{% url 'punishment' %}?student_qq={{ student_qq }}&enrollment_id={{ enrollment_id }}">添加处罚记录</a>
+                            </div>
+                            <h3 class="panel-title">处罚记录</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table id="demo-dt-basic" class="table table-striped" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>规则名称</th>
+                                        <th>规则详细</th>
+                                        <th>扣分</th>
+                                        <th>罚款</th>
+                                        <th>执行人</th>
+                                        <th>执行时间</th>
+                                        <th>备注</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for punishment in punishments %}
+                                        <tr>
+                                            <td>{{ punishment.rule.name }}</td>
+                                            <td>{{ punishment.rule.detail }}
+                                            </td>
+                                            <td>{{ punishment.rule.points }}</td>
+                                            <td>{{ punishment.rule.fine}}</td>
+                                            <td>{{ punishment.performer}}</td>
+                                            <td>{{ punishment.date}}</td>
+                                            <td>{{ punishment.note}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <div class="panel-control">
+                                <a class="btn btn-mint" href="{% url 'study_consult_record' enrollment_id %}">添加跟进记录</a>
+                            </div>
+                            <h3 class="panel-title">跟进记录</h3>
+                        </div>
+                        <div class="panel-body">
+                            {%for item in study_consult_record %}
+                                <div class="panel">
+                                    <div class="panel-heading">
+                                        <div class="panel-control">
+                                            <span>跟进人：{{item.consultant}}</span>
+                                             &emsp;&emsp;&emsp;
+                                            <em class="text-muted"><small>{{item.date}}</small></em>
+                                        </div>
+                                        <h3 class="panel-title">{{item.status}}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p>{{item.note}}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% if status == 'True' %}
+    {% block aside_content %}
+        <aside id="aside-container">
+            <div id="aside">
+                <div class="nano">
+                    <div class="nano-content">
+
+                        <!-- Simple profile -->
+                        <div class="text-center pad-all">
+                            <div class="pad-ver">
+                                <img src="/static/img/av1.png" class="img-lg img-border img-circle" alt="Profile Picture">
+                            </div>
+                            <h4 class="text-lg text-overflow mar-no">{{ student_item.name }}</h4>
+                            <p class="text-sm">{{ student_item.stu_id }}</p>
+                        </div>
+                        <hr>
+                        <ul class="list-group bg-trans">
+
+                            <!-- Profile Details -->
+                            <li class="list-group-item list-item-sm">
+                                电话号码：{{ student_item.phone }}
+                            </li>
+                            <li class="list-group-item list-item-sm">
+                                QQ号码：{{ student_item.qq}}
+                            </li>
+                            <li class="list-group-item list-item-sm">
+                                邮箱地址：{{ student_item.email }}
+                            </li>
+                            <li class="list-group-item list-item-sm">
+                                课程顾问：{{ student_item.consultant }}
+                            </li>
+                            <li class="list-group-item list-item-sm">
+                                身份证号：{{ student_item.id_num }}
+                            </li>
+                            <li class="list-group-item list-item-sm">
+                                客户来源：{{ student_item.source }}
+                           </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    {% endblock %}
+{% endif %}
+
+{% block dash-footer-js %}
+    <script>
+        $('button.from_student').click(function () {
+            var student_qq = $('input.from_student').val();
+            if(student_qq == ''){
+                alert('请先输入学员的QQ号码')
+            }else {
+                window.location.href = '{% url "studentinformation" %}' + '?student_qq=' + student_qq
+            }
+        })
+    </script>
+{% endblock %}

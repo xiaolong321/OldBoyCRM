@@ -37,7 +37,11 @@
 {%endblock%}
 
 {% block body-container %}
-	<div id="container" class="effect mainnav-lg mainnav-fixed">
+    {% if status == 'True' %}
+        <div id="container" class="effect aside-in aside-left aside-bright mainnav-lg">
+    {% else %}
+        <div id="container" class="effect mainnav-lg mainnav-fixed">
+    {% endif %}
 		<header id="navbar">
 			<div id="navbar-container" class="boxed">
 				<div class="navbar-header">
@@ -108,27 +112,24 @@
 
 									</li>
 
-									<li id="punishment">
-										<a href="{%url 'punishment' %}">
-											<i class="fa fa-dashboard"></i>
-											<span class="menu-title">
-												<strong>处罚学生</strong>
-												<!--<span class="label label-success pull-right">New</span>-->
-											</span>
-										</a>
-									</li>
-
-{##}
-{#									<li id="signed">#}
-{#										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">#}
-{#											<i class="fa fa-th"></i>#}
+{#									<li id="punishment">#}
+{#										<a href="{%url 'punishment' %}">#}
+{#											<i class="fa fa-dashboard"></i>#}
 {#											<span class="menu-title">#}
-{#												<strong>我的客户</strong>#}
-{##}
+{#												<strong>处罚学生</strong>#}
 {#											</span>#}
 {#										</a>#}
-{##}
 {#									</li>#}
+
+									<li id="studentinformation">
+										<a href="{%url 'studentinformation'%}">
+											<i class="fa fa-th"></i>
+											<span class="menu-title">
+												<strong>学生信息</strong>
+											</span>
+										</a>
+
+									</li>
 {##}
 {#									<li id="class_list">#}
 {#										<a href="{%url 'class_list'%}">#}
@@ -159,6 +160,9 @@
 					</div>
 				</div>
 			</nav>
+            {% block aside_content %}
+
+            {% endblock %}
 		</div>
 
 
@@ -188,6 +192,9 @@
 
 	<!--Bootstrap Select [ OPTIONAL ]-->
 	<script src="/static/js/bootstrap-select.min.js"></script>
+
+    <!--Fast Click [ OPTIONAL ]-->
+	<script src="/static/plugins/fast-click/fastclick.min.js"></script>
 
 	<!--dashboard js-->
 	<script src="/static/js/dash_customer.js"></script>

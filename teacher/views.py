@@ -293,3 +293,60 @@ def createcourse(request, class_id):
             return render(request, 'teacher/createcourse.html', locals())
 
 
+@login_required
+@check_permission
+def studentinformation(request):
+    student_qq = request.GET.get('student_qq')
+    print(student_qq)
+    if student_qq:
+            student_item = models.Customer.objects.filter(qq=student_qq).first()
+            if student_item:
+                enrollments = models.Enrollment.objects.filter(customer=student_item).order_by('enrolled_date')
+                if enrollments:
+                    enrollment_id = request.GET.get('enrollment_id')
+                    if not enrollment_id:
+                        enrollment_id = enrollments.last().id
+                    if enrollment_id:
+                        enrollment_id = int(enrollment_id)
+                        enrollment_item = models.Enrollment.objects.filter(id=enrollment_id).first()
+                        nums_class = models.StudyRecord.objects.filter(course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_100 = models.StudyRecord.objects.filter(score=100, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_90 = models.StudyRecord.objects.filter(score=90, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_50 = models.StudyRecord.objects.filter(score__in=[50,40], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_0 = models.StudyRecord.objects.filter(score__in=[0,-100], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_checked = models.StudyRecord.objects.filter(record='checked', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_late = models.StudyRecord.objects.filter(record='late', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_noshow = models.StudyRecord.objects.filter(record='noshow', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        nums_leave_early = models.StudyRecord.objects.filter(record='leave_early', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                        punishments = models.StuPunishmentRecord.objects.filter(enrollment_id=enrollment_id)
+                        study_consult_record = models.StudyConsultRecord.objects.filter(enrollment_id=enrollment_id).order_by('-date')
+                    status = 'True'
+                else:
+                    status = 'False'
+                    error_information = '该学员没有报名任何课程，没有学习信息'
+            else:
+                status = 'False'
+                error_information = '不存在该QQ对应的学生信息'
+    else:
+        status = 'False'
+    return render(request, 'teacher/studentinformation.html', locals())
+
+
+@login_required
+@check_permission
+def study_consult_record(request, enrollment_id):
+    enrollment = models.Enrollment.objects.get(id=enrollment_id)
+    if request.method == 'POST':
+        form = forms.AddStudyConsultRecordForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('studentinformation') + '?student_qq=' + str(enrollment.customer.qq) + '&enrollment_id=' + str(enrollment_id))
+        else:
+            form = forms.AddStudyConsultRecordForm(request.POST, instance=enrollment)
+            return render(request, 'crm/consult_record.html', {
+                'form': form
+            })
+    form = forms.AddStudyConsultRecordForm(instance=enrollment)
+    return render(request, 'teacher/study_consult_record.html', {
+        'form': form,
+    })

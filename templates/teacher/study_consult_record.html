@@ -1,0 +1,50 @@
+{% extends 'teacher/dashboard.html'%}
+    {%block dash-filter%}
+        <div class="col-sm-12 text-left">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">请填写如下表格(加黑字体为必填项)</h3>
+                </div>
+                {%if error %}
+                    <h1>{{error}}</h1>
+                {%endif%}
+                <!--Horizontal Form-->
+                <!--===================================================-->
+                <form class="form-horizontal" action=" " method="POST">
+                    {% csrf_token %}
+                    <div class="panel-body ">
+                        {%for field in form%}
+                            <div class="form-group text-left">
+                                {%if field.field.required %}
+                                    <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                                {%else%}
+                                    <label class="col-lg-3 control-label">{{field.label}}</label>
+                                {%endif%}
+                                <div class="col-sm-6 ">
+                                    {%if field.name == 'enrollment'%}
+                                        <select class="form-control" id="id_enrollment" name="enrollment">
+                                            <option value="{{form.instance.id}}" selected="selected">{{form.instance}}</option>
+                                        </select>
+                                    {%elif field.name == 'consultant'%}
+                                        <select class="form-control form-icon" id="id_consultant" name="consultant">
+                                            <option value="{{request.user.id}}" selected="selected">{{request.user}}</option>
+                                        </select>
+                                    {%else%}
+                                        {{field}}
+                                    {%endif%}
+                                </div>
+                                <div class="col-sm-3" style="color: red">
+                                    {{field.errors.as_text}}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-footer text-center">
+                        <input class="btn btn-info" type="submit" value="提交" >
+                    </div>
+                </form>
+            <!--===================================================-->
+            <!--End Horizontal Form-->
+            </div>
+        </div>
+    {% endblock %}
