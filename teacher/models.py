@@ -45,10 +45,3 @@ class StudyConsultRecord(models.Model):
     class Meta:
         verbose_name = u'学员学习跟踪记录'
         verbose_name_plural = u"客户学习跟踪记录"
-
-
-class test(models.Model):
-    name = models.CharField(max_length=64)
-
-class test2(models.Model):
-    name = models.CharField(max_length=64)
