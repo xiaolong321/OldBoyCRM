@@ -1,0 +1,90 @@
+{%extends 'crm/dashboard.html'%}
+
+{% block header-resource-files %}
+
+    <link href="/static/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+    <script src="/static/plugins/dropzone/dropzone.min.js"></script>
+
+{% endblock %}
+
+{% block dash-content%}
+
+    <div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">
+                    {% if show_menu %}
+                        请填写如下表格(加粗字体为必填项)
+                    {% else %}
+                        渠道详细信息
+                    {% endif %}
+                </h3>            </div>
+            <form class="form-horizontal" action=" " method="POST">
+                {% csrf_token %}
+                <div class="panel-body ">
+                    {%for field in form%}
+                        <div class="form-group text-left">
+                            {%if field.field.required%}
+                                <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                            {%else%}
+                                <label class="col-lg-3 control-label">{{field.label}}</label>
+                            {%endif%}
+                            <div class="col-sm-6">
+                                {% if field.name == 'location' %}
+                                    <input id="id_location" name="location" style="display: none">
+                                <div>
+                                    省：<select class="form-control" id="cmbProvince" style="display: inline;width: 25%"></select>
+                                    市：<select class="form-control" id="cmbCity" style="display: inline;width: 25%"></select>
+                                    区：<select class="form-control" id="cmbArea" style="display: inline;width: 25%"></select>
+                                </div>
+                                {% else %}
+                                {{field}}
+                                {% endif %}
+                            </div>
+                            <div class="col-sm-3"style="color: red;">
+                                {%for error in field.errors%}
+                                    {{error}}
+                                {%endfor%}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="提交">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{%block dash-footer-js%}
+
+    <script type="text/javascript" src="/static/js/jsAddress.js"></script>
+
+    <script src="/static/plugins/bootstrap-validator/bootstrapValidator.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            addressInit('cmbProvince', 'cmbCity', 'cmbArea');
+
+            $('#cmbProvince, #cmbCity, #cmbArea').change(function () {
+                var location_province = $('#cmbProvince').val()
+                var location_city = $('#cmbCity').val()
+                if(location_city == '市辖区' || location_city == '县'){
+                    location_city = '市'
+                }else {
+                    location_city = '市' + location_city
+                }
+                var location_area = $('#cmbArea').val()
+                if(location_area == '市辖区'){
+                    location_area = ''
+                }
+                var location = location_province + location_city + location_area
+                $('#id_location').val(location)
+            })
+            $('#cmbProvince').trigger('change')
+        })
+    </script>
+{%endblock%}

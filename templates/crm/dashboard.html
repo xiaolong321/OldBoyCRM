@@ -672,6 +672,30 @@
 
 									</li>
 
+                                    {% if show_menu == 'channel' %}
+                                        <li class="active" id="channel">
+                                    {% else %}
+                                        <li id="channel">
+                                    {% endif %}
+                                            <a href="#">
+                                                <i class="fa fa-table"></i>
+                                                <span class="menu-title">
+                                                    <strong>渠道功能</strong>
+                                                </span>
+                                                <i class="arrow"></i>
+                                            </a>
+
+										<!--Submenu-->
+                                            <ul>
+                                                <li id="showchannels"><a href="{%url 'showchannels'%}">查看渠道信息</a></li>
+                                                <li id="addchannel"><a href="{%url 'addchannel'%}">添加渠道</a></li>
+                                                <li id='addlinkman'><a href="{% url 'addlinkman' %}">添加联系人</a></li>
+                                                <li id="addprogress"><a href="{% url 'addprogress' %}">添加合作记录</a></li>
+{#                                                <li><a href="tables-footable.html">Foo Tables<span class="label label-info pull-right">New</span></a></li>#}
+
+                                            </ul>
+                                    </li>
+
 
 
 								</ul>
