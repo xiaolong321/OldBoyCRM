@@ -273,6 +273,10 @@ def stu_enrollment(request):
             else:
                 enroll_form = forms.EnrollmentForm(request.POST, instance=enroll_obj)
                 customer_form = forms.CustomerForm(request.POST, instance=enroll_obj.customer)
+                if not request.POST.get('emergency_contract'):
+                    customer_form.add_error('emergency_contract', '这个字段是必填项')
+                if not request.POST.get('emergency_contract_number'):
+                    customer_form.add_error('emergency_contract_number', '这个字段是必填项')
                 if enroll_form.is_valid() and customer_form.is_valid():
 
                     # check whether file has uploaded or not

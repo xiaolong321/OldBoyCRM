@@ -28,21 +28,28 @@ class CompliantForm(ModelForm):
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ('qq', 'name', 'phone', 'email', 'sex',
-                  'birthday', 'id_num', 'work_status',
-                  'company', 'salary', 'network_consult', 'consultant')
+        fields = ('qq', 'name', 'phone', 'email', 'sex','birthday', 'id_num', 'work_status','company',
+                  'salary', 'network_consult', 'consultant', 'emergency_contract',
+                  'emergency_contract_number')
 
     def __new__(cls, *args, **kwargs):
         # super(CustomerForm, self).__new__(*args, **kwargs)
         # self.fields['customer_note'].widget.attrs['class'] = 'form-control'
         disabled_fields = ['qq', 'consultant']
+        required_fields = ['emergency_contract', 'emergency_contract_number']
         for field_name in cls.base_fields:
             field = cls.base_fields[field_name]
+            print(1111, field, type(field.required), field.required)
+            if field.required:
+                required_fields.append(field_name)
             attr_dic = {'class': 'form-control',
                         'placeholder': field.help_text,
                         }
             if field_name in disabled_fields:
                 attr_dic['disabled'] = True
+            print(required_fields)
+            if field_name in required_fields:
+                attr_dic['required'] = True
             if field_name == 'network_consult':
                 attr_dic['height'] = '20px'
             field.widget.attrs.update(attr_dic)
