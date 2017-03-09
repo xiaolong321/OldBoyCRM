@@ -1675,3 +1675,111 @@ def punishment(request):
         else:
             error_message_enrollment = '请先选择违纪的学生信息'
     return render(request, 'crm/punishment.html', locals())
+
+
+def showchannels(request):
+    show_menu = 'channel'
+    channels = models.Channels.objects.filter(manager=request.user)
+    channelitem = channels.first()
+    return render(request, 'crm/showchannels.html', locals())
+
+
+def addchannel(request):
+    show_menu = 'channel'
+    if request.method == 'POST':
+        print(request.POST)
+        form = forms.AddChannelsForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addchannel.html', {
+                'show_menu': show_menu,
+                'form': form,
+            })
+    else:
+        form = forms.AddChannelsForm()
+        return render(request, 'crm/addchannel.html', {'show_menu': show_menu, 'form': form,})
+
+
+def addlinkman(request):
+    show_menu = 'channel'
+    if request.method == 'POST':
+        form = forms.AddLinkmanForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addlinkman.html', {
+                'show_menu': show_menu,
+                'form': form,
+            })
+    else:
+        form = forms.AddLinkmanForm()
+        return render(request, 'crm/addlinkman.html', {'show_menu': show_menu, 'form': form,})
+
+
+def addprogress(request):
+    show_menu = 'channel'
+    if request.method == 'POST':
+        form = forms.AddProgressForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addprogress.html', {
+                'show_menu': show_menu,
+                'form': form,
+            })
+    else:
+        form = forms.AddProgressForm()
+        return render(request, 'crm/addprogress.html', {'show_menu': show_menu, 'form': form,})
+
+
+def channel_detail(request, channel_id):
+    channel = models.Channels.objects.get(id=channel_id)
+    if request.method == 'POST':
+        print(request.POST)
+        form = forms.AddChannelsForm(instance=channel, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addchannel.html', {
+                'form': form,
+            })
+    else:
+        form = forms.AddChannelsForm(instance=channel)
+        return render(request, 'crm/addchannel.html', {'form': form,})
+
+
+def linkman_detail(request, linkman_id):
+    linkman = models.Linkman.objects.get(id=linkman_id)
+    if request.method == 'POST':
+        form = forms.AddLinkmanForm(instance=linkman, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addlinkman.html', {
+                'form': form,
+            })
+    else:
+        form = forms.AddLinkmanForm(instance=linkman)
+        return render(request, 'crm/addlinkman.html', { 'form': form,})
+
+
+def progress_detail(request, progress_id):
+    progress = models.Progress.objects.get(id=progress_id)
+    if request.method == 'POST':
+        form = forms.AddProgressForm(instance=progress, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url('showchannels'))
+        else:
+            return render(request, 'crm/addprogress.html', {
+                'form': form,
+            })
+    else:
+        form = forms.AddProgressForm(instance=progress)
+        return render(request, 'crm/addprogress.html', {'form': form,})

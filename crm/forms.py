@@ -4,7 +4,7 @@ __author__ = 'Alex Li'
 
 from django.forms import ModelForm,Textarea,BooleanField
 from django import forms
-from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList,StuPunishmentRecord
+from crm.models import Compliant,Enrollment,Customer,ConsultRecord,PaymentRecord,CourseModule,ClassList,StuPunishmentRecord,Channels,Linkman,Progress
 
 
 class CompliantForm(ModelForm):
@@ -89,6 +89,7 @@ class EnroForm(ModelForm, forms.Form):
         model = Enrollment
         fields = ('course_grade', 'memo', 'school')
 
+
     def __init__(self, *args, **kwargs):
         super(EnroForm, self).__init__(*args, **kwargs)
         self.fields['course_grade'].widget.attrs.update({'class': 'selectpicker'})
@@ -100,7 +101,9 @@ class EnroForm(ModelForm, forms.Form):
 class AddCustomerForm(ModelForm):
     class Meta:
         model = Customer
-        exclude = ('class_list', 'referral_from', 'status')
+        fields = ('qq', 'qq_name', 'name', 'sex', 'birthday', 'phone', 'email', 'id_num',
+                   'stu_id', 'source', 'course', 'class_type', 'customer_note', 'work_status', 'company', 'salary',
+                   'network_consult', 'consultant')
 
     def __new__(cls, *args, **kwargs):
         for field_name in cls.base_fields:
@@ -174,3 +177,47 @@ class ClasslistForm(ModelForm):
         self.fields['teachers'].widget.attrs.update({'class': 'form-control'})
         self.fields['memo'].widget.attrs.update({'class': 'form-control','placeholder':'建议写明该课程为何种课程，何种形式。如：Linux架构师-面授（周末）班', })
 
+
+class AddChannelsForm(ModelForm):
+    class Meta:
+        model = Channels
+        exclude = ()
+
+    def __new__(cls, *args, **kwargs):
+        for field_name in cls.base_fields:
+            field = cls.base_fields[field_name]
+            attr_dic = {'class': 'form-control',
+                        'placeholder': field.help_text,
+                        }
+            field.widget.attrs.update(attr_dic)
+        return ModelForm.__new__(cls)
+
+
+class AddLinkmanForm(ModelForm):
+    class Meta:
+        model = Linkman
+        exclude = ()
+
+    def __new__(cls, *args, **kwargs):
+        for field_name in cls.base_fields:
+            field = cls.base_fields[field_name]
+            attr_dic = {'class': 'form-control',
+                        'placeholder': field.help_text,
+                        }
+            field.widget.attrs.update(attr_dic)
+        return ModelForm.__new__(cls)
+
+
+class AddProgressForm(ModelForm):
+    class Meta:
+        model = Progress
+        exclude = ()
+
+    def __new__(cls, *args, **kwargs):
+        for field_name in cls.base_fields:
+            field = cls.base_fields[field_name]
+            attr_dic = {'class': 'form-control',
+                        'placeholder': field.help_text,
+                        }
+            field.widget.attrs.update(attr_dic)
+        return ModelForm.__new__(cls)
