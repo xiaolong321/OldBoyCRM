@@ -38,4 +38,11 @@ urlpatterns = [
     url(r'^searchcustomer', views.searchcustomer, name='searchcustomer'),
     url(r'^enrollment/(?P<customer_id>\d+)/$', views.enrollment, name='enrollment'),
     url(r'^payment/(?P<payment_id>\d+)/$', views.payment, name='payment'),
+    url(r'^showchannels/$', views.showchannels, name='showchannels'),
+    url(r'^addchannel/$', views.addchannel, name='addchannel'),
+    url(r'^addlinkman/$', views.addlinkman, name='addlinkman'),
+    url(r'^addprogress/$', views.addprogress, name='addprogress'),
+    url(r'^channel_detail/(?P<channel_id>\d+)/$', views.channel_detail, name='channel_detail'),
+    url(r'^linkman_detail/(?P<linkman_id>\d+)/$', views.linkman_detail, name='linkman_detail'),
+    url(r'^progress_detail/(?P<progress_id>\d+)/$', views.progress_detail, name='progress_detail'),
 ]

@@ -1,0 +1,65 @@
+{%extends 'crm/dashboard.html'%}
+
+{% block header-resource-files %}
+
+    <link href="/static/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+    <script src="/static/plugins/dropzone/dropzone.min.js"></script>
+
+{% endblock %}
+
+{% block dash-content%}
+
+    <div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">
+                    {% if show_menu %}
+                        请填写如下表格(加粗字体为必填项)
+                    {% else %}
+                        联系人详细信息
+                    {% endif %}
+                </h3>
+            </div>
+            <form class="form-horizontal" action=" " method="POST">
+                {% csrf_token %}
+                <div class="panel-body ">
+                    {%for field in form%}
+                        <div class="form-group text-left">
+                            {%if field.field.required%}
+                                <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                            {%else%}
+                                <label class="col-lg-3 control-label">{{field.label}}</label>
+                            {%endif%}
+                                <div class="col-sm-6">
+                                    {% if field.name == 'channel_manager' %}
+                                        {% if field.value == True %}
+                                            <input class="form-control" id="id_channel_manager" name="channel_manager" placeholder="" type="checkbox" checked="checked" style="height: 20px">
+                                        {% else %}
+                                            <input class="form-control" id="id_channel_manager" name="channel_manager" placeholder="" type="checkbox" style="height: 20px">
+                                        {% endif %}
+                                    {% else %}
+                                        {{field}}
+                                    {% endif %}
+                                </div>
+                            <div class="col-sm-3"style="color: red;">
+                                {%for error in field.errors%}
+                                    {{error}}
+                                {%endfor%}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="提交">
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{%block dash-footer-js%}
+    <script src="/static/plugins/bootstrap-validator/bootstrapValidator.min.js"></script>
+
+{%endblock%}

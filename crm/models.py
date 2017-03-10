@@ -5,6 +5,7 @@ from django.utils.html import format_html
 from OldboyCRM import settings
 import os
 from crm.myauth import UserProfile
+from multiselectfield import MultiSelectField
 
 
 course_choices = (
@@ -19,6 +20,8 @@ course_choices = (
                       ('PythonFullStack51', u'Python全栈开发(随到随学)'),
                       ('BigDataDev', u"大数据开发课程"),
                       ('Cloud', u"云计算课程"),
+                      ('Mysql', u"MySQL实战周末班"),
+                      ('GO', u"GO语言开发"),
                       )
 
 
@@ -60,7 +63,8 @@ class Customer(models.Model):
     referral_from = models.ForeignKey('self', verbose_name=u"转介绍自学员",
                                       help_text=u"若此客户是转介绍自内部学员,请在此处选择内部学员姓名", blank=True,
                                       null=True, related_name="internal_referral")
-    course = models.CharField(u"咨询课程", max_length=64, choices=course_choices)
+    course = MultiSelectField(u"咨询课程", choices=course_choices)
+    # course = models.CharField(u"咨询课程", choices=course_choices, max_length=64,)
     class_type = models.CharField(u"班级类型", max_length=64, choices=class_type_choices)
     customer_note = models.TextField(u"客户咨询内容详情", help_text=u"客户咨询的大概情况,客户个人信息备注等...")
     work_status_choices = (('employed', '在职'), ('unemployed', '无业'))
@@ -78,6 +82,8 @@ class Customer(models.Model):
     date = models.DateField(u"咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(u"最后跟进日期", auto_now_add=True)
     class_list = models.ManyToManyField('ClassList', verbose_name=u"已报班级", blank=True)
+    emergency_contract = models.CharField(max_length=32, blank=True, null=True, verbose_name='紧急联系人')
+    emergency_contract_number = models.CharField(max_length=16, blank=True, null=True, verbose_name='紧急联系人号码 ')
 
     def colored_status(self):
         if self.status == "signed":
@@ -613,3 +619,66 @@ class StuPunishmentRecord(models.Model):
     class Meta:
         verbose_name = "学员处罚记录"
         verbose_name_plural = "学员处罚记录"
+
+
+class Channels(models.Model):
+    name = models.CharField(max_length=64,verbose_name='渠道名称')
+    manager = models.ForeignKey('UserProfile', verbose_name='渠道管理人')
+    channel_type_choices = (
+        ('school', '院校'),
+        ('company', '公司'),
+        ('individual', '个人')
+    )
+    channel_type = models.CharField(u"渠道类型", choices=channel_type_choices, max_length=64)
+    location = models.CharField(max_length=64, verbose_name='所在区域')
+    level = models.CharField(max_length=64, verbose_name='级别（规模）')
+    major = models.CharField(max_length=64, verbose_name='主要业务')
+    date = models.DateField(auto_now_add=True, verbose_name='接触时间')
+    channel_status_choices = (
+        ('unpartner', '未开展合作'),
+        ('communicating', '正在沟通中'),
+        ('partnered', '合作中')
+    )
+    status = models.CharField(u"合作状态", choices=channel_status_choices, max_length=64, default='unpartner')
+    note = models.TextField(max_length=256, verbose_name='备注', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = '渠道'
+        verbose_name_plural = "渠道"
+
+
+class Linkman(models.Model):
+    name = models.CharField(max_length=64, verbose_name='姓名')
+    sex = models.CharField(max_length=64, verbose_name='性别', blank=True, null=True)
+    age = models.CharField(max_length=64, verbose_name='年龄', blank=True, null=True)
+    position = models.CharField(max_length=64, verbose_name='职位', blank=True, null=True)
+    contact = models.CharField(max_length=64, verbose_name='联系方式')
+    affiliation = models.ForeignKey('Channels', verbose_name='归属')
+    channel_manager = models.BooleanField(default=False, verbose_name='渠道经理')
+    note = models.TextField(max_length=256, verbose_name='备注', blank=True, null=True)
+
+    def __str__(self):
+        return '{}-{}'.format(self.affiliation, self.name)
+
+    class Meta:
+        verbose_name = '渠道联系人'
+        verbose_name_plural = "渠道联系人"
+
+
+class Progress(models.Model):
+    channel = models.ForeignKey('Channels', verbose_name='渠道')
+    linkman = models.ForeignKey('Linkman', verbose_name='联系人')
+    title = models.CharField(max_length=64, verbose_name='梗概')
+    content = models.TextField(max_length=256, verbose_name='内容')
+    date = models.DateField(auto_now_add=True, verbose_name='时间')
+    note = models.TextField(max_length=256, verbose_name='备注', blank=True,null=True)
+
+    def __str__(self):
+        return '{}-{}-{}'.format(self.channel, self.linkman.name, self.title)
+
+    class Meta:
+        verbose_name = '合作记录'
+        verbose_name_plural = "合作记录"

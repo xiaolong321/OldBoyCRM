@@ -28,9 +28,3 @@ def has_study(modu_id,user_qq):
     percent_num = str(round((has_study_num/sum_day_num)*100))+'%'
     return percent_num
 
-
-
-
-
-
-

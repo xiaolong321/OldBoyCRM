@@ -96,6 +96,33 @@
 												</div>
 												<div style="clear: both"></div>
 											</th>
+                                            <th>
+												<div style="float: left;margin-right: 3px">
+												<a href="" class="a-ico-sort">
+												<div>
+
+													<div style="float:left;text-align: center;line-height: 35px">
+														<span>电话号</span>
+													</div>
+													<div class="div2-ico-sort hid">
+														<div class="div-ico-sort">
+														<i class="fa fa-caret-up" aria-hidden="false"></i>
+														</div>
+														<div class="div-ico-sort hid">
+														<i class="fa fa-caret-down" aria-hidden="true"></i>
+														</div>
+													</div>
+
+												</div>
+												</a>
+													</div>
+												<div style="float: left;text-align: center;line-height: 34px">
+													<a href="" title="取消过滤">
+														<i class="fa fa-ban hid" aria-hidden="true"></i>
+													</a>
+												</div>
+												<div style="clear: both"></div>
+											</th>
 											<th>
 												<div style="float: left;margin-right: 3px">
 												<a href="" class="a-ico-sort">
@@ -235,7 +262,8 @@
 									{%for customer in customers%}
 									<tr>
                                         <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.qq}}</a></td>
-                                        <td>{{customer.stu_id}}</td>
+                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.phone}}</a></td>
+                                        <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.stu_id}}</a></td>
                                         <td><a class="btn-link" href="{%url 'customer_detail' customer.id%}">{{customer.name}}</a></td>
 
                                         <td>{{customer.consultant.name}}</td>
