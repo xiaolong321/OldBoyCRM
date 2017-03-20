@@ -520,19 +520,6 @@ class ContractTemplate(models.Model):
             ('crm_edit_payment', ' 编辑 客户缴费 页面 '),
             ('crm_view_punishment', ' 访问 违规记录 页面 '),
             ('crm_edit_punishment', ' 编辑 违规记录 页面 '),
-
-            ('teacher_view_teacher_dashboard', '访问 老师 主页'),
-            ('teacher_view_classlist', '访问 教授课程 页面'),
-            ('teacher_view_courselist', '访问 课程节次 页面'),
-            ('teacher_edit_courselist', '下载出勤记录 页面'),
-            ('teacher_view_courserecord', '访问 课程节次详细 页面'),
-            ('teacher_edit_courserecord', '编辑 课程节次详细 页面'),
-            ('teacher_view_createcourse', '访问 创建课程节次 页面'),
-            ('teacher_edit_createcourse', '编辑 创建课程节次 页面'),
-            ('teacher_view_studentinformation', '访问 学生信息 页面'),
-            ('teacher_edit_studentinformation', '编辑学生信息 页面'),
-            ('teacher_view_study_consult_record', '访问 创建学习跟踪记录 页面'),
-            ('teacher_edit_study_consult_record', '编辑 创建学习跟踪记录 页面'),
         )
 
 
