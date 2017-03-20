@@ -438,171 +438,6 @@
 					</div>
 					</div>
 					</div>
-                    <div class="panel">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">有人向我推荐……（点击QQ号或姓名快捷添加客户信息）</h3>
-                        </div>
-
-                        <!--Data Table-->
-                        <!--===================================================-->
-                        <div class="panel-body">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>QQ</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>电话</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>姓名</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>推荐日期</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>推荐人</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                            <th>
-                                                <div style="float: left;margin-right: 3px">
-                                                <a href="" class="a-ico-sort">
-                                                <div>
-
-                                                    <div style="float:left;text-align: center;line-height: 35px">
-                                                        <span>备注</span>
-                                                    </div>
-                                                    <div class="div2-ico-sort">
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-up hid" aria-hidden="false"></i>
-                                                        </div>
-                                                        <div class="div-ico-sort hid">
-                                                        <i class="fa fa-caret-down hid" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                </a>
-                                                    </div>
-
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {%for referral in referrals%}
-                                        {% if referral.flag %}
-                                            <tr>
-                                                <td><a class="btn-link" href="{% url 'addcustomer' referral.id %}" target="_Blank">{{referral.qq}}</a></td>
-                                                <td><span class="text-muted">{{referral.phone}} </span></td>
-                                                <td><a class="btn-link" href="{% url 'addcustomer' referral.id %}" target="_blank">{{referral.name}}</a></td>
-                                                <td><span class="text-muted"><div>{{referral.referral_date}}</div> </span></td>
-                                                <td><span class="text-muted">{{referral.referralfrom}} </span></td>
-                                                <td><span style="max-width: 100px"class="text-muted">{{referral.comment|truncatechars:40}} </span></td>
-                                            </tr>
-                                        {% endif %}
-
-                                    {%endfor%}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 <div id="sales_chart" class="row" style="margin:0px;height:600px;"></div>
 				</div>
 			{% endblock %}
@@ -618,19 +453,20 @@
 
 									<!--Category name-->
 									<li class="list-header">菜单栏</li>
-									<li id="customers_library">
-										<a href="{%url 'customers_library' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 
+									<li id="customers_library">
+										<a href="{%url 'customers_library' 'all' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 											<i class="fa fa-database"></i>
 											<span class="menu-title">
 												<strong>客户库</strong>
 											</span>
 										</a>
-
 									</li>
 
-									<li id="tracking">
-										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
+                                    {% if_waiting request.user %}
+
+                                    <li id="tracking">
+										<a href="{%url 'tracking' 'all' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 											<i class="fa fa-dashboard"></i>
 											<span class="menu-title">
 												<strong>我的跟进</strong>
@@ -641,7 +477,7 @@
 
 
 									<li id="signed">
-										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
+										<a href="{%url 'signed' 'all' 'all' 'all' 'all' 'all' 'all' 'all' 1 %}">
 											<i class="fa fa-th"></i>
 											<span class="menu-title">
 												<strong>我的客户</strong>
@@ -652,7 +488,7 @@
 									</li>
 
 									<li id="class_list">
-										<a href="{%url 'class_list'%}">
+										<a href="{%url 'class_list' 'all' 'all' 'all' 'all' 'all' %}">
 
 											<i class="fa fa-list-ul"></i>
 											<span class="menu-title">
@@ -825,13 +661,15 @@
                 }
             })
 
-            $('.action_url').click(function () {
-                if('{{ start_time }}' == '' && '{{ end_time }}' == '') {
-                    window.location.href = $(this).attr('href_url')
-                }else{
-                    window.location.href = $(this).attr('href_url') + '?start_time={{ start_time }}&end_time={{ end_time }}'
-                }
-            })
+            {% block dash-time-range-js %}
+                $('.action_url').click(function () {
+                    if('{{ start_time }}' == '' && '{{ end_time }}' == '') {
+                        window.location.href = $(this).attr('href_url')
+                    }else{
+                        window.location.href = $(this).attr('href_url') + '?start_time={{ start_time }}&end_time={{ end_time }}'
+                    }
+                })
+            {% endblock %}
 		});
 
 

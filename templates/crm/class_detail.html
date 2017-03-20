@@ -64,6 +64,20 @@
 						<!--Data Table-->
 						<!--===================================================-->
 						<div class="panel-body">
+                            <div class="pad-btm form-inline">
+                                <div class="row">
+                                    <div class="col-sm-6 table-toolbar-left"></div>
+                                    <div class="col-sm-6 table-toolbar-right">
+                                        <div class="form-group">
+                                            <form action="" method="GET">
+                                            <input id="input-search2" name="qq" type="text" placeholder="请输入QQ号" class="form-control" autocomplete="off">
+                                            <input class="form-control" type="submit" value="查询"/>
+                                            </form>
+                                            <span style="color: red;position: relative;left: -160px">{{qq_num_error}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 							<div class="table-responsive">
 								<table class="table table-striped">
 									<thead>

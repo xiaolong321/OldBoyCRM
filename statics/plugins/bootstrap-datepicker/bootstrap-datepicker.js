@@ -1685,7 +1685,7 @@
 	// 		$this.datepicker('show');
 	// 	}
 	// );
-	$('#datepicker').focusin(
+	$('.datepicker').focusin(
 		function(e){
 			var $this = $(this);
 			if ($this.data('datepicker'))

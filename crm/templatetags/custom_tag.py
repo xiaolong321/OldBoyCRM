@@ -3,11 +3,13 @@ __author__ = 'jieli'
 import datetime
 from django.utils.safestring import mark_safe
 from django import template
-register = template.Library()
 from django.utils.html import escapejs, format_html
-
-
+from OldboyCRM.settings import consultant_list
+from django.core.urlresolvers import reverse
 from crm import models
+
+register = template.Library()
+
 
 @register.filter
 def get_score_color(stu_study_obj):
@@ -121,3 +123,15 @@ def add_persent(number_no):
     cur_num=str(number_no)
     cur_num=cur_num+'%'
     return cur_num
+
+@register.simple_tag
+def if_waiting(user):
+    for group in user.groups.all():
+        if group.name in consultant_list:
+            user_status = 'consultant'
+            temp = '''<li id="waiting"><a href="{}"><i class="fa fa-edit"></i><span class="menu-title"><strong>等待跟进</strong></span></a></li>'''.format(reverse('waiting'))
+            return mark_safe(temp)
+    return ''
+
+
+

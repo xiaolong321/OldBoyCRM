@@ -9,5 +9,4 @@ class StudyConsultRecordAdmin(admin.ModelAdmin):
     raw_id_fields = ('enrollment',)
 
 
-admin.site.register(models.teacher)
 admin.site.register(models.StudyConsultRecord, StudyConsultRecordAdmin )

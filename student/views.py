@@ -16,6 +16,8 @@ from django.utils.encoding import smart_str
 import time
 from student.tasks import uploadhomework
 import shutil
+from common.message import message
+
 
 
 #装饰器 验证用户登录
@@ -205,12 +207,37 @@ def homework(request, class_id, day_num):
                             if os.path.exists(os.path.join(customer_file_path, 'all', student.name)):
                                 shutil.rmtree(os.path.join(customer_file_path, 'all', student.name))
                             for dirpath, dirnames, filenames in os.walk(upload_path):
-                                print(dirpath, dirnames, filenames)
                                 for file in filenames:
-                                    f = zipfile.ZipFile(os.path.join(dirpath, file), 'r')
+                                    f = zipfile.ZipFile(os.path.join(dirpath, file), 'r',)
                                     for file_obj in f.namelist():
                                         unzipfile = f.extract(file_obj, os.path.join(customer_file_path, 'all',
                                                                                      file.split('.zip')[0]))
+                            for dirpath, dirnames, filenames in os.walk(os.path.join(customer_file_path, 'all'),topdown=False, followlinks=True):
+                                for item in dirnames:
+                                    try:
+                                        new_name = item.encode('cp437')
+                                        new_name = new_name.decode('gbk')
+                                        os.rename(os.path.join(dirpath,item),(os.path.join(dirpath, new_name)))
+                                    except Exception:
+                                        pass
+                                for item in filenames:
+                                    try:
+                                        new_name = item.encode('cp437')
+                                        new_name = new_name.decode('gbk')
+                                        os.rename(os.path.join(dirpath, item),(os.path.join(dirpath, new_name)))
+                                    except Exception:
+                                        pass
+                        else:
+                            pick_learn = crmmodels.OnlineStuAssignment.objects.filter(enrollment__customer=student, enrollment__course_grade=course_record.course).first()
+                            object = message(subject='homework_upload', toaddrs=[pick_learn.assistant.name.email])
+                            object.getcontent(assistantname=pick_learn.assistant.name,
+                                              classname=pick_learn.enrollment.course_grade.course,
+                                              studentname=student.name, studentqq=student.qq,
+                                              classid=pick_learn.enrollment.course_grade.id,
+                                              studentid=student.id,
+                                              )
+                            object.sendmessage()
+
                         # uploadhomework.delay(class_id, day_num, upload_path)
                     else:
                         return HttpResponseForbidden('只允许上传大小小于5M的文件')

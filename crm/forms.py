@@ -29,7 +29,7 @@ class CustomerForm(ModelForm):
     class Meta:
         model = Customer
         fields = ('qq', 'name', 'phone', 'email', 'sex','birthday', 'id_num', 'work_status','company',
-                  'salary', 'network_consult', 'consultant', 'emergency_contract',
+                  'salary', 'consultant', 'emergency_contract',
                   'emergency_contract_number')
 
     def __new__(cls, *args, **kwargs):
@@ -101,9 +101,25 @@ class EnroForm(ModelForm, forms.Form):
 class AddCustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ('qq', 'qq_name', 'name', 'sex', 'birthday', 'phone', 'email', 'id_num',
-                   'stu_id', 'source', 'course', 'class_type', 'customer_note', 'work_status', 'company', 'salary',
-                   'network_consult', 'consultant')
+        fields = ('qq', 'qq_name', 'name', 'sex', 'birthday', 'phone', 'email', 'id_num', 'stu_id',
+                  'source', 'course', 'class_type', 'customer_note', 'work_status', 'company', 'salary',
+                  'network_consultant', 'network_consult_note', 'consultant')
+
+    def __new__(cls, *args, **kwargs):
+        for field_name in cls.base_fields:
+            field = cls.base_fields[field_name]
+            attr_dic = {'class': 'form-control',
+                        'placeholder': field.help_text,
+                        }
+            field.widget.attrs.update(attr_dic)
+        return ModelForm.__new__(cls)
+
+
+class PushCustomerForm(ModelForm):
+    class Meta:
+        model = Customer
+        fields = ('qq', 'source', 'course', 'class_type','network_consultant', 'network_consult_note',
+                  'consultant')
 
     def __new__(cls, *args, **kwargs):
         for field_name in cls.base_fields:
