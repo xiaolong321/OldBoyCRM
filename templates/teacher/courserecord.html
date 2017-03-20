@@ -74,6 +74,7 @@
                                     <option value ="-1000">只查看成绩FAIL</option>
                                 </select>
                             </th>
+                            <th>作业批注</th>
                             <th>备注</th>
                             <th><div><h6>
                                 {% homework_download_button  homework_path studyrecords.first.course_record.course.id studyrecords.first.course_record.day_num %}
@@ -87,7 +88,7 @@
                                     <input type="checkbox">
                                 </td>
                                 <td>{{ studyrecord.student.stu_id }}</td>
-                                <td>{{ studyrecord.student.name }}</td>
+                                <td><a href="{% url 'studentinformation' %}?student_qq={{ studyrecord.student.qq }}&enrollment_id={{ studyrecord.enrollment_id }}">{{ studyrecord.student.name }}</a></td>
                                 <td>
                                     <select class="form-control record" status="record">
                                         <option value ="checked">正常签到</option>
@@ -111,6 +112,9 @@
                                         <option value ="-100">COPY</option>
                                         <option value ="-1000">FAIL</option>
                                     </select>
+                                </td>
+                                <td>
+                                    <textarea type="text" class="homework_note" status="homework_note">{{ studyrecord.homework_note }}</textarea>
                                 </td>
                                 <td>
                                     <textarea type="text" class="note" status="note">{{ studyrecord.note }}</textarea>
@@ -164,7 +168,7 @@
                     })
                 });
 
-                $('select.record,select.score,textarea.note').change(function () {
+                $('select.record,select.score,textarea.note,textarea.homework_note').change(function () {
                     var student_id = $(this).parent().parent().attr('student_id');
                     var course_id = $(this).parent().parent().attr('course_id');
                     var status = $(this).attr('status');

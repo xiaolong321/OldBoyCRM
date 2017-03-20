@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, resolve_url
 from django.contrib.auth.decorators import login_required
 from teacher import models
-from teacher.permissions import check_permission
+from crm.permissions import check_permission
 from OldboyCRM.settings import HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR
 from teacher import forms
 from crm import forms as crm_forms
@@ -96,7 +96,8 @@ def courselist(request, class_id):
                                                                                            'course_record__day_num',
                                                                                            'student__name',
                                                                                            'record',
-                                                                                           'score')
+                                                                                           'score',
+                                                                                           'homework_note',)
 
         xls = xlwt.Workbook(encoding="utf-8")  # 创建一个xls对象
         sheet1 = xls.add_sheet('考勤表', cell_overwrite_ok=True)  # 给 xls 添加一张‘考勤表’的表格
@@ -114,8 +115,9 @@ def courselist(request, class_id):
             if one['course_record__day_num'] not in courseday:
                 y = one['course_record__day_num']
                 courseday.append(y)
-                sheet1.write(0, y, '{}第{}天'.format(one['course_record__date'], y))
-                sheet2.write(0, y, '{}第{}天'.format(one['course_record__date'], y))
+                sheet1.write(0, y, '{}第{}天签到情况'.format(one['course_record__date'], y))
+                sheet2.write(0, 2*y-1, '{}第{}天作业成绩'.format(one['course_record__date'], y))
+                sheet2.write(0, 2*y, '{}第{}天作业批注'.format(one['course_record__date'], y))
 
             if one['student__name'] not in students:
                 # 学员不在students列表内\
@@ -132,7 +134,8 @@ def courselist(request, class_id):
                                 sheet1.write((students[one['student__name']]), (i), status1[sta1])
                         for sta2 in status2:
                             if sta2 == one['score']:
-                                sheet2.write((students[one['student__name']]), (i), status2[sta2])
+                                sheet2.write((students[one['student__name']]), (2*i-1), status2[sta2])
+                                sheet2.write((students[one['student__name']]), (2*i), one['homework_note'])
         sheet1.write(0, y+1, '迟到次数')
         sheet1.write(0, y+2, '早退次数')
         sheet1.write(0, y+3, '缺勤次数')
@@ -297,36 +300,35 @@ def createcourse(request, class_id):
 @check_permission
 def studentinformation(request):
     student_qq = request.GET.get('student_qq')
-    print(student_qq)
     if student_qq:
-            student_item = models.Customer.objects.filter(qq=student_qq).first()
-            if student_item:
-                enrollments = models.Enrollment.objects.filter(customer=student_item).order_by('enrolled_date')
-                if enrollments:
-                    enrollment_id = request.GET.get('enrollment_id')
-                    if not enrollment_id:
-                        enrollment_id = enrollments.last().id
-                    if enrollment_id:
-                        enrollment_id = int(enrollment_id)
-                        enrollment_item = models.Enrollment.objects.filter(id=enrollment_id).first()
-                        nums_class = models.StudyRecord.objects.filter(course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_100 = models.StudyRecord.objects.filter(score=100, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_90 = models.StudyRecord.objects.filter(score=90, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_50 = models.StudyRecord.objects.filter(score__in=[50,40], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_0 = models.StudyRecord.objects.filter(score__in=[0,-100], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_checked = models.StudyRecord.objects.filter(record='checked', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_late = models.StudyRecord.objects.filter(record='late', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_noshow = models.StudyRecord.objects.filter(record='noshow', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        nums_leave_early = models.StudyRecord.objects.filter(record='leave_early', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
-                        punishments = models.StuPunishmentRecord.objects.filter(enrollment_id=enrollment_id)
-                        study_consult_record = models.StudyConsultRecord.objects.filter(enrollment_id=enrollment_id).order_by('-date')
-                    status = 'True'
-                else:
-                    status = 'False'
-                    error_information = '该学员没有报名任何课程，没有学习信息'
+        student_item = models.Customer.objects.filter(qq=student_qq).first()
+        if student_item:
+            enrollments = models.Enrollment.objects.filter(customer=student_item).order_by('enrolled_date')
+            if enrollments:
+                enrollment_id = request.GET.get('enrollment_id')
+                if not enrollment_id:
+                    enrollment_id = enrollments.last().id
+                if enrollment_id:
+                    enrollment_id = int(enrollment_id)
+                    enrollment_item = models.Enrollment.objects.filter(id=enrollment_id).first()
+                    nums_class = models.StudyRecord.objects.filter(course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_100 = models.StudyRecord.objects.filter(score=100, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_90 = models.StudyRecord.objects.filter(score=90, course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_50 = models.StudyRecord.objects.filter(score__in=[50,40], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_0 = models.StudyRecord.objects.filter(score__in=[0,-100], course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_checked = models.StudyRecord.objects.filter(record='checked', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_late = models.StudyRecord.objects.filter(record='late', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_noshow = models.StudyRecord.objects.filter(record='noshow', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    nums_leave_early = models.StudyRecord.objects.filter(record='leave_early', course_record__course=enrollment_item.course_grade, student__qq=student_qq).count()
+                    punishments = models.StuPunishmentRecord.objects.filter(enrollment_id=enrollment_id)
+                    study_consult_record = models.StudyConsultRecord.objects.filter(enrollment_id=enrollment_id).order_by('-date')
+                status = 'True'
             else:
                 status = 'False'
-                error_information = '不存在该QQ对应的学生信息'
+                error_information = '该学员没有报名任何课程，没有学习信息'
+        else:
+            status = 'False'
+            error_information = '不存在该QQ对应的学生信息'
     else:
         status = 'False'
     return render(request, 'teacher/studentinformation.html', locals())

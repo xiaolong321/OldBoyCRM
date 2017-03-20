@@ -27,7 +27,8 @@ import string
 import random
 import os
 import shutil
-from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR, consultant_list
+from OldboyCRM.settings import ENROLL_DATA_DIR, CONSULT_DATA_DIR, HOMEWORK_DATA_DIR, ATTENDANCE_DATA_DIR
+from OldboyCRM.settings import consultant_list, network_consultant_list, teacher_list
 from django.utils.http import urlquote
 from teacher.views import my_login as teacher_my_login
 
@@ -461,12 +462,6 @@ def dashboard(request):
 
     result['sale_list']=sale_list
     result['curr_url']=curr_url
-    referrals = Referral.objects.filter(consultant=request.user)
-    for referral in referrals:
-        if models.Customer.objects.filter(qq=referral.qq):
-            referral.flag = False
-        else:
-            referral.flag = True
     return render(request,'crm/dashboard.html',locals())
 
 
@@ -491,9 +486,26 @@ def sale_table(request):
         return HttpResponse(sale_dict)
 
 
+def waiting(request):
+    referrals = Referral.objects.filter(consultant=request.user)
+    print(referrals)
+    for referral in referrals:
+        if models.Customer.objects.filter(qq=referral.qq):
+            referral.flag = False
+        else:
+            referral.flag = True
+    customers = models.Customer.objects.filter(customer_note=None, consultant=request.user, status='unregistered')
+    return render(request, 'crm/waiting.html', locals())
+
+
 @login_required
 @check_permission
 def tracking(request, page, *args, **kwargs):
+    for group in request.user.groups.all():
+        if group.name in consultant_list:
+            user_status = 'consultant'
+        if group.name in network_consultant_list:
+            user_status = 'network_consultant'
     ord = []
     username = request.session['username']
     user = request.session['email']
@@ -515,9 +527,20 @@ def tracking(request, page, *args, **kwargs):
     cus_status = map(lambda x: {'type': x[0], 'name': x[1]}, cus_status)
     cus_status = list(cus_status)
 
-    staffs = models.UserProfile.objects.filter(email=user).values('email', 'name')  # 客户顾问
-    staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
-    staffs = list(staffs)
+    if user_status == 'consultant':
+        staffs = models.UserProfile.objects.filter(email=user).values('email', 'name')  # 客户顾问
+        staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
+        staffs = list(staffs)
+        network_consultants = models.UserProfile.objects.filter(groups__name__in=network_consultant_list).values('email', 'name')   # 网络咨询师
+        network_consultants = map(lambda x: {'type': x['email'], 'name': x['name']}, network_consultants)
+        network_consultants = list(network_consultants)
+    elif user_status == 'network_consultant':
+        staffs = models.UserProfile.objects.filter(groups__name__in=consultant_list).values('email', 'name')  # 客户顾问
+        staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
+        staffs = list(staffs)
+        network_consultants = models.UserProfile.objects.filter(email=user).values('email', 'name')   # 网络咨询师
+        network_consultants = map(lambda x: {'type': x['email'], 'name': x['name']}, network_consultants)
+        network_consultants = list(network_consultants)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
                    {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
@@ -530,6 +553,7 @@ def tracking(request, page, *args, **kwargs):
         'staffs': staffs,
         'current_url': current_url,
         'filter_date': filter_date,
+        'network_consultants': network_consultants,
     }
 
     now = datetime.datetime.now()
@@ -586,7 +610,7 @@ def tracking(request, page, *args, **kwargs):
         q1.connector = 'AND'
         for key, value in direct_org.items():
             q1.children.append((key, value))
-        q1.children.append(('consultant__email', user))
+        q1.children.append(('{}__email'.format(user_status), user))
         q2 = Q()
         q2.connector = 'AND'
         for key, value in direct_org.items():
@@ -610,7 +634,7 @@ def tracking(request, page, *args, **kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 最后咨询日期倒叙 排序
         else:
             ord = []
 
@@ -629,7 +653,7 @@ def tracking(request, page, *args, **kwargs):
         q1.connector = 'AND'
         for key, value in direct_org.items():
             q1.children.append((key, value))
-        q1.children.append(('consultant__email', user))
+        q1.children.append(('{}__email'.format(user_status), user))
         q2 = Q()
         q2.connector = 'AND'
         for key, value in direct_org.items():
@@ -640,7 +664,7 @@ def tracking(request, page, *args, **kwargs):
         con.add(q2, 'OR')
         count = models.Customer.objects.filter(con).distinct().count()
         pageObj = PageInfo(page, count, 50)
-        customers = models.Customer.objects.filter(con).distinct().select_related().order_by(*ord)[pageObj.start:pageObj.end]
+        customers = models.Customer.objects.filter(con).exclude(customer_note=None).distinct().select_related().order_by(*ord)[pageObj.start:pageObj.end]
         fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
 
         fil = {'customers': customers, 'count': count, 'fenye': fenye}
@@ -652,6 +676,11 @@ def tracking(request, page, *args, **kwargs):
 @login_required
 @check_permission
 def signed(request,page,*args,**kwargs):
+    for group in request.user.groups.all():
+        if group.name in consultant_list:
+            user_status = 'consultant'
+        if group.name in network_consultant_list:
+            user_status = 'network_consultant'
 
     if request.method == 'POST':
         id=request.POST['id']
@@ -681,9 +710,20 @@ def signed(request,page,*args,**kwargs):
     cus_status = map(lambda x: {'type': x[0], 'name': x[1]}, cus_status)
     cus_status = list(cus_status)
 
-    staffs = models.UserProfile.objects.filter(email=user).values('email', 'name')  # 客户顾问
-    staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
-    staffs = list(staffs)
+    if user_status == 'consultant':
+        staffs = models.UserProfile.objects.filter(email=user).values('email', 'name')  # 客户顾问
+        staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
+        staffs = list(staffs)
+        network_consultants = models.UserProfile.objects.filter(groups__name__in=network_consultant_list).values('email', 'name')   # 网络咨询师
+        network_consultants = map(lambda x: {'type': x['email'], 'name': x['name']}, network_consultants)
+        network_consultants = list(network_consultants)
+    elif user_status == 'network_consultant':
+        staffs = models.UserProfile.objects.filter(groups__name__in=consultant_list).values('email', 'name')  # 客户顾问
+        staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
+        staffs = list(staffs)
+        network_consultants = models.UserProfile.objects.filter(email=user).values('email', 'name')   # 网络咨询师
+        network_consultants = map(lambda x: {'type': x['email'], 'name': x['name']}, network_consultants)
+        network_consultants = list(network_consultants)
 
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
                    {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}]
@@ -696,6 +736,7 @@ def signed(request,page,*args,**kwargs):
         'staffs': staffs,
         'current_url': current_url,
         'filter_date': filter_date,
+        'network_consultants': network_consultants,
     }
 
     now = datetime.datetime.now()
@@ -707,7 +748,7 @@ def signed(request,page,*args,**kwargs):
     ayear = datetime.timedelta(days=365)
     ayearbef = (now - ayear).strftime('%Y-%m-%d')  # 一年前
 
-    direct_org = {'consultant__email': user}
+    direct_org = {'{}__email'.format(user_status): user}
     exc = {'status': 'unregistered'}
     for item in kwargs.keys():
 
@@ -764,7 +805,7 @@ def signed(request,page,*args,**kwargs):
 
         values = request.COOKIES.values()
         if ('desc' not in values) and ('asc' not in values):
-            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 id 排序
+            ord = ['-last_consult_date']  # 如果没有选择排序，那么默认设置为按 最后咨询日期倒叙 排序
         else:
             ord = []
 
@@ -821,6 +862,10 @@ def customers_library(request, page, *args, **kwargs):
     staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
     staffs = list(staffs)
 
+    network_consultants = models.UserProfile.objects.filter(groups__name__in=network_consultant_list).values('email', 'name')   # 网络咨询师
+    network_consultants = map(lambda x: {'type': x['email'], 'name': x['name']}, network_consultants)
+    network_consultants = list(network_consultants)
+
     filter_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
                    {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'},]
 
@@ -832,6 +877,7 @@ def customers_library(request, page, *args, **kwargs):
         'staffs': staffs,
         'current_url': current_url,
         'filter_date': filter_date,
+        'network_consultants': network_consultants,
     }
 
     now = datetime.datetime.now()
@@ -867,7 +913,6 @@ def customers_library(request, page, *args, **kwargs):
                 direct_org['date__lt'] = end_time.replace('年','-').replace('月','-').replace('日','')
                 result['start_time'] = start_time
                 result['end_time'] = end_time
-
 
         else:
             if kwargs[item] != 'all':
@@ -938,8 +983,11 @@ def customers_library(request, page, *args, **kwargs):
 
 @login_required
 @check_permission
-def addcustomer(request, referralfromid=None):
+def addcustomer(request, referralfromid=None, pushid=None):
     curr_user = request.user
+    for group in curr_user.groups.all():
+        if group.name in network_consultant_list:
+            return HttpResponseRedirect(resolve_url('pushcustomer'))
     username = request.user.email
     if request.method == 'POST':
         upload_path = '%s/%s/%s' % (settings.CONSULT_DATA_DIR, curr_user.id, 'temporary')
@@ -958,12 +1006,18 @@ def addcustomer(request, referralfromid=None):
             else:
                 return HttpResponseForbidden('最多上传不超过4个文件')
         else:
-            form = forms.AddCustomerForm(data=request.POST)
+            if pushid:
+                customer = models.Customer.objects.get(id=pushid)
+                form = forms.AddCustomerForm(instance=customer,data=request.POST)
+            else:
+                form = forms.AddCustomerForm(data=request.POST)
             if request.POST.get('source') == 'referral':
                 from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
             else:
                 from_student = None
             if form.is_valid():
+                if not request.POST.get('customer_note'):
+                    form.add_error('customer_note', '这个字段是必填项')
                 file_sources_upload_path = "%s/%s/%s" % (settings.CONSULT_DATA_DIR, curr_user.id, 'temporary')
                 file_uploaded = False
                 try:
@@ -983,8 +1037,9 @@ def addcustomer(request, referralfromid=None):
                                 for j in x[-1]:
                                     os.rename(x[0] + '/' + j, file_upload_path + '/' + j)
                         return HttpResponseRedirect(
-                            resolve_url('tracking', 'all', 'all', 'all', 'all', 'all', 'all', '1'))
-                except Exception:
+                            resolve_url('tracking', 'all', 'all', 'all', 'all', 'all', 'all', 'all', '1'))
+                except Exception as e:
+                    print(e)
                     file_uploaded = False
                 if not file_uploaded:
                     return render(request, 'crm/addcustomer.html', {
@@ -1018,9 +1073,41 @@ def addcustomer(request, referralfromid=None):
         from_student = models.Customer.objects.filter(id=referralfrom.referralfrom.stu_name_id).first()
         return render(request, 'crm/addcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user,
                                                         'from_student': from_student})
+    if pushid:
+        push = models.Customer.objects.filter(id=pushid).first()
+        form = forms.AddCustomerForm(instance=push)
+        return render(request, 'crm/addcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user})
     else:
         form = forms.AddCustomerForm()
         return render(request, 'crm/addcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user})
+
+
+def pushcustomer(request, referralfromid=None):
+    curr_user = request.user
+    username = request.user.email
+    if request.method == 'POST':
+        form = forms.PushCustomerForm(data=request.POST)
+        if request.POST.get('source') == 'referral':
+            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
+        else:
+            from_student = None
+        if form.is_valid():
+            form.save()
+            from_student = models.Customer.objects.filter(qq=request.POST.get("referral_from")).first()
+            customer = models.Customer.objects.filter(qq=request.POST.get('qq')).first()
+            customer.referral_from = from_student
+            customer.save()
+            return HttpResponseRedirect(resolve_url('tracking', 'all', 'all', 'all', 'all', 'all', 'all', 'all', '1'))
+        else:
+            return render(request, 'crm/pushcustomer.html', {
+                'form': form,
+                'username': username,
+                'curr_user': curr_user,
+                'from_student': from_student,
+            })
+    else:
+        form = forms.PushCustomerForm()
+        return render(request, 'crm/pushcustomer.html', {'form': form, 'username': username, 'curr_user': curr_user})
 
 
 @login_required
@@ -1341,10 +1428,96 @@ def customer_detail(request, id):
 
 @login_required
 @check_permission
-def class_list(request,*args,**kwargs):
-    class_lists = models.ClassList.objects.all()
-    count = models.ClassList.objects.all().count()
-    return render(request,'crm/class_list.html',{'class_lists':class_lists,'count':count})
+def class_list(request, *args, **kwargs):
+    username = request.session['username']
+    current_url = request.path
+    GET = request.GET
+
+    courses = models.course_choices  # 课程名称
+    courses = map(lambda x: {'type': x[0], 'name': x[1]}, courses)
+    courses = list(courses)
+
+    semesters = models.ClassList.objects.all().values('semester').distinct().order_by('semester')  # 学期
+    semesters = map(lambda x: {'type': str(x['semester']), 'name': str(x['semester'])}, semesters)
+    semesters = list(semesters)
+
+    start_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
+                  {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}, ]
+
+    graduate_date = [{'type': 'today', 'name': '今天'}, {'type': 'sevendays', 'name': '七天以内'},
+                     {'type': 'month', 'name': '近一个月'}, {'type': 'year', 'name': '今年'}, ]
+
+
+    teachers = models.UserProfile.objects.filter(groups__name__in=teacher_list).values('email', 'name')   # 授课老师
+    teachers = map(lambda x: {'type': x['email'], 'name': x['name']}, teachers)
+    teachers = list(teachers)
+
+
+    result = {
+        'courses': courses,
+        'semesters': semesters,
+        'start_date': start_date,
+        'graduate_date': graduate_date,
+        'teachers': teachers,
+    }
+
+    now = datetime.datetime.now()
+    sevenday = datetime.timedelta(days=7)
+    today = now.strftime('%Y-%m-%d')  # 今天
+    sevendaybef = (now - sevenday).strftime('%Y-%m-%d')  # 一周前
+    amouth = datetime.timedelta(days=30)
+    amouthbef = (now - amouth).strftime('%Y-%m-%d')  # 一个月前
+    ayear = datetime.timedelta(days=365)
+    ayearbef = (now - ayear).strftime('%Y-%m-%d')  # 一年前
+
+    direct_org = {}
+    for item in kwargs.keys():
+
+        if item == 'start_date' or item == 'graduate_date':  # 单独对日期进行处理
+            if kwargs[item] == 'all':
+                pass
+            elif kwargs[item] == 'today':
+                direct_org[item] = today
+            elif kwargs[item] == 'sevendays':
+                direct_org['{}__gte'.format(item)] = sevendaybef
+                direct_org['{}__lt'.format(item)] = today
+            elif kwargs[item] == 'month':
+                direct_org['{}__gte'.format(item)] = amouthbef
+                direct_org['{}__lt'.format(item)] = today
+            elif kwargs[item] == 'year':
+                direct_org['{}__gte'.format(item)] = ayearbef
+                direct_org['{}__lt'.format(item)] = today
+            elif kwargs[item] == 'range':
+                print(item)
+                start_time = GET.get('{}_start'.format(item))
+                end_time = GET.get('{}_end'.format(item))
+                direct_org['{}__gte'.format(item)] = start_time.replace('年', '-').replace('月', '-').replace('日', '')
+                direct_org['{}__lt'.format(item)] = end_time.replace('年', '-').replace('月', '-').replace('日', '')
+                result['{}_start_time'.format(item)] = start_time
+                result['{}_end_time'.format(item)] = end_time
+
+        else:
+            if kwargs[item] != 'all':
+                direct_org[item] = kwargs[item]
+
+    values = request.COOKIES.values()
+    if ('desc' not in values) and ('asc' not in values):
+        ord = ['-id']
+    else:
+        ord = []
+    for key in request.COOKIES.keys():
+        if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
+            if key != 'undefined':
+                if request.COOKIES[key] == 'asc':
+                    ord.append(key)
+                elif request.COOKIES[key] == 'desc':
+                    ord.append('-' + key)
+
+    class_lists = models.ClassList.objects.filter(**direct_org).annotate(student_num=Count('customer')).order_by(*ord)
+    count = models.ClassList.objects.filter(**direct_org).count()
+    fil = {'class_lists': class_lists, 'count': count, 'current_url': current_url}
+    result.update(fil)
+    return render(request,'crm/class_list.html', result)
 
 
 @login_required
@@ -1385,43 +1558,50 @@ def class_detail(request, *args, **kwargs):
     staffs = map(lambda x: {'type': x['email'], 'name': x['name']}, staffs)
     staffs = list(staffs)
 
-    res={'cus_status': cus_status, 'staffs': staffs}
+    result = {'cus_status': cus_status, 'staffs': staffs, 'current_url': current_url}
 
-    direct_org = {'class_list': id}
-    page = kwargs['page']
-    try:
-        page = int(page)
-    except:
-        page = 1
+    if request.GET.get('qq'):
+        qq_num_err = {}
+        qq = request.GET.get('qq')
+        try:
+            qq = int(qq)
+        except ValueError as e:
+            qq_num_err = {'qq_num_error': '只能输入QQ号'}
+        customers = models.Customer.objects.filter(qq=qq)
+        count = models.Customer.objects.filter(qq=qq).count()
+        fil = {'customers': customers, 'count': count, }
+        fil.update(qq_num_err)
+        result.update(fil)
+    else:
+        direct_org = {'class_list': id}
+        page = kwargs['page']
+        try:
+            page = int(page)
+        except:
+            page = 1
 
+        for item in kwargs.keys():
+            if item !='page' and item !='id':
+                if kwargs[item] != 'all':
+                    direct_org[item] = kwargs[item]
 
+        for key in request.COOKIES.keys():
+            if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
+                if key != 'undefined':
+                    if request.COOKIES[key] == 'desc':
+                        ord.append('-' + key)
+                    elif request.COOKIES[key] == 'asc':
+                        ord.append(key)
 
+        if '-date'in ord:
+            ord.remove('-date')
 
-
-    for item in kwargs.keys():
-        if item !='page' and item !='id':
-            if kwargs[item] != 'all':
-                direct_org[item] = kwargs[item]
-
-    for key in request.COOKIES.keys():
-        if request.COOKIES[key] == 'asc' or request.COOKIES[key] == 'desc':
-            if key != 'undefined':
-                if request.COOKIES[key] == 'desc':
-                    ord.append('-' + key)
-                elif request.COOKIES[key] == 'asc':
-                    ord.append(key)
-
-
-    if '-date'in ord:
-        ord.remove('-date')
-
-    count = models.Customer.objects.filter(**direct_org ).count()
-    pageObj = PageInfo(page, count,100)
-    customers = models.Customer.objects.filter(**direct_org).order_by(*ord)[pageObj.start:pageObj.end]
-    fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
-
-    result = {'current_url': current_url, 'customers': customers, 'count': count, 'fenye': fenye}
-    result.update(res)
+        count = models.Customer.objects.filter(**direct_org ).count()
+        pageObj = PageInfo(page, count,100)
+        customers = models.Customer.objects.filter(**direct_org).order_by(*ord)[pageObj.start:pageObj.end]
+        fenye = Page(page, pageObj.all_page_count, url_path=current_url[0:-2])
+        fil = {'customers': customers, 'count': count, 'fenye': fenye}
+        result.update(fil)
     return render(request, 'crm/class_detail.html', result)
 
 
@@ -1567,7 +1747,7 @@ def enrollment_payment(request, customer):
                 if enrollmentinformation.course_grade.class_type == 'pick_up_study':
                     courserecord = models.CourseRecord.objects.filter(course=enrollmentinformation.course_grade, day_num=1).first()
                     models.OnlineStuAssignment.objects.get_or_create(enrollment=enrollmentinformation, schedule=courserecord)
-                return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 1)))
+                return redirect(reverse('signed', args=('all', 'all', 'all', 'all', 'all', 'all', 'add', 1)))
         else:
             return render(request, 'crm/enrollment/enrollment_payment.html', locals())
 

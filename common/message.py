@@ -12,7 +12,8 @@ class message:
         self.subject = subject
         self.toaddrs = toaddrs
 
-    def getcontent(self, username=None, classname=None, account=None, password=None):
+    def getcontent(self, username=None, classname=None, account=None, password=None, assistantname=None,
+                   studentname=None, studentqq=None, classid=None, studentid=None):
         if self.subject == 'createaccount':
             content_template = MessageTemplate.objects.filter(subject=self.subject).first().content
             content = content_template.format(username = username, classname = classname, account = account, password = password)
@@ -23,7 +24,15 @@ class message:
             content = content_template.format(username = username, account = account, password = password)
             self.content = content
             self.subject = '生成（重置）账号信息'
-
+        elif self.subject == 'homework_upload':
+            content_template = MessageTemplate.objects.filter(subject=self.subject).first().content
+            content = content_template.format(assistantname=assistantname,
+                                              classname=classname,
+                                              studentname=studentname, studentqq=studentqq,
+                                              classid=classid,
+                                              studentid=studentid)
+            self.content = content
+            self.subject = '作业上交提醒'
 
     def sendmessage(self):
         from_email = settings.DEFAULT_FROM_EMAIL

@@ -61,16 +61,12 @@
                             <div class="form-group text-left">
                                 <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
                                 <div class="col-sm-6">
-                                    <select class="form-control" id="id_consultant" name="consultant">
-                                        <option value="{{curr_user.id}}" selected="selected">{{curr_user.name}}</option>
-                                    </select>
+                                    {{ field }}
                                 </div>
                             </div>
                         {% else %}
                             <div class="form-group text-left">
-                                {% if field.name == 'customer_note' %}
-                                    <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
-                                {%elif field.field.required%}
+                                {%if field.field.required%}
                                     <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
                                 {%else%}
                                     <label class="col-lg-3 control-label">{{field.label}}</label>
@@ -80,15 +76,11 @@
                                         {{ field }}
                                         <span style="color: blue">{{ field.help_text }}</span>
                                     </div>
-                                {%elif field.name == 'class_list'%}
+                                {% elif field.name == 'network_consultant' %}
                                     <div class="col-sm-6" >
-                                        <select class="form-control" >
-                                            <option  value="" selected="selected">{{curr_user.class_list.all}}</option>
+                                        <select class="form-control" id="id_network_consultant" name="network_consultant">
+                                            <option value="{{curr_user.id}}" selected="selected">{{curr_user.name}}</option>
                                         </select>
-                                    </div>
-                                {% elif field.name == 'network_consult' %}
-                                    <div class="col-sm-6" >
-                                        <input class="form-control" id="id_network_consult" name="network_consult" placeholder="" type="checkbox" style="height:20px">
                                     </div>
                                 {% elif field.name == 'course' %}
                                     <div class="col-sm-6" >
@@ -121,41 +113,6 @@
             </form>
         </div>
     </div>
-    <div class="panel">
-        <div class="panel-heading">
-            <h3 class="panel-title">咨询信息上传 {% if file_upload_err %}<span style="color: red">{{ file_upload_err }}</span>{% endif %}</h3>
-        </div>
-        <div class="panel-body">
-             <div class="row">
-                {% if uploaded_files %}
-                <h5>已上传文件</h5>
-                    <ul>
-                     {% for file in uploaded_files %}
-                         <li>{{ file }}</li>
-                     {% endfor %}
-                    </ul>
-                {% endif %}
-             </div>
-            <!--Dropzonejs-->
-            <!--===================================================-->
-            <form id="demo-dropzone" action="#" class="dropzone dz-clickable">{% csrf_token %}
-                <div class="dz-default dz-message">
-                    <div class="dz-icon icon-wrap icon-circle icon-wrap-md">
-                        <i class="fa fa-cloud-upload fa-3x"></i>
-                    </div>
-                    <div>
-                        <p class="dz-text">将截图拖拽到此区域或点击上传按钮</p>
-                        <p class="text-muted">请将咨询过程内容截图并上传</p>
-                    </div>
-                </div>
-
-            </form>
-            <!--===================================================-->
-            <!-- End Dropzonejs -->
-
-        </div>
-    </div>
-
 {% endblock %}
 
 {%block dash-footer-js%}

@@ -1,204 +1,365 @@
-{%extends 'crm/dashboard.html'%}
-{%load humanize %}
+{% extends 'crm/dashboard.html' %}
+{% load humanize %}
+{% load custom_tag %}
 
+{% block dash-filter%}
+    <div style="height: auto;width: auto;border: 1px solid lightgray">
+        <div  style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
+            {% action_all  current_url  1 '以课程名称'%}
+        </div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in courses %}
+                    {% action current_url item 1%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 
+    <div style="height: auto;width: auto;border: 1px solid lightgray">
+        <div  style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
+            {% action_all  current_url  2 '以学期'%}
+        </div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in semesters %}
+                    {% action current_url item 2%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  3 '以开班时间'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in start_date %}
+                    {% action current_url item 3%}
+                {% endfor %}
+                <div id="demo-dp-range" style="width: 40%;float: left;margin-left: 5px">
+                    {% if start_date_start_time and start_date_end_time %}
+                        <li style="float: left;margin: 5px 10px;"><button style="background-color:#363c40;color:white" href="#" id="start_date_range">查询时间范围</button></li>
+                    {% else %}
+                        <li style="float: left;margin: 5px 10px;"><button id="start_date_range">查询时间范围</button></li>
+                    {% endif %}
+                    <div class="input-daterange input-group datepicker">
+                        <input type="text" class="form-control" name="start_date_start" id="start_date_range_start" {% if start_date_start_time %}value="{{ start_date_start_time }}"{% endif %}/>
+                        <span class="input-group-addon">to</span>
+                        <input type="text" class="form-control" name="start_date_end" id="start_date_range_end"{% if start_date_end_time %}value="{{ start_date_end_time }}"{% endif %}/>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 
-{% block dash-content%}
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div style="float: left;line-height: 50px;margin:0px 10px 0px  20px" >{% action_all  current_url  4 '以结业时间'%}</div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in graduate_date %}
+                    {% action current_url item 4%}
+                {% endfor %}
+                <div id="demo-dp-range" style="width: 40%;float: left;margin-left: 5px">
+                    {% if graduate_date_start_time and graduate_date_end_time %}
+                        <li style="float: left;margin: 5px 10px;"><button style="background-color:#363c40;color:white" href="#" id="graduate_date_range">查询时间范围</button></li>
+                    {% else %}
+                        <li style="float: left;margin: 5px 10px;"><button id="graduate_date_range">查询时间范围</button></li>
+                    {% endif %}
+                    <div class="input-daterange input-group datepicker">
+                        <input type="text" class="form-control" name="graduate_date_start" id="graduate_date_range_start" {% if graduate_date_start_time %}value="{{ graduate_date_start_time }}"{% endif %}/>
+                        <span class="input-group-addon">to</span>
+                        <input type="text" class="form-control" name="graduate_date_end" id="graduate_date_range_end"{% if graduate_date_end_time %}value="{{ graduate_date_end_time }}"{% endif %}/>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 
-				<div id="page-content">
-					<div class="panel">
-						<div class="panel-heading">
-							<h3 class="panel-title">班级列表</h3>
-						</div>
-						<div class="panel-body">			
-							<div class="table-responsive">
-								<table class="table table-striped">
-									<thead>
-										<tr>
+    <div style="height: 50px;width: auto;border: 1px solid lightgray">
+        <div  style="float: left;line-height:50px;margin:0px 10px 0px  20px" >
+            {% action_all  current_url  5  '讲师'%}
+        </div>
+        <div >
+            <ul style="list-style-type: none;">
+                {% for item in teachers %}
+                    {% action current_url item 5%}
+                {% endfor %}
+            </ul>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+{% endblock %}
 
-											<th>
-												<div style="float: left;margin-right: 3px">
-												<a href="" class="a-ico-sort">
-												<div>
+{% block dash-content %}
+    <div id="page-content">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">班级列表</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by='course'>课程名称</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up" aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by='id'>课程名称</span>
-													</div>
-													<div class="div2-ico-sort hid">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down" aria-hidden="true"></i>
-														</div>
-													</div>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by='semester'>学期</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up" aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
 
-												</div>
-												</a>
-													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban hid" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<a  class="a-ico-sort">
-												<div>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by="start_date">开班日期</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up " aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down " aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span>学期</span>
-													</div>
-													<div class="div2-ico-sort hid">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-														</div>
-													</div>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by="graduate_date">结业日期</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up " aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
 
-												</div>
-												</a>
-											</th>
-											<th>
-												<div style="float: left;margin-right: 3px">
-												<a href="" class="a-ico-sort">
-												<div>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by="teachers">讲师</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up " aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by="course">开班日期</span>
-													</div>
-													<div class="div2-ico-sort hid">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up " aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down " aria-hidden="true"></i>
-														</div>
-													</div>
+                            <th>
+                                <div style="float: left;margin-right: 3px">
+                                    <a href="" class="a-ico-sort">
+                                        <div>
+                                            <div style="float:left;text-align: center;line-height: 35px">
+                                                <span sort_by="student_num">学员数量</span>
+                                            </div>
+                                            <div class="div2-ico-sort">
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-up " aria-hidden="false"></i>
+                                                </div>
+                                                <div class="div-ico-sort">
+                                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div style="float: left;text-align: center;line-height: 34px">
+                                    <a href="" title="取消过滤">
+                                        <i class="fa fa-ban hid" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                                <div style="clear: both"></div>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for classes in class_lists %}
+                            <tr>
+                            <td><a class="btn-link"
+                                   href="{% url 'class_detail' classes.id  'all' 'all' 1 %}">{{ classes.get_course_display }}</a>
+                            </td>
+                            <td>{{ classes.semester }}</td>
+                            <td>{{ classes.start_date }}</td>
+                            <td>{{ classes.graduate_date }}</td>
+                            <td>{% for teacher in classes.teachers.all %}
+                                {{ teacher.name }}&emsp;
+                            {% endfor %}</td>
+                            <td>{{ classes.get_student_num }}</td>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <span>共&emsp13;{{ count }}&emsp14;条记录</span>
+                </div>
+            </div>
+            <!--===================================================-->
+            <!--End Data Table-->
+            <!--fenye-->
+            <div class="text-center">
+                <ul class="pagination">
+                    {{ fenye }}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--===================================================-->
+    <!--End page content-->
+{% endblock %}
 
-												</div>
-												</a>
-													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban hid" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<div style="float: left;margin-right: 3px">
-												<a href="" class="a-ico-sort">
-												<div>
+{% block dash-footer-js %}
+    <script>
+        $(function () {
+            $('#start_date_range').click(function () {
+                var start_date_start_time = $("#start_date_range_start").val()
+                var start_date_end_time = $("#start_date_range_end").val()
+                var graduate_date_start_time = $("#graduate_date_range_start").val()
+                var graduate_date_end_time = $("#graduate_date_range_end").val()
+                if(start_date_start_time == ''){
+                    alert('请选择一个开始时间')
+                }else if(start_date_end_time == ''){
+                    alert('请选择一个结束时间')
+                }else {
+                    var current_url = window.location.href.split('?')[0].split('-')
+                    current_url[3] = ('range')
+                    var to_url = current_url.join('-')
+                    if(current_url[4] == 'range'){
+                        window.location.href = to_url + '?start_date_start=' + start_date_start_time + '&start_date_end=' + start_date_end_time + '&graduate_date_start=' + graduate_date_start_time + '&graduate_date_end=' + graduate_date_end_time
+                    }else {
+                        window.location.href = to_url + '?start_date_start=' + start_date_start_time + '&start_date_end=' + start_date_end_time
+                    }
+                }
+            })
 
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by="class_type">结业日期</span>
-													</div>
-													<div class="div2-ico-sort hid">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up " aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down" aria-hidden="true"></i>
-														</div>
-													</div>
-
-												</div>
-												</a>
-													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban hid" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<div style="float: left;margin-right: 3px">
-												<a href="" class="a-ico-sort">
-												<div>
-
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span sort_by="#">讲师</span>
-													</div>
-													<div class="div2-ico-sort  hid">
-														<div class="div-ico-sort hid">
-														<i class="fa fa-caret-up " aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort hid">
-														<i class="fa fa-caret-down" aria-hidden="true"></i>
-														</div>
-													</div>
-
-												</div>
-												</a>
-													</div>
-												<div style="float: left;text-align: center;line-height: 34px">
-													<a href="" title="取消过滤">
-														<i class="fa fa-ban hid" aria-hidden="true"></i>
-													</a>
-												</div>
-												<div style="clear: both"></div>
-											</th>
-											<th>
-												<a href="#" class="a-ico-sort">
-												<div>
-
-													<div style="float:left;text-align: center;line-height: 35px">
-														<span>学员数量</span>
-													</div>
-													<div class="div2-ico-sort">
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-up hid" aria-hidden="false"></i>
-														</div>
-														<div class="div-ico-sort">
-														<i class="fa fa-caret-down hid" aria-hidden="true"></i>
-														</div>
-													</div>
-												</div>
-												</a>
-											</th>
-
-										</tr>
-									</thead>
-									<tbody>
-									{%for classes in class_lists%}
-									<tr>
-											<td><a class="btn-link" href="{%url 'class_detail' classes.id  'all' 'all' 1%}">{{classes.get_course_display}}</a></td>
-											<td>{{classes.semester}}</td>
-											<td>{{classes.start_date}}</td>
-											<td>{{classes.graduate_date}}</td>
-											<td>{%for teacher in classes.teachers.all%}
-													{{teacher.name}}&emsp;
-												{%endfor%}</td>
-											<td>{{classes.customer_set.all.count}}</td>
-
-
-									{%endfor%}
-									</tbody>
-								</table>
-								<span>共&emsp13;{{count}}&emsp14;条记录</span>
-							</div>
-						</div>
-						<!--===================================================-->
-						<!--End Data Table-->
-
-
-						<!--fenye-->
-						<div class="text-center">
-							<ul class="pagination">
-								{{fenye}}
-							</ul>
-						</div>
-					</div>
-
-
-				</div>
-				<!--===================================================-->
-				<!--End page content-->
-{%endblock%}
-
+             $('#graduate_date_range').click(function () {
+                var start_date_start_time = $("#start_date_range_start").val()
+                var start_date_end_time = $("#start_date_range_end").val()
+                var graduate_date_start_time = $("#graduate_date_range_start").val()
+                var graduate_date_end_time = $("#graduate_date_range_end").val()
+                if(graduate_date_start_time == ''){
+                    alert('请选择一个开始时间')
+                }else if(graduate_date_end_time == ''){
+                    alert('请选择一个结束时间')
+                }else {
+                    var current_url = window.location.href.split('?')[0].split('-')
+                    current_url[4] = ('range')
+                    var to_url = current_url.join('-')
+                    if(current_url[3] == 'range'){
+                        window.location.href = to_url + '?start_date_start=' + start_date_start_time + '&start_date_end=' + start_date_end_time + '&graduate_date_start=' + graduate_date_start_time + '&graduate_date_end=' + graduate_date_end_time
+                    }else {
+                        window.location.href = to_url + '?graduate_date_start=' + graduate_date_start_time + '&graduate_date_end=' + graduate_date_end_time
+                    }
+                }
+            })
+		})
+    </script>
+        {% block dash-time-range-js %}
+            <script>
+            $('.action_url').click(function () {
+                var current_url = $(this).attr('href_url').split('?')[0].split('-')
+                if(current_url[3] == 'range'){
+                    if(current_url[4] == 'range'){
+                        window.location.href = $(this).attr('href_url') + '?start_date_start={{ start_date_start_time }}&start_date_end={{ start_date_end_time }}&graduate_date_start={{ graduate_date_start_time }}&graduate_date_end={{ graduate_date_end_time }}'
+                    }else {
+                        var to_url = $(this).attr('href_url') + '?start_date_start={{ start_date_start_time }}&start_date_end={{ start_date_end_time }}'
+                        window.location.href = to_url
+                    }
+                }else {
+                    if(current_url[4] == 'range'){
+                        window.location.href = $(this).attr('href_url') + '?graduate_date_start={{ graduate_date_start_time }}&graduate_date_end={{ graduate_date_end_time }}'
+                    }else {
+                        window.location.href = $(this).attr('href_url')
+                    }
+                }
+            })
+            </script>
+        {% endblock %}
+{% endblock %}

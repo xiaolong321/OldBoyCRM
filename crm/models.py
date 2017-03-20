@@ -35,7 +35,7 @@ class_type_choices= (('online', u'网络班'),
 class Customer(models.Model):
     qq = models.CharField('QQ', max_length=64, unique=True, help_text=u'QQ号必须唯一')
     qq_name = models.CharField(u'QQ名称', max_length=64, blank=True, null=True)
-    name = models.CharField(u'姓名', max_length=32, help_text='学员报名后，请改为真实姓名')
+    name = models.CharField(u'姓名', max_length=32,blank=True, null=True, help_text='学员报名后，请改为真实姓名')
     sex_type = (('male',u'男'), ('female',u'女'))
     sex = models.CharField(u"性别", choices=sex_type, default='male', max_length=32, blank=True, null=True)
     birthday = models.DateField(u'出生日期', max_length=64, default=None, help_text="格式yyyy-mm-dd", blank=True, null=True)
@@ -66,7 +66,7 @@ class Customer(models.Model):
     course = MultiSelectField(u"咨询课程", choices=course_choices)
     # course = models.CharField(u"咨询课程", choices=course_choices, max_length=64,)
     class_type = models.CharField(u"班级类型", max_length=64, choices=class_type_choices)
-    customer_note = models.TextField(u"客户咨询内容详情", help_text=u"客户咨询的大概情况,客户个人信息备注等...")
+    customer_note = models.TextField(u"课程顾问咨询内容",blank=True, null=True, help_text=u"客户咨询的大概情况,客户个人信息备注等...")
     work_status_choices = (('employed', '在职'), ('unemployed', '无业'))
     work_status = models.CharField(u"职业状态", choices=work_status_choices, max_length=32, default='employed',
                                    blank=True, null=True)
@@ -77,8 +77,9 @@ class Customer(models.Model):
                       ('paid_in_full', u"学费已交齐"))
     status = models.CharField(u"状态", choices=status_choices, max_length=64, default=u"unregistered",
                               help_text=u"选择客户此时的状态")
-    network_consult = models.BooleanField('网络咨询', default=False)
-    consultant = models.ForeignKey(UserProfile, verbose_name=u"课程顾问")
+    network_consultant = models.ForeignKey('UserProfile',blank=True, null=True, verbose_name='网络咨询师', related_name='network_consultant')
+    network_consult_note = models.TextField(max_length=256, blank=True,null=True, verbose_name='网络咨询师咨询内容')
+    consultant = models.ForeignKey('UserProfile', verbose_name=u"课程顾问", related_name='consultant')
     date = models.DateField(u"咨询日期", auto_now_add=True)
     last_consult_date = models.DateField(u"最后跟进日期", auto_now_add=True)
     class_list = models.ManyToManyField('ClassList', verbose_name=u"已报班级", blank=True)
@@ -238,7 +239,7 @@ class CourseRecord(models.Model):
     course_memo = models.TextField('本节课程内容', max_length=300, blank=True, null=True)
     has_homework = models.BooleanField(default=True, verbose_name=u"本节有作业")
     homework_title = models.CharField('本节作业标题', max_length=64, blank=True, null=True)
-    homework_memo = models.TextField('作业描述', max_length=300, blank=True, null=True)
+    homework_memo = models.TextField('作业描述', max_length=500, blank=True, null=True)
     exam = models.TextField('踩分点', max_length=300, blank=True, null=True)
     course_module = models.ForeignKey('CourseModule', verbose_name='所属模块', null=True, blank=True,
                                       related_name='courserecord')
@@ -333,6 +334,7 @@ class StudyRecord(models.Model):
                      (-1000, 'FAIL'),
                      )
     score = models.IntegerField(u"本节成绩", choices=score_choices, default=-1)
+    homework_note = models.CharField(max_length=255, verbose_name='作业批语', blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     note = models.CharField(u"备注", max_length=255, blank=True, null=True)
     homework=models.FileField(verbose_name='作业文件', blank=True, null=True, default=None)
@@ -384,6 +386,13 @@ class StudyRecord(models.Model):
     colored_record.allow_tags = True
     colored_score.short_description = u'成绩'
     colored_record.short_description = u'签到情况'
+
+    def enrollment_id(self):
+        try:
+            enrollment = Enrollment.objects.filter(customer=self.student, course_grade=self.course_record.course).first()
+            return enrollment.id
+        except Exception:
+            return None
 
 
 class SurveryItem(models.Model):
@@ -501,12 +510,29 @@ class ContractTemplate(models.Model):
             ('crm_edit_consult_record', ' 编辑 跟进记录 '),
             ('crm_view_addcustomer', ' 访问 添加新客户 页面 '),
             ('crm_edit_addcustomer', ' 编辑 添加新客户 '),
+            ('crm_view_add_referral_customer', ' 访问 添加新转介绍客户 页面 '),
+            ('crm_edit_add_referral_customer', ' 编辑 添加新转介绍客户 '),
+            ('crm_view_add_push_customer', ' 访问 添加新网络咨询师客户 页面 '),
+            ('crm_edit_add_push_customer', ' 编辑 添加新网络咨询师客户 '),
             ('crm_view_enrollment', ' 访问 为客户报名 页面 '),
             ('crm_edit_enrollment', ' 编辑 为客户报名 '),
             ('crm_view_payment', ' 访问 客户缴费 页面 '),
             ('crm_edit_payment', ' 编辑 客户缴费 页面 '),
             ('crm_view_punishment', ' 访问 违规记录 页面 '),
             ('crm_edit_punishment', ' 编辑 违规记录 页面 '),
+
+            ('teacher_view_teacher_dashboard', '访问 老师 主页'),
+            ('teacher_view_classlist', '访问 教授课程 页面'),
+            ('teacher_view_courselist', '访问 课程节次 页面'),
+            ('teacher_edit_courselist', '下载出勤记录 页面'),
+            ('teacher_view_courserecord', '访问 课程节次详细 页面'),
+            ('teacher_edit_courserecord', '编辑 课程节次详细 页面'),
+            ('teacher_view_createcourse', '访问 创建课程节次 页面'),
+            ('teacher_edit_createcourse', '编辑 创建课程节次 页面'),
+            ('teacher_view_studentinformation', '访问 学生信息 页面'),
+            ('teacher_edit_studentinformation', '编辑学生信息 页面'),
+            ('teacher_view_study_consult_record', '访问 创建学习跟踪记录 页面'),
+            ('teacher_edit_study_consult_record', '编辑 创建学习跟踪记录 页面'),
         )
 
 
