@@ -1,0 +1,53 @@
+{% extends 'teacher/dashboard.html'%}
+    {%block dash-filter%}
+        <div class="col-sm-12 text-left">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">请填写如下表格(加粗字体为必填项)</h3>
+            </div>
+            <form class="form-horizontal" action=" " method="POST">
+                {% csrf_token %}
+                <div class="panel-body ">
+                    {% for field in form %}
+                        <div class="form-group text-left">
+                            {%if field.field.required%}
+                                <label class="col-lg-3 control-label"><b>{{field.label}}</b></label>
+                            {%else%}
+                                <label class="col-lg-3 control-label">{{field.label}}</label>
+                            {%endif%}
+                        <div class="col-sm-6">
+{#                            {% if field.name == 'course' %}#}
+{#                                <select class="form-control" id="id_course" name="course" placeholder="" required="">#}
+{#                                    <option value={{ flag.course.id }} selected="selected">{{ flag.course }}</option>#}
+{#                                </select>#}
+{#                            {% elif field.name == 'teacher' %}#}
+{#                                <select class="form-control" id="id_teacher" name="teacher" placeholder="" required="">#}
+{#                                    <option value={{ request.user.id }} selected="selected">{{ request.user }}</option>#}
+{#                                </select>#}
+{#                            {% elif field.name == 'day_num' %}#}
+{#                                <input class="form-control" id="id_day_num" name="day_num" value="{{ day_num }}" type="number" required="">#}
+                            {% if field.name == 'has_homework' %}
+                                {% if field.value == True %}
+                                    <input class="form-control" id="id_has_homework" name="has_homework" placeholder="" type="checkbox" checked="checked" style="height: 20px">
+                                {% else %}
+                                    <input class="form-control" id="id_has_homework" name="has_homework" placeholder="" type="checkbox" style="height: 20px">
+                                {% endif %}
+                            {% else %}
+                                {{field}}
+                            {% endif %}
+                        </div>
+                            <div class="col-sm-3"style="color: red;">
+                                {%for error in field.errors%}
+                                    {{error}}
+                                {%endfor%}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer text-center">
+                    <input class="btn btn-info" type="submit" value="提交">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -12,6 +12,7 @@
                             <th>授课教师</th>
                             <th>开始时间</th>
                             <th>结束时间</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -29,6 +30,7 @@
                                 </td>
                                 <td>{{ class.start_date }}</td>
                                 <td>{{ class.graduate_date }}</td>
+                                <td><a class="btn-link" href="{% url 'coursedetail' class.id %}">查看该课程的详细课程大纲</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

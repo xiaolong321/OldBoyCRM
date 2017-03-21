@@ -24,10 +24,13 @@ class teacher(models.Model):
             ('teacher_edit_courserecord', '编辑 课程节次详细 页面'),
             ('teacher_view_createcourse', '访问 创建课程节次 页面'),
             ('teacher_edit_createcourse', '编辑 创建课程节次 页面'),
+            ('teacher_view_editcourse', '访问 编辑课程节次 页面'),
+            ('teacher_edit_editcourse', '编辑 编辑课程节次 页面'),
             ('teacher_view_studentinformation', '访问 学生信息 页面'),
             ('teacher_edit_studentinformation', '编辑学生信息 页面'),
             ('teacher_view_study_consult_record', '访问 创建学习跟踪记录 页面'),
             ('teacher_edit_study_consult_record', '编辑 创建学习跟踪记录 页面'),
+            ('teacher_view_coursedetail', '访问 学习记录详细 页面'),
         )
 
 
