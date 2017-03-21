@@ -26,6 +26,7 @@
                             <th>缺勤人数</th>
                             <th>迟到人数</th>
                             <th>早退人数</th>
+                            <th>更改节次信息</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +50,7 @@
                                 <td>{{ course.get_total_noshow_num }}</td>
                                 <td>{{ course.get_total_late_num }}</td>
                                 <td>{{ course.get_total_leave_early_num }}</td>
+                                <td><a class="btn-link" href="{% url 'editcourse' class_id course.id %}">更改第{{ course.day_num}}天的节次信息</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

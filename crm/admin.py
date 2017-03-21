@@ -9,8 +9,11 @@ from django.contrib.admin.actions import delete_selected
 
 class ConsultRecordInline(admin.TabularInline):
     model = models.ConsultRecord
+
+
 class PaymentRecordInline(admin.TabularInline):
     model = models.PaymentRecord
+
 
 class CustomerAdmin(admin.ModelAdmin):
     search_fields = ('qq','phone')
@@ -31,7 +34,6 @@ class CustomerAdmin(admin.ModelAdmin):
         return actions
 
 
-
 class ConsultRecordAdmin(admin.ModelAdmin):
     raw_id_fields = ('customer',)
     list_display = ('customer','note','status','consultant','date')
@@ -43,6 +45,8 @@ class ConsultRecordAdmin(admin.ModelAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
+
+
 class PaymentRecordAdmin(admin.ModelAdmin):
     raw_id_fields = ('customer',)
 
@@ -56,6 +60,7 @@ class PaymentRecordAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
+
 class CustomerInline(admin.TabularInline):
     model = models.Customer.class_list.through
     #fields = ('class_type',)
@@ -66,6 +71,7 @@ class ClassListAdmin(admin.ModelAdmin):
     list_display = ("course",'semester',"start_date","graduate_date","get_student_num")
     # inlines = (CustomerInline,)
     actions= ['view_grade',]
+    filter_horizontal = ('teachers',)
     def view_grade(modeladmin, request, queryset):
         selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
         ct = ContentType.objects.get_for_model(queryset.model)
@@ -118,6 +124,7 @@ class CourseRecordAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
+
 class StudyRecordAdmin(admin.ModelAdmin):
     list_display = ('course_record','get_stu_name','get_stu_id','record','colored_record','colored_score','score','date','note')
     list_filter = ("course_record__course__course","score","record")
@@ -164,7 +171,6 @@ class StudyRecordAdmin(admin.ModelAdmin):
     get_stu_name.short_description = u'姓名'  #Renames column head
 
 
-
 class SurveryAdmin(admin.ModelAdmin):
     filter_horizontal = ('questions',)
     actions = ['check_survery_report',]
@@ -178,14 +184,17 @@ class SurveryAdmin(admin.ModelAdmin):
         return HttpResponseRedirect("/crm/survery/report/%s/" %(selected[0]))
     check_survery_report.short_description = u"查看问卷报告"
 
+
 class SurveryRecordAdmin(admin.ModelAdmin):
     #filter_horizontal = ('questions',)
     list_display = ['survery','survery_item','score','suggestion','date']
     list_filter = ['survery_item','survery']
 
+
 class CompliantAdmin(admin.ModelAdmin):
     list_display = ('compliant_type','title','content','name','date','dealing_time','status','comment')
     list_filter = ('compliant_type','status','date')
+
 
 class StudentFAQAdmin(admin.ModelAdmin):
     list_display = ('title','author','date')
@@ -203,6 +212,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
+
 
 class ContractTemplateAdmin(admin.ModelAdmin):
     def get_actions(self, request):
@@ -240,7 +250,7 @@ class OnlineStuAssignmentAdmin(admin.ModelAdmin):
 
 class StuPunishmentRecordAdmin(admin.ModelAdmin):
     search_fields = ('enrollment__customer__qq',)
-    raw_id_fields = ('enrollment',)
+    raw_id_fields = ('enrollment', 'studyrecord',)
 
 
 admin.site.register(models.UserProfile, UserProfileAdmin)

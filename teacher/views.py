@@ -15,7 +15,7 @@ import xlwt
 
 # Create your views here.
 
-def changenumtochar(num):           # 将数字转换为已A-Z表示的26进制的字母表现形式，以供写Excel的公式时的定位使用
+def changenumtochar(num):           # 将数字转换为以A-Z表示的26进制的字母表现形式，以供写Excel的公式时的定位使用
     quotient, remainder = divmod(num-1, 26)
     if quotient > 26:
         a = changenumtochar(quotient)
@@ -183,13 +183,20 @@ def courselist(request, class_id):
 
 @login_required
 @check_permission
+def coursedetail(request, class_id):
+    courserecords = models.CourseRecord.objects.filter(course_id=class_id)
+    return render(request, 'teacher/coursedetail.html', locals())
+
+
+@login_required
+@check_permission
 def courserecord(request, course_id, student_id=None):
     if request.method == 'GET':
 
         homework_path = HOMEWORK_DATA_DIR
         if not student_id == '0':
-            OnlineStuAssignment = models.OnlineStuAssignment.objects.filter(enrollment__customer_id=student_id,
-                                                          enrollment__course_grade_id=course_id).first()
+            OnlineStuAssignment = models.OnlineStuAssignment.objects.filter(
+                enrollment__customer_id=student_id, enrollment__course_grade_id=course_id).first()
             day_num = OnlineStuAssignment.schedule.day_num
             class_obj = models.ClassList.objects.filter(id=course_id).first()
             studyrecords = models.StudyRecord.objects.filter(course_record__course=class_obj, student_id=student_id)
@@ -250,42 +257,114 @@ def courserecord(request, course_id, student_id=None):
             student_id = request.POST.get('student_id',)
             course_id = request.POST.get('course_id', )
             information = request.POST.get('information')
-            obj = models.StudyRecord.objects.filter(course_record_id=course_id, student_id=student_id,)
-            if obj:
+            studyrecord = models.StudyRecord.objects.filter(course_record_id=course_id, student_id=student_id,)
+
+            if studyrecord:
                 up_dict = {status:information}
-                obj.update(**up_dict)
+                studyrecord.update(**up_dict)
+                studyrecord = studyrecord.first()
             else:
                 create_dict ={
                     'course_record_id':course_id,
                     'student_id':student_id,
                     status:information,
                 }
-                models.StudyRecord.objects.create(**create_dict)
+                studyrecord = models.StudyRecord.objects.create(**create_dict)
+            if status == 'record':
+                if information == 'checked':
+                    try:
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
+                                                                                     note='根据学生出席情况自动创建')
+                        stupunishmentrecord.delete()
+                    except Exception:
+                        pass
+                else:
+                    if information == 'vacate':
+                        rule = models.Rules.objects.get(name='请假')
+                    if information == 'late':
+                        rule = models.Rules.objects.get(name='迟到')
+                    if information == 'noshow':
+                        rule = models.Rules.objects.get(name='缺勤')
+                    if information == 'leave_early':
+                        rule = models.Rules.objects.get(name='早退')
+                    try:
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
+                                                                                     note='根据学生出席情况自动创建')
+                        stupunishmentrecord.rule = rule
+                        stupunishmentrecord.save()
+                    except Exception:
+                        enrollment = models.Enrollment.objects.get(course_grade=studyrecord.course_record.course,
+                                                                      customer=studyrecord.student)
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.create(
+                            enrollment=enrollment, rule=rule, performer=request.user,
+                            note='根据学生出席情况自动创建', studyrecord=studyrecord)
+
+            if status == 'score':
+                information = int(information)
+                if information >= 60:
+                    try:
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
+                                                                                     note='根据学生成绩情况自动创建')
+                        stupunishmentrecord.delete()
+                    except Exception:
+                        pass
+                else:
+                    if information < 60 and information > 0 :
+                        rule = models.Rules.objects.get(name='作业不及格')
+                    if information <= 0:
+                        rule = models.Rules.objects.get(name='不交作业')
+                    try:
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
+                                                                                     note='根据学生成绩情况自动创建')
+                        stupunishmentrecord.rule = rule
+                        stupunishmentrecord.save()
+                    except Exception:
+                        enrollment = models.Enrollment.objects.get(course_grade=studyrecord.course_record.course,
+                                                                   customer=studyrecord.student)
+                        stupunishmentrecord = models.StuPunishmentRecord.objects.create(
+                            enrollment=enrollment,rule=rule, performer=request.user,
+                            note='根据学生成绩情况自动创建', studyrecord=studyrecord)
             return HttpResponse('OK')
 
 
 @login_required
 @check_permission
-def createcourse(request, class_id):
-    flag = models.CourseRecord.objects.filter(course_id=class_id, course__teachers=request.user).order_by(
-        'day_num').last()
-    if flag:
-        day_num = flag.day_num + 1
-    else:
-        day_num = 1
+def createcourse(request, class_id, courserecord_id=None):
     if request.method == 'GET':
-        form = forms.CourserecordForm()
-        return render(request, 'teacher/createcourse.html', locals())
+        if courserecord_id:
+            courserecord = models.CourseRecord.objects.get(course_id=class_id, id=courserecord_id)
+            form = forms.CourserecordForm(instance=courserecord)
+            return render(request, 'teacher/editcourse.html', locals())
+        else:
+            flag = models.CourseRecord.objects.filter(course_id=class_id, course__teachers=request.user).order_by('day_num').last()
+            if flag:
+                day_num = flag.day_num + 1
+            else:
+                day_num = 1
+            form = forms.CourserecordForm()
+            return render(request, 'teacher/createcourse.html', locals())
+
+
     if request.method == 'POST':
-        form = forms.CourserecordForm(data=request.POST)
+        if courserecord_id:
+            courserecord = models.CourseRecord.objects.get(course_id=class_id, id=courserecord_id)
+            form = forms.CourserecordForm(instance=courserecord, data=request.POST)
+        else:
+            form = forms.CourserecordForm(data=request.POST)
         if form.is_valid():
             if not request.POST.get('course_title'):
                 form.add_error('course_title', '请输入课程标题')
-                return render(request, 'teacher/createcourse.html', locals())
+                if courserecord_id:
+                    return render(request, 'teacher/editcourse.html', locals())
+                else:
+                    return render(request, 'teacher/createcourse.html', locals())
             if request.POST.get('has_homework'):
                 if not request.POST.get('homework_title'):
                     form.add_error('homework_title', '请输入作业标题')
-                    return render(request, 'teacher/createcourse.html', locals())
+                    if courserecord_id:
+                        return render(request, 'teacher/editcourse.html', locals())
+                    else:
+                        return render(request, 'teacher/createcourse.html', locals())
             form.save()
             courserecord = models.CourseRecord.objects.filter(course_id=class_id, day_num=request.POST.get('day_num')).first()
             student_list = courserecord.course.customer_set.select_related()
@@ -293,7 +372,10 @@ def createcourse(request, class_id):
                 models.StudyRecord.objects.get_or_create(course_record=courserecord, student=student,)
             return HttpResponseRedirect(resolve_url('courselist', class_id))
         else:
-            return render(request, 'teacher/createcourse.html', locals())
+            if courserecord_id:
+                return render(request, 'teacher/editcourse.html', locals())
+            else:
+                return render(request, 'teacher/createcourse.html', locals())
 
 
 @login_required

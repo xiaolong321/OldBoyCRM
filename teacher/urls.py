@@ -12,8 +12,10 @@ urlpatterns = [
     url(r'^logout',views.my_logout, name='teacher_my_logout'),
     url(r'^classlist',views.classlist, name='classlist'),
     url(r'^courselist/(?P<class_id>\d+)', views.courselist, name='courselist'),
+    url(r'^coursedetail/(?P<class_id>\d+)', views.coursedetail, name='coursedetail'),
     url(r'^courserecord/(?P<course_id>\d+)/(?P<student_id>\d+)', views.courserecord, name='courserecord'),
-    url(r'^createcourse/(?P<class_id>\d+)', views.createcourse, name='createcourse'),
+    url(r'^createcourse/(?P<class_id>\d+)/$', views.createcourse, name='createcourse'),
+    url(r'^editcourse/(?P<class_id>\d+)/(?P<courserecord_id>\d+)', views.createcourse, name='editcourse'),
     url(r'^studentinformation/$', views.studentinformation, name='studentinformation'),
     url(r'^study_consult_record/(?P<enrollment_id>\d+)/$', views.study_consult_record, name='study_consult_record'),
 ]

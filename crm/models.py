@@ -315,6 +315,7 @@ class StudyRecord(models.Model):
     course_record = models.ForeignKey(CourseRecord, verbose_name=u"第几天课程")
     student = models.ForeignKey(Customer, verbose_name=u"学员")
     record_choices = (('checked', u"已签到"),
+                      ('vacate', u"请假"),
                       ('late', u"迟到"),
                       ('noshow', u"缺勤"),
                       ('leave_early', u"早退"),
@@ -520,19 +521,19 @@ class ContractTemplate(models.Model):
             ('crm_edit_payment', ' 编辑 客户缴费 页面 '),
             ('crm_view_punishment', ' 访问 违规记录 页面 '),
             ('crm_edit_punishment', ' 编辑 违规记录 页面 '),
-
-            ('teacher_view_teacher_dashboard', '访问 老师 主页'),
-            ('teacher_view_classlist', '访问 教授课程 页面'),
-            ('teacher_view_courselist', '访问 课程节次 页面'),
-            ('teacher_edit_courselist', '下载出勤记录 页面'),
-            ('teacher_view_courserecord', '访问 课程节次详细 页面'),
-            ('teacher_edit_courserecord', '编辑 课程节次详细 页面'),
-            ('teacher_view_createcourse', '访问 创建课程节次 页面'),
-            ('teacher_edit_createcourse', '编辑 创建课程节次 页面'),
-            ('teacher_view_studentinformation', '访问 学生信息 页面'),
-            ('teacher_edit_studentinformation', '编辑学生信息 页面'),
-            ('teacher_view_study_consult_record', '访问 创建学习跟踪记录 页面'),
-            ('teacher_edit_study_consult_record', '编辑 创建学习跟踪记录 页面'),
+            ('crm_view_showchannels', ' 访问 查看渠道信息 页面 '),
+            ('crm_view_addchannel', ' 访问 添加渠道 页面 '),
+            ('crm_edit_addchannel', ' 编辑 添加渠道 页面 '),
+            ('crm_view_addlinkman', ' 访问 添加渠道联系人 页面 '),
+            ('crm_edit_addlinkman', ' 编辑 添加渠道联系人 页面 '),
+            ('crm_view_addprogress', ' 访问 添加渠道合作记录 页面 '),
+            ('crm_edit_addprogress', ' 编辑 添加渠道合作记录 页面 '),
+            ('crm_view_channel_detail', ' 访问 渠道详细 页面 '),
+            ('crm_edit_channel_detail', ' 编辑 渠道详细 页面 '),
+            ('crm_view_linkman_detail', ' 访问 渠道联系人详细 页面 '),
+            ('crm_edit_linkman_detail', ' 编辑 渠道联系人详细 页面 '),
+            ('crm_view_progress_detail', ' 访问 渠道合作记录详细 页面 '),
+            ('crm_edit_progress_detail', ' 编辑 渠道合作记录详细 页面 '),
         )
 
 
@@ -638,6 +639,7 @@ class StuPunishmentRecord(models.Model):
     performer = models.ForeignKey(UserProfile, verbose_name='执行人')
     note = models.CharField(max_length=128, blank=True,null=True, verbose_name='备注')
     date = models.DateField(auto_now_add=True, verbose_name='执行时间')
+    studyrecord = models.ForeignKey(StudyRecord, blank=True, null=True, verbose_name='违规的课程节次')
 
     def __str__(self):
         return '{}-{}-{}'.format(self.enrollment.customer.name, self.enrollment.course_grade, self.rule)

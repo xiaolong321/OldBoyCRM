@@ -1857,6 +1857,8 @@ def punishment(request):
     return render(request, 'crm/punishment.html', locals())
 
 
+@login_required
+@check_permission
 def showchannels(request):
     show_menu = 'channel'
     channels = models.Channels.objects.filter(manager=request.user)
@@ -1864,6 +1866,8 @@ def showchannels(request):
     return render(request, 'crm/showchannels.html', locals())
 
 
+@login_required
+@check_permission
 def addchannel(request):
     show_menu = 'channel'
     if request.method == 'POST':
@@ -1882,6 +1886,8 @@ def addchannel(request):
         return render(request, 'crm/addchannel.html', {'show_menu': show_menu, 'form': form,})
 
 
+@login_required
+@check_permission
 def addlinkman(request):
     show_menu = 'channel'
     if request.method == 'POST':
@@ -1899,6 +1905,8 @@ def addlinkman(request):
         return render(request, 'crm/addlinkman.html', {'show_menu': show_menu, 'form': form,})
 
 
+@login_required
+@check_permission
 def addprogress(request):
     show_menu = 'channel'
     if request.method == 'POST':
@@ -1916,6 +1924,8 @@ def addprogress(request):
         return render(request, 'crm/addprogress.html', {'show_menu': show_menu, 'form': form,})
 
 
+@login_required
+@check_permission
 def channel_detail(request, channel_id):
     channel = models.Channels.objects.get(id=channel_id)
     if request.method == 'POST':
@@ -1933,6 +1943,8 @@ def channel_detail(request, channel_id):
         return render(request, 'crm/addchannel.html', {'form': form,})
 
 
+@login_required
+@check_permission
 def linkman_detail(request, linkman_id):
     linkman = models.Linkman.objects.get(id=linkman_id)
     if request.method == 'POST':
@@ -1949,6 +1961,8 @@ def linkman_detail(request, linkman_id):
         return render(request, 'crm/addlinkman.html', { 'form': form,})
 
 
+@login_required
+@check_permission
 def progress_detail(request, progress_id):
     progress = models.Progress.objects.get(id=progress_id)
     if request.method == 'POST':
