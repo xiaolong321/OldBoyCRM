@@ -28,6 +28,7 @@
                         <select class="form-control set_all">
                             <option>设置所有已选择学生的签到状态</option>
                             <option value ="checked">全部设置为正常签到</option>
+                            <option value ="vacate">全部设置为请假</option>
                             <option value ="noshow">全部设置为缺勤</option>
                             <option value ="late">全部设置为迟到</option>
                             <option value ="leave_early">全部设置为早退</option>
@@ -51,6 +52,7 @@
                             <th>
                                 <select class="form-control sieve record_sieve">
                                     <option value="all">按签到情况查看</option>
+                                    <option value ="vacate">只查看请假</option>
                                     <option value ="checked">只查看正常签到</option>
                                     <option value ="late">只查看迟到</option>
                                     <option value ="noshow">只查看缺勤</option>
@@ -92,6 +94,7 @@
                                 <td>
                                     <select class="form-control record" status="record">
                                         <option value ="checked">正常签到</option>
+                                        <option value ="vacate">请假</option>
                                         <option value ="late">迟到</option>
                                         <option value ="noshow">缺勤</option>
                                         <option value ="leave_early">早退</option>
