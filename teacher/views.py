@@ -140,33 +140,33 @@ def courselist(request, class_id):
         sheet1.write(0, y+2, '早退次数')
         sheet1.write(0, y+3, '缺勤次数')
         sheet1.write(0, y+4, '正常签到次数')
-        sheet2.write(0, y+1, '获得A+次数')
-        sheet2.write(0, y+2, '获得A次数')
-        sheet2.write(0, y+3, '获得B+次数')
-        sheet2.write(0, y+4, '获得B次数')
-        sheet2.write(0, y+5, '获得B-次数')
-        sheet2.write(0, y+6, '获得C+次数')
-        sheet2.write(0, y+7, '获得C次数')
-        sheet2.write(0, y+8, '获得C-次数')
-        sheet2.write(0, y+9, '获得D次数')
-        sheet2.write(0, y+10, '获得COPY次数')
-        sheet2.write(0, y+11, '获得FAIL次数')
+        sheet2.write(0, 2*y+1, '获得A+次数')
+        sheet2.write(0, 2*y+2, '获得A次数')
+        sheet2.write(0, 2*y+3, '获得B+次数')
+        sheet2.write(0, 2*y+4, '获得B次数')
+        sheet2.write(0, 2*y+5, '获得B-次数')
+        sheet2.write(0, 2*y+6, '获得C+次数')
+        sheet2.write(0, 2*y+7, '获得C次数')
+        sheet2.write(0, 2*y+8, '获得C-次数')
+        sheet2.write(0, 2*y+9, '获得D次数')
+        sheet2.write(0, 2*y+10, '获得COPY次数')
+        sheet2.write(0, 2*y+11, '获得FAIL次数')
         for i in range(0,x):
             sheet1.write(i+1, y+1, xlwt.Formula('COUNTIF({}{}:{}{},"迟到")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
             sheet1.write(i+1, y+2, xlwt.Formula('COUNTIF({}{}:{}{},"早退")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
             sheet1.write(i+1, y+3, xlwt.Formula('COUNTIF({}{}:{}{},"缺勤")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
             sheet1.write(i+1, y+4, xlwt.Formula('COUNTIF({}{}:{}{},"已签到")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+1, xlwt.Formula('COUNTIF({}{}:{}{},"A+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+2, xlwt.Formula('COUNTIF({}{}:{}{},"A")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+3, xlwt.Formula('COUNTIF({}{}:{}{},"B+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+4, xlwt.Formula('COUNTIF({}{}:{}{},"B")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+5, xlwt.Formula('COUNTIF({}{}:{}{},"B-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+6, xlwt.Formula('COUNTIF({}{}:{}{},"C+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+7, xlwt.Formula('COUNTIF({}{}:{}{},"C")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+8, xlwt.Formula('COUNTIF({}{}:{}{},"C-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+9, xlwt.Formula('COUNTIF({}{}:{}{},"D")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+10, xlwt.Formula('COUNTIF({}{}:{}{},"COPY")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
-            sheet2.write(i+1, y+11, xlwt.Formula('COUNTIF({}{}:{}{},"FAIL")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+1, xlwt.Formula('COUNTIF({}{}:{}{},"A+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+2, xlwt.Formula('COUNTIF({}{}:{}{},"A")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+3, xlwt.Formula('COUNTIF({}{}:{}{},"B+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+4, xlwt.Formula('COUNTIF({}{}:{}{},"B")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+5, xlwt.Formula('COUNTIF({}{}:{}{},"B-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+6, xlwt.Formula('COUNTIF({}{}:{}{},"C+")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+7, xlwt.Formula('COUNTIF({}{}:{}{},"C")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+8, xlwt.Formula('COUNTIF({}{}:{}{},"C-")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+9, xlwt.Formula('COUNTIF({}{}:{}{},"D")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+10, xlwt.Formula('COUNTIF({}{}:{}{},"COPY")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
+            sheet2.write(i+1, 2*y+11, xlwt.Formula('COUNTIF({}{}:{}{},"FAIL")'.format(changenumtochar(2), i+2, changenumtochar(y+1), i+2)))
         xls.save(savefile)
         return HttpResponse('下载文件准备就绪')
 
@@ -309,21 +309,23 @@ def courserecord(request, course_id, student_id=None):
                     except Exception:
                         pass
                 else:
-                    if information < 60 and information > 0 :
+                    if information < 60:
                         rule = models.Rules.objects.get(name='作业不及格')
                     if information <= 0:
                         rule = models.Rules.objects.get(name='不交作业')
-                    try:
-                        stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
-                                                                                     note='根据学生成绩情况自动创建')
-                        stupunishmentrecord.rule = rule
-                        stupunishmentrecord.save()
-                    except Exception:
-                        enrollment = models.Enrollment.objects.get(course_grade=studyrecord.course_record.course,
-                                                                   customer=studyrecord.student)
-                        stupunishmentrecord = models.StuPunishmentRecord.objects.create(
-                            enrollment=enrollment,rule=rule, performer=request.user,
-                            note='根据学生成绩情况自动创建', studyrecord=studyrecord)
+                    if studyrecord.course_record.has_homework:
+                        try:
+                            stupunishmentrecord = models.StuPunishmentRecord.objects.get(studyrecord=studyrecord,
+                                                                                         note='根据学生成绩情况自动创建')
+                            stupunishmentrecord.rule = rule
+                            stupunishmentrecord.save()
+                        except Exception as e:
+                            print(e)
+                            enrollment = models.Enrollment.objects.get(course_grade=studyrecord.course_record.course,
+                                                                       customer=studyrecord.student)
+                            stupunishmentrecord = models.StuPunishmentRecord.objects.create(
+                                enrollment=enrollment,rule=rule, performer=request.user,
+                                note='根据学生成绩情况自动创建', studyrecord=studyrecord)
             return HttpResponse('OK')
 
 
